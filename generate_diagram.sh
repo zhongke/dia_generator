@@ -120,9 +120,15 @@ REQUEST="request"
 RESPONSE="response"
 
 
-# Message direction
+# Arrow direction
 LEFT=" <--------------- "
 RIGHT=" ---------------> "
+
+
+IN="*           -> "
+OUT="*           <- "
+
+HEADER="*              -"
 
 # Message type
 INITIAL_REQUEST="INITIAL_REQUEST"
@@ -461,31 +467,62 @@ show_message_detail () {
             ;;
             esac
             echo "$req $session Session"
-            echo -n "*           -> "
+            echo -n "$IN"
             echo "CCR message is sent from $node to SAPC"
-            echo "*              - cc_request_type          : $request"
+            echo "$HEADER cc_request_type          : $request"
             echo "*"
-            echo -n "*           <- "
+            echo -n "$OUT"
             echo "CCA message is sent from SAPC to $node"
-            echo "*              - Result-Code              : 2001 (SUCCESS)"
-
 
         ;;
         $GXA_RAR_EVENT|$SX_RAR_EVENT|$GX_RAR_EVENT)
             seq=`expr $seq - 1`
             echo "$session Re-authorization"
-            echo  -n "*           <- "
+            echo -n "$OUT"
 
             echo "RAR message is sent from SAPC to $node"
-            echo "*               - CR-Install              :"
+            echo "$HEADER CR-Install              :"
             echo "*"
-            echo -n "*           -> "
+            echo -n "$IN"
             echo "RAA message is sent from $node to SAPC"
-            echo "*              - Result-Code              : 2001 (SUCCESS)"
-        ;;
 
+        ;;
+        $RX_AAR_EVENT)
+            seq=`expr $seq - 1`
+            echo "$session creation"
+            echo -n "$IN"
+
+            echo "AAR message is sent from SAPC to $node"
+            echo "$HEADER CR-Install              :"
+            echo "*"
+            echo -n "$OUT"
+            echo "AAA message is sent from $node to SAPC"
+
+        ;;
+        $RX_ASR_EVENT)
+            echo "$session Re-authorization"
+            echo -n "$OUT"
+
+            echo "ASR message is sent from SAPC to $node"
+            echo "$HEADER CR-Install              :"
+            echo "*"
+            echo -n "$IN"
+            echo "ASA message is sent from $node to SAPC"
+
+        ;;
+        $RX_STR_EVENT)
+            seq=`expr $seq - 1`
+            echo "$session termination"
+            echo -n "$IN"
+
+            echo "STR message is sent from SAPC to $node"
+            echo "*"
+            echo -n "$OUT"
+            echo "STA message is sent from $node to SAPC"
+        ;;
         esac
 
+        echo "*              - Result-Code              : 2001 (SUCCESS)"
         echo "*"
 
         let 'count++'
@@ -507,31 +544,12 @@ show_diagram () {
         event=${EVENT_TYPE_LIST[$i]}
         request=${EVENT_REQUEST_LIST[$seq]}
 
-        #show_commmon_line "common"
-
         case $node in
         $SGSN_MME|$BBERF)
             node_seq=0
             has_gxa_sx=1
-            if [ $event == $GXA_RAR_EVENT -o $event == $SX_RAR_EVENT ]
-            then
-                seq=`expr $seq - 1`
-                show_message_type $node_seq $event $REQUEST  $count
-                show_direction $node_seq $event $REQUEST
-                #show_commmon_line "common"
-                show_message_type $node_seq $event $RESPONSE  $count
-                show_direction $node_seq $event $RESPONSE
-                #show_commmon_line "common"
-            else
-                show_message_type $node_seq $event $REQUEST  $count $request
-                show_direction $node_seq $event $REQUEST
-                #show_commmon_line "common"
-                show_message_type $node_seq $event $RESPONSE  $count $request
-                show_direction $node_seq $event $RESPONSE
-                #show_commmon_line "common"
-            fi
-        ;;
 
+        ;;
         $GGSN)
             if [ $has_gxa_sx -eq 1 ]
             then
@@ -540,25 +558,7 @@ show_diagram () {
                 node_seq=0
             fi
 
-            if [ $event == $GX_RAR_EVENT ]
-            then
-                seq=`expr $seq - 1`
-                show_message_type $node_seq $event $REQUEST $count
-                show_direction $node_seq $event $REQUEST
-                #show_commmon_line "common"
-                show_message_type $node_seq $event $RESPONSE $count
-                show_direction $node_seq $event $RESPONSE
-                #show_commmon_line "common"
-            else
-                show_message_type $node_seq $event $REQUEST  $count $request
-                show_direction $node_seq $event $REQUEST
-                #show_commmon_line "common"
-                show_message_type $node_seq $event $RESPONSE  $count $request
-                show_direction $node_seq $event $RESPONSE
-                #show_commmon_line "common"
-            fi
         ;;
-
         $AF)
             if [ $has_gxa_sx -eq 1 ]
             then
@@ -567,17 +567,23 @@ show_diagram () {
                 node_seq=1
             fi
 
-            seq=`expr $seq - 1`
-
-            show_message_type $node_seq $event $REQUEST $count
-            show_direction $node_seq $event $REQUEST
-            #show_commmon_line "common"
-            show_message_type $node_seq $event $RESPONSE $count
-            show_direction $node_seq $event $RESPONSE
-            #show_commmon_line "common"
         ;;
-
         esac
+
+        if [ $event == $GXA_RAR_EVENT -o $event == $SX_RAR_EVENT -o $event == $GX_RAR_EVENT -o $event == $RX_AAR_EVENT -o $event == $RX_STR_EVENT ]
+        then
+            seq=`expr $seq - 1`
+            show_message_type $node_seq $event $REQUEST  $count
+            show_direction $node_seq $event $REQUEST
+            show_message_type $node_seq $event $RESPONSE  $count
+            show_direction $node_seq $event $RESPONSE
+        else
+            show_message_type $node_seq $event $REQUEST  $count $request
+            show_direction $node_seq $event $REQUEST
+            show_message_type $node_seq $event $RESPONSE  $count $request
+            show_direction $node_seq $event $RESPONSE
+        fi
+
 
         let 'count++'
         let 'seq++'
