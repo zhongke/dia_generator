@@ -130,7 +130,7 @@ IN="*           -> "
 OUT="*           <- "
 HEADER="*              -"
 
-# Message type
+# Request type
 INITIAL_REQUEST="INITIAL_REQUEST"
 UPDATE_REQUEST="UPDATE_REQUEST"
 TERMINATION_REQUEST="TERMINATION_REQUEST"
@@ -225,7 +225,10 @@ show_direction () {
             fi
         elif [ $1 -eq 0  ]
         then
-            if [ $2 == "$GXA_CCR_EVENT" -o $2 == "$SX_CCR_EVENT" -o $2 == "$GX_CCR_EVENT" ]
+            if [ $2 == "$GXA_CCR_EVENT" \
+              -o $2 == "$SX_CCR_EVENT" \
+              -o $2 == "$GX_CCR_EVENT" \
+               ]
             then
                 if [ $3 == "$REQUEST" ]
                 then
@@ -234,7 +237,10 @@ show_direction () {
                     echo -n "$LEFT"
                 fi
 
-            elif [ $2 == "$GXA_RAR_EVENT" -o $2 == "$SX_RAR_EVENT" -o $2 == "$GX_RAR_EVENT" ]
+            elif [ $2 == "$GXA_RAR_EVENT" \
+                -o $2 == "$SX_RAR_EVENT" \
+                -o $2 == "$GX_RAR_EVENT" \
+                 ]
             then
                 if [ $3 == "$REQUEST" ]
                 then
@@ -245,7 +251,10 @@ show_direction () {
             fi
         elif [ $1 -eq 1  ]
         then
-            if [ $2 == "$GX_CCR_EVENT" -o $2 == "$RX_AAR_EVENT" -o $2 == "$RX_STR_EVENT" ]
+            if [ $2 == "$GX_CCR_EVENT" \
+              -o $2 == "$RX_AAR_EVENT" \
+              -o $2 == "$RX_STR_EVENT" \
+               ]
             then
                 if [ $3 == "$REQUEST" ]
                 then
@@ -253,7 +262,10 @@ show_direction () {
                 else
                     echo -n "$RIGHT"
                 fi
-            elif [ $2 == "$GX_RAR_EVENT" -o $2 == "$RX_RAR_EVENT"  -o $2 == "$RX_ASR_EVENT" ]
+            elif [ $2 == "$GX_RAR_EVENT" \
+                -o $2 == "$RX_RAR_EVENT" \
+                -o $2 == "$RX_ASR_EVENT" \
+                 ]
             then
                 if [ $3 == "$REQUEST" ]
                 then
@@ -294,7 +306,10 @@ show_message_type () {
         then
 
             echo -n " ($4) "
-            if [ $2 == "$GXA_CCR_EVENT" -o $2 == "$SX_CCR_EVENT" -o $2 == "$GX_CCR_EVENT" ]
+            if [ $2 == "$GXA_CCR_EVENT" \
+              -o $2 == "$SX_CCR_EVENT" \
+              -o $2 == "$GX_CCR_EVENT" \
+               ]
             then
                 if [ $3 == "$REQUEST" ]
                 then
@@ -328,7 +343,10 @@ show_message_type () {
                 else
                     echo -n "       "
                 fi
-            elif [ $2 == "$GXA_RAR_EVENT" -o $2 == "$SX_RAR_EVENT" -o $2 == "$GX_RAR_EVENT" ]
+            elif [ $2 == "$GXA_RAR_EVENT" \
+                -o $2 == "$SX_RAR_EVENT" \
+                -o $2 == "$GX_RAR_EVENT" \
+                 ]
             then
                 if [ $3 == "$REQUEST" ]
                 then
@@ -570,7 +588,12 @@ show_diagram () {
         ;;
         esac
 
-        if [ $event == $GXA_RAR_EVENT -o $event == $SX_RAR_EVENT -o $event == $GX_RAR_EVENT -o $event == $RX_AAR_EVENT -o $event == $RX_STR_EVENT ]
+        if [ $event == $GXA_RAR_EVENT \
+          -o $event == $SX_RAR_EVENT \
+          -o $event == $GX_RAR_EVENT \
+          -o $event == $RX_AAR_EVENT \
+          -o $event == $RX_STR_EVENT \
+           ]
         then
             seq=`expr $seq - 1`
             show_message_type $node_seq $event $REQUEST  $count
