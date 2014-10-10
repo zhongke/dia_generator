@@ -40,7 +40,7 @@
 #   Mon Sep 29 22:23:41 CST 2014
 #   - 0.7 => Add AF support
 #       + message: AAR/A, STR/A, ASR/A, RAR/A
-#   Thu Oct  2 17:09:08 CEST 2014
+# Thu Oct  2 17:09:08 CEST 2014
 #
 #   - 0.8 => Add EMA support
 #       | Profile change by OAM
@@ -48,8 +48,11 @@
 #       | test case: ./generate_diagram.sh ~/Downloads/ts_43_Gxa/ts_43_Gxa/ch_02_Gxa_Support/sch_02_03_IpCan_Session_Reauthorization_By_Oam/tc_02_03_01_IpCanSession_Update_By_Adding_Services/tc_02_03_01_IpCanSession_Update_By_Adding_Services.ttcn
 #
 #   - 0.8.1 => Refactor the code
+#       + Abstract the common part for show_message function
+#
 #   - 0.8.2 => Add detailed messge info in the diagram below
-#       | Reuse the current implementation
+#       + Reuse the current implementation
+# Fri Oct 10 22:21:51 CST 2014
 #
 #   - 0.8.3 => Add configuration part of test case
 #       | Go through the ldif and extract the dn:CotextName=, to retrieve the resource, suject, policy and rule
@@ -123,11 +126,8 @@ RESPONSE="response"
 # Arrow direction
 LEFT=" <--------------- "
 RIGHT=" ---------------> "
-
-
 IN="*           -> "
 OUT="*           <- "
-
 HEADER="*              -"
 
 # Message type
@@ -429,7 +429,7 @@ show_message_type () {
                     echo -n "         "
                 fi
             fi
-        fi 
+        fi
     done
 
 }
