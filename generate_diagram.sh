@@ -68,7 +68,6 @@
 
 # Get the inpurt from ttcn file
 TTCN_FILE=$1
-OUTPUT_FILE="/Users/kevinzhong/ttcn/tc_diagram.txt"
 
 # Node definition
 EMA="EMA"
@@ -343,6 +342,7 @@ show_message_type () {
             echo -n " ($4) "
             if [ $2 == "$GX_CCR_EVENT" ]
             then
+
                 if [ $3 == "$REQUEST" ]
                 then
                     if [ $5 == "$INITIAL_REQUEST" ]
@@ -441,193 +441,56 @@ show_message_detail () {
         node=${EVENT_LIST[$i]}
         event=${EVENT_TYPE_LIST[$i]}
         request=${EVENT_REQUEST_LIST[$seq]}
+        req=""
+        session=`echo $event | awk 'BEGIN {FS="[_]"} {print $2} '`
 
         echo  -n "*       $count) "
 
         case $event in
         $GXA_CCR_EVENT|$SX_CCR_EVENT|$GX_CCR_EVENT)
-            echo "Initial Gxa IP-CAN Session"
-            echo -n "*           -> "
-            echo "CCR message is sent from $node to SAPC"
-            echo -n "*              - cc_request_type         : "
 
             case $request in
             $INITIAL_REQUEST)
-                echo "$INITIAL_REQUEST"
+                req="Initialize"
             ;;
             $UPDATE_REQUEST)
-                echo "$UPDATE_REQUEST"
+                req="Update"
             ;;
             $TERMINATION_REQUEST)
-                echo "$TERMINATION_REQUEST"
+                req="Terminate"
             ;;
-
             esac
+            echo "$req $session Session"
+            echo -n "*           -> "
+            echo "CCR message is sent from $node to SAPC"
+            echo "*              - cc_request_type          : $request"
+            echo "*"
+            echo -n "*           <- "
+            echo "CCA message is sent from SAPC to $node"
+            echo "*              - Result-Code              : 2001 (SUCCESS)"
+
+
         ;;
         $GXA_RAR_EVENT|$SX_RAR_EVENT|$GX_RAR_EVENT)
             seq=`expr $seq - 1`
-            echo "Gxa Re-authorization"
+            echo "$session Re-authorization"
             echo  -n "*           <- "
 
             echo "RAR message is sent from SAPC to $node"
-            echo "*               - cc_request_type         : "
+            echo "*               - CR-Install              :"
+            echo "*"
+            echo -n "*           -> "
+            echo "RAA message is sent from $node to SAPC"
+            echo "*              - Result-Code              : 2001 (SUCCESS)"
         ;;
 
         esac
 
+        echo "*"
 
         let 'count++'
         let 'seq++'
     done
-
-#        if [ $1 -ne $j ]
-#        then
-#            if [ $j -lt `expr $NODE_LIST_SIZE - 1` ]
-#            then
-#                echo -n "                  "
-#            else
-#                echo
-#            fi
-#        elif [ $1 -eq 0  ]
-#        then
-#
-#            echo -n " ($4) "
-#            if [ $2 == "$GXA_CCR_EVENT" -o $2 == "$SX_CCR_EVENT" -o $2 == "$GX_CCR_EVENT" ]
-#            then
-#                if [ $3 == "$REQUEST" ]
-#                then
-#                    if [ $5 == "$INITIAL_REQUEST" ]
-#                    then
-#                        echo -n "$CCR_I"
-#                    elif [ $5 == "$UPDATE_REQUEST" ]
-#                    then
-#                        echo -n "$CCR_U"
-#                    elif [ $5 == "$TERMINATION_REQUEST" ]
-#                    then
-#                        echo -n "$CCR_T"
-#                    fi
-#
-#                elif [ $3 == "$RESPONSE" ]
-#                then
-#                    if [ $5 == "$INITIAL_REQUEST" ]
-#                    then
-#                        echo -n "$CCA_I"
-#                    elif [ $5 == "$UPDATE_REQUEST" ]
-#                    then
-#                        echo -n "$CCA_U"
-#                    elif [ $5 == "$TERMINATION_REQUEST" ]
-#                    then
-#                        echo -n "$CCA_T"
-#                    fi
-#                fi
-#                if [ $4 -lt 10 ]
-#                then
-#                    echo -n "        "
-#                else
-#                    echo -n "       "
-#                fi
-#            elif [ $2 == "$GXA_RAR_EVENT" -o $2 == "$SX_RAR_EVENT" -o $2 == "$GX_RAR_EVENT" ]
-#            then
-#                if [ $3 == "$REQUEST" ]
-#                then
-#                    echo -n "$RAR"
-#                else
-#                    echo -n "$RAA"
-#                fi
-#                if [ $4 -lt 10 ]
-#                then
-#                    echo -n "          "
-#                else
-#                    echo -n "         "
-#                fi
-#            fi
-#        elif [ $1 -eq 1  ]
-#        then
-#            echo -n " ($4) "
-#            if [ $2 == "$GX_CCR_EVENT" ]
-#            then
-#                if [ $3 == "$REQUEST" ]
-#                then
-#                    if [ $5 == "$INITIAL_REQUEST" ]
-#                    then
-#                        echo -n "$CCR_I"
-#                    elif [ $5 == "$UPDATE_REQUEST" ]
-#                    then
-#                        echo -n "$CCR_U"
-#                    elif [ $5 == "$TERMINATION_REQUEST" ]
-#                    then
-#                        echo -n "$CCR_T"
-#                    fi
-#                else
-#                     if [ $5 == "$INITIAL_REQUEST" ]
-#                    then
-#                        echo -n "$CCA_I"
-#                    elif [ $5 == "$UPDATE_REQUEST" ]
-#                    then
-#                        echo -n "$CCA_U"
-#                    elif [ $5 == "$TERMINATION_REQUEST" ]
-#                    then
-#                        echo -n "$CCA_T"
-#                    fi
-#                fi
-#                if [ $4 -lt 10 ]
-#                then
-#                    echo -n "        "
-#                else
-#                    echo -n "       "
-#                fi
-#            else
-#                if [ $2 == "$GX_RAR_EVENT" ]
-#                then
-#                    if [ $3 == "$REQUEST" ]
-#                    then
-#                        echo -n "$RAR"
-#                    else
-#                        echo -n "$RAA"
-#                    fi
-#                elif [ $2 == "$RX_AAR_EVENT" ]
-#                then
-#                    if [ $3 == "$REQUEST" ]
-#                    then
-#                        echo -n "$AAR"
-#                    else
-#                        echo -n "$AAA"
-#                    fi
-#                elif [ $2 == "$RX_STR_EVENT" ]
-#                then
-#                    if [ $3 == "$REQUEST" ]
-#                    then
-#                        echo -n "$STR"
-#                    else
-#                        echo -n "$STA"
-#                    fi
-#                elif [ $2 == "$RX_RAR_EVENT" ]
-#                then
-#                    if [ $3 == "$REQUEST" ]
-#                    then
-#                        echo -n "$RAR"
-#                    else
-#                        echo -n "$RAA"
-#                    fi
-#                elif [ $2 == "$RX_ASR_EVENT" ]
-#                then
-#                    if [ $3 == "$REQUEST" ]
-#                    then
-#                        echo -n "$ASR"
-#                    else
-#                        echo -n "$ASA"
-#                    fi
-#                fi
-#
-#                if [ $4 -lt 10 ]
-#                then
-#                    echo -n "          "
-#                else
-#                    echo -n "         "
-#                fi
-#            fi
-#        fi
-#
 
 }
 
@@ -734,6 +597,6 @@ show_commmon_line "common"
 show_commmon_line "end"
 echo "*"
 echo "*"
-#show_message_detail
+show_message_detail
 
 
