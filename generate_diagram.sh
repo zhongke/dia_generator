@@ -97,6 +97,7 @@ SX_CCR_EVENT="t_sx_ccr_event"
 SX_RAR_EVENT="t_sx_rar_event"
 
 RX_AAR_EVENT="t_rx_aar_event"
+RX_RAR_EVENT="t_rx_rar_event"
 RX_ASR_EVENT="t_rx_asr_event"
 RX_STR_EVENT="t_rx_str_event"
 
@@ -528,6 +529,17 @@ show_message_detail () {
             echo "ASA message is sent from $node to SAPC"
 
         ;;
+        $RX_RAR_EVENT)
+            echo "$session Re-authorization"
+            echo -n "$OUT"
+
+            echo "RAR message is sent from SAPC to $node"
+            echo "$HEADER CR-Install              :"
+            echo "*"
+            echo -n "$IN"
+            echo "RAA message is sent from $node to SAPC"
+
+        ;;
         $RX_STR_EVENT)
             seq=`expr $seq - 1`
             echo "$session termination"
@@ -592,6 +604,8 @@ show_diagram () {
           -o $event == $SX_RAR_EVENT \
           -o $event == $GX_RAR_EVENT \
           -o $event == $RX_AAR_EVENT \
+          -o $event == $RX_RAR_EVENT \
+          -o $event == $RX_ASR_EVENT \
           -o $event == $RX_STR_EVENT \
            ]
         then
