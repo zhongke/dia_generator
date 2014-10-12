@@ -97,8 +97,8 @@ SX_CCR_EVENT="t_sx_ccr_event"
 SX_RAR_EVENT="t_sx_rar_event"
 
 RX_AAR_EVENT="t_rx_aar_event"
-RX_RAR_EVENT="t_rx_rar_event"
 RX_ASR_EVENT="t_rx_asr_event"
+RX_RAR_EVENT="t_rx_rar_event"
 RX_STR_EVENT="t_rx_str_event"
 
 # Message definition
