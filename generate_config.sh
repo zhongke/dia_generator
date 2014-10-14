@@ -28,6 +28,13 @@
 #       | notificationData
 #       | SubscrberQulificationData
 #           | ...
+#
+#Tue Oct 14 23:00:46 CST 2014
+#   0.1 Get the all the common info from Context, subsriber and subscriber group
+# #   0.2 Get all the info by loop for the context and subscriber/subscribrgroup info
+#       | How to handle the 2 lines of result by grep
+
+
 
 LDIF_FILE=$1
 
@@ -38,16 +45,54 @@ POLICY="EPC-PolicyId="
 RULE="EPC-RuleId="
 FORMULA="EPC-ConditionFormula:"
 OUTPUT_ATTRIBUTES="EPC-OutputAttributes:"
+SUBSCRIBER="EPC-SubscriberId="
+SUBSCRIBER_GROUP="EPC-SubscriberGroupId="
 
-CONTEXT_INFO=(`grep -n -e $CONTEXT $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1,  $4, $6, $8 }'`)
+# CONTEXT_INFO=(`grep -n -e $CONTEXT $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1,  $4, $6, $8 }'`)
+CONTEXT_INFO=(`grep -n -e $CONTEXT $LDIF_FILE`)
+echo CONTEXT_INFO[0]
+echo ${CONTEXT_INFO[0]}
+echo 
+echo CONTEXT_INFO[1]
+echo ${CONTEXT_INFO[1]}
+echo 
+
+
+
+SUBSCRIBER_INFO=(`grep -n -e $SUBSCRIBER $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1, $4 }'`)
+SUBSCRIBER_GROUP_INFO=(`grep -n -e $SUBSCRIBER_GROUP $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1, $4 }'`)
+#echo
+#echo SUBSCRIBER_INFO
+#echo $SUBSCRIBER_INFO
+#echo
+#echo SUBSCRIBER_GROUP_INFO
+#echo $SUBSCRIBER_GROUP_INFO
+#echo
 
 show_subscriber_info () {
     echo
+    echo SUBSCRIBER_LINE
+    SUBSCRIBER_LINE=${SUBSCRIBER_INFO[0]}
+    echo $SUBSCRIBER_LINE
+    echo
+    SUBSCRIBERED_SERVICES=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_LINE}"',/^$/p' | sed -n '/EPC-SubscriberedServices/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
+    echo SUBSCRIBERED_SERVICES
+    echo $SUBSCRIBERED_SERVICES
+    SUBSCRIBERED_GROUPIDs=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_LINE}"',/^$/p' | sed -n '/EPC-GroupIds/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
+    echo SUBSCRIBERED_GROUPIDs
+    echo $SUBSCRIBERED_GROUPIDs
 }
 
 show_subscriberGroup_info () {
     echo
-
+    echo SUBSCRIBER_GROUP_LINE
+    SUBSCRIBER_GROUP_LINE=${SUBSCRIBER_GROUP_INFO[0]}
+    echo $SUBSCRIBER_GROUP_LINE
+    echo
+    SUBSCRIBERED_SERVICES=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_GROUP_LINE}"',/^$/p' | sed -n '/EPC-SubscribedServices/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
+    echo SUBSCRIBERED_SERVICES
+    echo $SUBSCRIBERED_SERVICES
+    echo
 }
 
 show_policy_info () {
@@ -108,9 +153,9 @@ show_policy_info () {
 
 
 
-show_policy_info
-show_subscriber_info
-show_subscriberGroup_info
+#show_policy_info
+#show_subscriber_info
+#show_subscriberGroup_info
 
 
 
