@@ -45,117 +45,119 @@ POLICY="EPC-PolicyId="
 RULE="EPC-RuleId="
 FORMULA="EPC-ConditionFormula:"
 OUTPUT_ATTRIBUTES="EPC-OutputAttributes:"
-SUBSCRIBER="EPC-SubscriberId="
+SUBSCRIBER="dn:EPC-SubscriberId="
 SUBSCRIBER_GROUP="EPC-SubscriberGroupId="
 
 # CONTEXT_INFO=(`grep -n -e $CONTEXT $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1,  $4, $6, $8 }'`)
-CONTEXT_INFO=(`grep -n -e $CONTEXT $LDIF_FILE`)
-echo CONTEXT_INFO[0]
-echo ${CONTEXT_INFO[0]}
-echo 
-echo CONTEXT_INFO[1]
-echo ${CONTEXT_INFO[1]}
-echo 
 
 
 
-SUBSCRIBER_INFO=(`grep -n -e $SUBSCRIBER $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1, $4 }'`)
-SUBSCRIBER_GROUP_INFO=(`grep -n -e $SUBSCRIBER_GROUP $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1, $4 }'`)
-#echo
-#echo SUBSCRIBER_INFO
-#echo $SUBSCRIBER_INFO
+
+show_subscriber_info () {
+SUBSCRIBER_INFO_LIST=(`grep -n -e $SUBSCRIBER $LDIF_FILE`)
+    for (( i = 0; i < ${#SUBSCRIBER_INFO_LIST[@]}; i++ ))
+    do
+        SUBSCRIBER_INFO=(`echo ${SUBSCRIBER_INFO_LIST[$i]} | awk 'BEGIN { FS="[:=,]" } { print $1, $4 }'`)
+        SUBSCRIBER_LINE=${SUBSCRIBER_INFO[0]}
+        SUBSCRIBER=${SUBSCRIBER_INFO[1]}
+        echo -n "Subscriber : "
+        echo $SUBSCRIBER
+        SUBSCRIBERED_SERVICES=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_LINE}"',/^$/p' | sed -n '/EPC-SubscriberedServices/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
+        echo -n "Services   : "
+        echo $SUBSCRIBERED_SERVICES
+        SUBSCRIBERED_GROUPIDs=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_LINE}"',/^$/p' | sed -n '/EPC-GroupIds/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
+        echo -n "GroupIds   : "
+        echo $SUBSCRIBERED_GROUPIDs
+    done
+}
+
+show_subscriberGroup_info () {
+#SUBSCRIBER_GROUP_INFO_LIST=(`grep -n -e $SUBSCRIBER_GROUP $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1, $4 }'`)
+SUBSCRIBER_GROUP_INFO_LIST=(`grep -n -e $SUBSCRIBER_GROUP $LDIF_FILE`)
+
 #echo
 #echo SUBSCRIBER_GROUP_INFO
 #echo $SUBSCRIBER_GROUP_INFO
 #echo
-
-show_subscriber_info () {
-    echo
-    echo SUBSCRIBER_LINE
-    SUBSCRIBER_LINE=${SUBSCRIBER_INFO[0]}
-    echo $SUBSCRIBER_LINE
-    echo
-    SUBSCRIBERED_SERVICES=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_LINE}"',/^$/p' | sed -n '/EPC-SubscriberedServices/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
-    echo SUBSCRIBERED_SERVICES
-    echo $SUBSCRIBERED_SERVICES
-    SUBSCRIBERED_GROUPIDs=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_LINE}"',/^$/p' | sed -n '/EPC-GroupIds/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
-    echo SUBSCRIBERED_GROUPIDs
-    echo $SUBSCRIBERED_GROUPIDs
-}
-
-show_subscriberGroup_info () {
-    echo
-    echo SUBSCRIBER_GROUP_LINE
-    SUBSCRIBER_GROUP_LINE=${SUBSCRIBER_GROUP_INFO[0]}
-    echo $SUBSCRIBER_GROUP_LINE
-    echo
-    SUBSCRIBERED_SERVICES=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_GROUP_LINE}"',/^$/p' | sed -n '/EPC-SubscribedServices/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
-    echo SUBSCRIBERED_SERVICES
-    echo $SUBSCRIBERED_SERVICES
-    echo
+    for (( i = 0; i < ${#SUBSCRIBER_GROUP_INFO_LIST[@]}; i++ ))
+    do
+        SUBSCRIBER_GROUP_INFO=(`echo ${SUBSCRIBER_GROUP_INFO_LIST[$i]} | awk  'BEGIN { FS="[:=,]" } { print $1, $4 }'`)
+        SUBSCRIBER_GROUP_LINE=${SUBSCRIBER_GROUP_INFO[0]}
+        SUBSCRIBER_GROUP=${SUBSCRIBER_GROUP_INFO[1]}
+        echo
+        echo -n "Group      : "
+        echo $SUBSCRIBER_GROUP
+        SUBSCRIBERED_SERVICES=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_GROUP_LINE}"',/^$/p' | sed -n '/EPC-SubscribedServices/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
+        echo -n "Services   : "
+        echo $SUBSCRIBERED_SERVICES
+        echo
+    done
 }
 
 show_policy_info () {
 
-    echo CONTEXT_LINE
-    CONTEXT_LINE=${CONTEXT_INFO[0]}
-    echo $CONTEXT_LINE
-    echo
+    CONTEXT_INFO_LIST=(`grep -n -e $CONTEXT $LDIF_FILE`)
 
-    echo CONTEXT
-    CONTEXT=${CONTEXT_INFO[1]}
-    echo $CONTEXT
-    echo
+    echo "-------------------------------"
 
-    echo RESOURCE
-    RESOURCE=${CONTEXT_INFO[2]}
-    echo $RESOURCE
-    echo
+    for (( i = 0; i < ${#CONTEXT_INFO_LIST[@]}; i++ ))
+    do
 
-    echo SUBJECT
-    SUBJECT=${CONTEXT_INFO[3]}
-    echo $SUBJECT
+        #echo CONTEXT_INFO_LIST[$i]
+        #echo ${CONTEXT_INFO_LIST[$i]}
 
-    #cat $LDIF_FILE | sed -n '$LINE,/^$/p'
-    # Get policies one by one with sequence
-    # cat $LDIF_FILE | sed -n ''"${LINE}"',/^$/p' | sed -n '/EPC-PolicyIds/p'
-    POLICY_VALUE=`cat $LDIF_FILE | sed -n ''"${CONTEXT_LINE}"',/^$/p' | sed -n '/EPC-PolicyIds/p' | awk 'BEGIN { FS="[:]" } {print $3}'`
+        CONTEXT_INFO=(`echo ${CONTEXT_INFO_LIST[$i]} | awk 'BEGIN { FS="[:=,]" } { print $1,  $4, $6, $8 }'`)
+        CONTEXT_LINE=${CONTEXT_INFO[0]}
 
-    echo
-    echo POLICY_VALUE
-    echo $POLICY_VALUE
+        CONTEXT=${CONTEXT_INFO[1]}
+        RESOURCE=${CONTEXT_INFO[2]}
+        SUBJECT=${CONTEXT_INFO[3]}
+        echo "$RESOURCE $CONTEXT Control"
+        echo "-------------------------------"
 
-    POLICY_LINE=(`grep -n -e ${POLICY}${POLICY_VALUE} $LDIF_FILE | awk 'BEGIN { FS="[:]" } { print $1 }'`)
-    # POLICY_LINE=`grep -n -e $POLICY$POLICY_VALUE $LDIF_FILE | awk`
-    echo
-    echo POLICY_LINE
-    echo $POLICY_LINE
+        echo -n "Context    : "
+        echo $CONTEXT
 
-    # RULE_VALUE=`cat $LDIF_FILE | sed -n '/EPC-PolicyIds/p' | awk 'BEGIN { FS="[:]" } {print $3}'`
-    RULE_VALUE=`cat $LDIF_FILE | sed -n ''"${POLICY_LINE}"',/^$/p' | sed -n '/EPC-Rules/p' | awk 'BEGIN { FS="[:]" } {print $3}'`
-    echo
-    echo RULE_VALUE
+        echo -n "Resource   : "
+        echo $RESOURCE
 
-    RULE_LINE=(`grep -n -e ${RULE}${RULE_VALUE} $LDIF_FILE | awk 'BEGIN { FS="[:]" } { print $1 }'`)
-    # POLICY_LINE=`grep -n -e $POLICY$POLICY_VALUE $LDIF_FILE | awk`
-    echo
-    echo RULE_LINE
-    echo $RULE_LINE
+        echo -n "Subject    : "
+        echo $SUBJECT
 
-    # FORMULA_VALUE=`cat $LDIF_FILE | sed -n ''"${RULE_LINE}"',/^$/p' | sed -n '/'"${FORMULA}"'/p' | awk 'BEGIN { FS="[:]" } {print $3}'`
-    FORMULA_VALUE=`cat $LDIF_FILE | sed -n ''"${RULE_LINE}"',/^$/p' | sed -n '/EPC-Condition/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
-    echo
-    echo FORMULA_VALUE
-    echo $FORMULA_VALUE
+        POLICY_VALUE=(`cat $LDIF_FILE | sed -n ''"${CONTEXT_LINE}"',/^$/p' | sed -n '/EPC-PolicyIds/p' | awk 'BEGIN { FS="[:]" } {print $3}'`)
 
+        for (( j = 0; j < ${#POLICY_VALUE[@]}; j++ ))
+        do
+
+            echo -n "Policy:$j   : "
+            echo ${POLICY_VALUE[$j]}
+
+            POLICY_LINE=(`grep -n -e ${POLICY}${POLICY_VALUE} $LDIF_FILE | awk 'BEGIN { FS="[:]" } { print $1 }'`)
+
+            RULE_VALUE=(`cat $LDIF_FILE | sed -n ''"${POLICY_LINE}"',/^$/p' | sed -n '/EPC-Rules/p' | awk 'BEGIN { FS="[:]" } {print $3}'`)
+
+            for (( k = 0; k < ${#RULE_VALUE[@]}; k++ ))
+            do
+                echo -n "  Rule:$k   : "
+                echo ${RULE_VALUE[$k]}
+                RULE_LINE=(`grep -n -e ${RULE}${RULE_VALUE[$k]} $LDIF_FILE | awk 'BEGIN { FS="[:]" } { print $1 }'`)
+
+                FORMULA_VALUE=`cat $LDIF_FILE | sed -n ''"${RULE_LINE}"',/^$/p' | sed -n '/EPC-Condition/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
+                echo -n "   Formula : "
+                echo $FORMULA_VALUE
+            done
+        done
+
+        echo "-------------------------------"
+
+    done
 
 }
 
 
 
-#show_policy_info
-#show_subscriber_info
-#show_subscriberGroup_info
-
+show_subscriberGroup_info
+show_subscriber_info
+show_policy_info
 
 
