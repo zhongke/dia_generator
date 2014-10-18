@@ -70,7 +70,7 @@
 
 
 # Get the inpurt from ttcn file
-TTCN_FILE=$1
+TTCN_FILE=`echo $1.ttcn`
 
 # Node definition
 EMA="EMA"
@@ -146,6 +146,9 @@ EVENT_REQUEST_LIST=(`less $TTCN_FILE | grep -e 't_[a-z]*_[a-z]*_event' | awk 'BE
 
 # Show the header of the digram based on the number of nodes
 show_header() {
+    echo "*"
+    echo "*  EXECUTION"
+    echo "*"
     echo -n "*         "
 
     for (( i = 0; i < $NODE_LIST_SIZE; i++ ))
@@ -500,7 +503,7 @@ show_message_detail () {
             echo -n "$OUT"
 
             echo "RAR message is sent from SAPC to $node"
-            echo "$HEADER CR-Install              :"
+            echo "$HEADER CR-Install               :"
             echo "*"
             echo -n "$IN"
             echo "RAA message is sent from $node to SAPC"
