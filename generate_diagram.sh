@@ -470,7 +470,7 @@ show_message_detail () {
         event=${EVENT_TYPE_LIST[$i]}
         request=${EVENT_REQUEST_LIST[$seq]}
         req=""
-        session=`echo $event | awk 'BEGIN {FS="[_]"} {print $2} '`
+        session=`echo $event | awk 'BEGIN {FS="[_]"} {print $2}' | sed "s/\b[a-z]/\U&/g"`
 
         echo  -n "*       $count) "
 

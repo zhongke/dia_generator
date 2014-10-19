@@ -50,14 +50,12 @@ FORMULA="EPC-ConditionFormula:"
 OUTPUT_ATTRIBUTES="EPC-OutputAttributes:"
 SUBSCRIBER="dn:EPC-SubscriberId="
 SUBSCRIBER_GROUP="EPC-SubscriberGroupId="
-
-# CONTEXT_INFO=(`grep -n -e $CONTEXT $LDIF_FILE | awk 'BEGIN { FS="[:=,]" } { print $1,  $4, $6, $8 }'`)
-
-
+SUBSCRIBER_QUALIFICATION_DATA="EPC-SubscriberQualificationData"
+DN_SUBSCRIBER_QUALIFICATION="dn:EPC-Name=EPC-SubscriberQualification,EPC-SubscriberId="
 
 
 show_subscriber_info () {
-SUBSCRIBER_INFO_LIST=(`grep -n -e $SUBSCRIBER $LDIF_FILE`)
+SUBSCRIBER_INFO_LIST=(`cat $LDIF_FILE | grep -n -e $SUBSCRIBER`)
     echo "*  -------------------------------"
     echo "*  Subscriber"
     echo "*  -------------------------------"
@@ -74,11 +72,29 @@ SUBSCRIBER_INFO_LIST=(`grep -n -e $SUBSCRIBER $LDIF_FILE`)
         SUBSCRIBERED_GROUPIDs=`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_LINE}"',/^$/p' | sed -n '/EPC-GroupIds/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
         echo -n "*  GroupIds   : "
         echo $SUBSCRIBERED_GROUPIDs
+
+        # Get subscriber qulification data
+        SUBSCRIBER_QUALIFICATION_LINE=(`cat $LDIF_FILE | grep -n -e ${DN_SUBSCRIBER_QUALIFICATION}${SUBSCRIBER} | awk 'BEGIN { FS="[:]" } { print $1 }'`)
+        SUBSCRIBER_QUALIFICATION_INFO=(`cat $LDIF_FILE | sed -n ''"${SUBSCRIBER_QUALIFICATION_LINE}"',/^$/p' | sed -n '/'"${SUBSCRIBER_QUALIFICATION_DATA}"'/p' | awk 'BEGIN { FS="[:]" } {print $2, $3}'`)
+
+        # If there are more than one line of info just left one header
+        for (( j = 0; j < ${#SUBSCRIBER_QUALIFICATION_INFO[@]}; j = $j + 2 ))
+        do
+            if [ $j -gt 0 ]
+            then
+                echo -n "*             : "
+            else
+                echo -n "*    QualiData: "
+            fi
+            echo -n "${SUBSCRIBER_QUALIFICATION_INFO[$j]}:"
+            echo ${SUBSCRIBER_QUALIFICATION_INFO[`expr $j + 1`]}
+        done
+
     done
 }
 
 show_subscriberGroup_info () {
-    SUBSCRIBER_GROUP_INFO_LIST=(`grep -n -e $SUBSCRIBER_GROUP $LDIF_FILE`)
+    SUBSCRIBER_GROUP_INFO_LIST=(`cat $LDIF_FILE | grep -n -e $SUBSCRIBER_GROUP`)
 
     echo "*  -------------------------------"
     echo "*  Subscriber Group"
@@ -105,10 +121,6 @@ show_policy_info () {
 
     for (( i = 0; i < ${#CONTEXT_INFO_LIST[@]}; i++ ))
     do
-
-        #echo CONTEXT_INFO_LIST[$i]
-        #echo ${CONTEXT_INFO_LIST[$i]}
-
         CONTEXT_INFO=(`echo ${CONTEXT_INFO_LIST[$i]} | awk 'BEGIN { FS="[:=,]" } { print $1,  $4, $6, $8 }'`)
         CONTEXT_LINE=${CONTEXT_INFO[0]}
 
@@ -135,7 +147,7 @@ show_policy_info () {
             echo -n "*  Policy:$j   : "
             echo ${POLICY_VALUE[$j]}
 
-            POLICY_LINE=(`grep -n -e ${POLICY}${POLICY_VALUE} $LDIF_FILE | awk 'BEGIN { FS="[:]" } { print $1 }'`)
+            POLICY_LINE=(`cat $LDIF_FILE | grep -n -e ${POLICY}${POLICY_VALUE} | awk 'BEGIN { FS="[:]" } { print $1 }'`)
 
             RULE_VALUE=(`cat $LDIF_FILE | sed -n ''"${POLICY_LINE}"',/^$/p' | sed -n '/EPC-Rules/p' | awk 'BEGIN { FS="[:]" } {print $3}'`)
 
@@ -143,24 +155,24 @@ show_policy_info () {
             do
                 echo -n "*    Rule:$k   : "
                 echo ${RULE_VALUE[$k]}
-                RULE_LINE=(`grep -n -e ${RULE}${RULE_VALUE[$k]} $LDIF_FILE | awk 'BEGIN { FS="[:]" } { print $1 }'`)
-
+                RULE_LINE=(`cat $LDIF_FILE | grep -n -e ${RULE}${RULE_VALUE[$k]} | awk 'BEGIN { FS="[:]" } { print $1 }'`)
                 FORMULA_VALUE=`cat $LDIF_FILE | sed -n ''"${RULE_LINE}"',/^$/p' | sed -n '/EPC-Condition/p' | awk 'BEGIN { FS="[:]" } {print $2}'`
                 echo -n "*     Formula : "
                 echo $FORMULA_VALUE
 
-                # OUTPUT_VALUE=(`cat $LDIF_FILE | sed -n ''"${RULE_LINE}"',/^$/p' | sed -n '/EPC-OutputAttributes/p' | awk 'BEGIN { FS="[:]" } { print $3, $4 }'`)
                 OUTPUT_VALUE=(`cat $LDIF_FILE | sed -n ''"${RULE_LINE}"',/^$/p' | sed -n '/EPC-OutputAttributes/p' | awk 'BEGIN { FS="[:]" } { print $3, $4 }'`)
-                    for (( z = 0; z < ${#OUTPUT_VALUE[@]}; z = $z + 2 ))
-                    do
+                for (( z = 0; z < ${#OUTPUT_VALUE[@]}; z = $z + 2 ))
+                do
+                    if [ $z -gt 0 ]
+                    then
+                        echo -n "*             : "
+                    else
                         echo -n "*     Output  : "
-                        echo -n "${OUTPUT_VALUE[$z]}:"
-                        echo ${OUTPUT_VALUE[`expr $z + 1`]}
-                    done
-
+                    fi
+                    echo -n "${OUTPUT_VALUE[$z]}:"
+                    echo ${OUTPUT_VALUE[`expr $z + 1`]}
+                done
             done
-
-
         done
 
         echo "*  -------------------------------"
