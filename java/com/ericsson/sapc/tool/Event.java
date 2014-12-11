@@ -8,6 +8,7 @@ public class Event {
 	private int nodePosition;
 	private String release;
 	private String requestType;
+	private String eventFlow;
 
 	public String getNodeName() {
 		return nodeName;
@@ -63,6 +64,14 @@ public class Event {
 
 	public void setRequestType(String requestType) {
 		this.requestType = requestType;
+	}
+
+	public String getEventFlow() {
+		return eventFlow;
+	}
+
+	public void setEventFlow(String eventFlow) {
+		this.eventFlow = eventFlow;
 	}
 
 }

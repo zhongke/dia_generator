@@ -83,11 +83,11 @@ public class Diagram {
 				if (i == 2) {
 					lineMessage.delete(lineMessage.lastIndexOf(Diagram.BLANK), lineMessage.length());
 					lineArrow.delete(lineArrow.lastIndexOf(Diagram.BLANK), lineArrow.length());
-					assembleMessage(lineMessage, lineArrow, event, flow);
+					assembleMessage(lineMessage, lineArrow, event);
 					lineMessage.append(Diagram.MIDDLE);
 					lineArrow.append(Diagram.MIDDLE);
 				} else {
-					assembleMessage(lineMessage, lineArrow, event, flow);
+					assembleMessage(lineMessage, lineArrow, event);
 					needBlank = false;
 				}
 			}
@@ -124,47 +124,48 @@ public class Diagram {
 		System.out.println(lineHeader.toString());
 	}
 	
-	private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, Event node, MSG_FLOW flow) {
-		String eventType = node.getEventType();
+	private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, Event event) {
+		String eventType = event.getEventType();
 		StringBuffer msg = new StringBuffer();
+		String flow = event.getEventFlow();
 
 		msg.append("  (");
-		msg.append(node.getNodeSeqence());
+		msg.append(event.getNodeSeqence());
 		msg.append(") ");
 		if (EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GXA_CCR_EVENT.toString().equals(eventType)
 		) {
-			if (node.getRequestType().equals(REQUEST_TYPE.INITIAL_REQUEST.toString())) {
-				if (MSG_FLOW.REQUEST == flow) {
+			if (event.getRequestType().equals(REQUEST_TYPE.INITIAL_REQUEST.toString())) {
+				if (null != flow && MSG_FLOW.REQUEST.toString().equals(flow)) {
 					msg.append(MSG_TYPE.CCR_I);
 				} else {
 					msg.append(MSG_TYPE.CCA_I);
 				}
 			} else
-			if (node.getRequestType().equals(REQUEST_TYPE.UPDATE_REQUEST.toString())) {
-				if (MSG_FLOW.REQUEST == flow) {
+			if (event.getRequestType().equals(REQUEST_TYPE.UPDATE_REQUEST.toString())) {
+				if (null != flow && MSG_FLOW.REQUEST.toString().equals(flow)) {
 					msg.append(MSG_TYPE.CCR_U);
 				} else {
 					msg.append(MSG_TYPE.CCA_U);
 				}
 			} else
-			if (node.getRequestType().equals(REQUEST_TYPE.TERMINATION_REQUEST.toString())) {
-				if (MSG_FLOW.REQUEST == flow) {
+			if (event.getRequestType().equals(REQUEST_TYPE.TERMINATION_REQUEST.toString())) {
+				if (null != flow && MSG_FLOW.REQUEST.toString().equals(flow)) {
 					msg.append(MSG_TYPE.CCR_T);
 				} else {
 					msg.append(MSG_TYPE.CCA_T);
 				}
 			}
 			lineMessage.append(msg.toString());
-			if (node.getNodePosition() < 1){
-				if (MSG_FLOW.REQUEST == flow) {
+			if (event.getNodePosition() < 1){
+				if (null != flow && MSG_FLOW.REQUEST.toString().equals(flow)) {
 					lineArrow.append(RIGHT);
 				} else {
 					lineArrow.append(LEFT);
 				}
 			} else {
-				if (MSG_FLOW.REQUEST == flow) {
+				if (null != flow && MSG_FLOW.REQUEST.toString().equals(flow)) {
 					lineArrow.append(LEFT);
 				} else {
 					lineArrow.append(RIGHT);
@@ -178,15 +179,15 @@ public class Diagram {
 		) {
 			msg.append(MSG_TYPE.RAR);
 			lineMessage.append(msg.toString());
-			if (node.getNodePosition() < 1){
-				if (MSG_FLOW.REQUEST == flow) {
+			if (event.getNodePosition() < 1){
+				if (null != flow && MSG_FLOW.REQUEST.toString().equals(flow)) {
 					lineArrow.append(LEFT);
 				} else {
 					lineArrow.append(RIGHT);
 				}
 			} else {
 				
-				if (MSG_FLOW.REQUEST == flow) {
+				if (null != flow && MSG_FLOW.REQUEST.toString().equals(flow)) {
 					lineArrow.append(RIGHT);
 				} else {
 					lineArrow.append(LEFT);

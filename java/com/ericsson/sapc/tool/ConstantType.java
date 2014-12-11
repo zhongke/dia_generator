@@ -95,13 +95,9 @@ public class ConstantType {
 		TERMINATION_REQUEST
 	}
 
-	public enum MSG_DIRECTION {
-		LEFT,
-		RIGHT
-	}
 	
 	public enum MSG_FLOW {
 		REQUEST,
-		RESPONSE
+		ANSWER
 	}
 }
