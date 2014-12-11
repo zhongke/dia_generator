@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
+import com.ericsson.sapc.tool.ConstantType.MSG_FLOW;
 
 public class BufferMgr {
 	private static String PATTERN_EVENT		= "t_[a-z]*_[a-z]*_event";
@@ -120,7 +121,9 @@ public class BufferMgr {
 		Iterator<Event> iter = events.iterator();
 		while (iter.hasNext()) {
 			Event event = (Event) iter.next();
-			Diagram.showMessageLine(event, nodeList);
+			Diagram.showMessageLine(event, nodeList, MSG_FLOW.REQUEST);
+			Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
+			Diagram.showMessageLine(event, nodeList, MSG_FLOW.RESPONSE);
 			
 
 		}

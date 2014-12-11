@@ -3,6 +3,7 @@ package com.ericsson.sapc.tool;
 import java.util.List;
 
 import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
+import com.ericsson.sapc.tool.ConstantType.MSG_FLOW;
 import com.ericsson.sapc.tool.ConstantType.MSG_TYPE;
 import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
@@ -60,7 +61,7 @@ public class Diagram {
 	
 	//*       |        | (1) CCR-I        |        |                  |        |
 	//*       |        | ---------------> |        |                  |        |
-	public static void showMessageLine(Event event, List<String> nodeList) {
+	public static void showMessageLine(Event event, List<String> nodeList, MSG_FLOW flow) {
 		StringBuffer lineMessage = new StringBuffer();
 		StringBuffer lineArrow = new StringBuffer();
 		lineMessage.append(Diagram.BEGIN);
@@ -82,11 +83,11 @@ public class Diagram {
 				if (i == 2) {
 					lineMessage.delete(lineMessage.lastIndexOf(Diagram.BLANK), lineMessage.length());
 					lineArrow.delete(lineArrow.lastIndexOf(Diagram.BLANK), lineArrow.length());
-					assembleMessage(lineMessage, lineArrow, event);
+					assembleMessage(lineMessage, lineArrow, event, flow);
 					lineMessage.append(Diagram.MIDDLE);
 					lineArrow.append(Diagram.MIDDLE);
 				} else {
-					assembleMessage(lineMessage, lineArrow, event);
+					assembleMessage(lineMessage, lineArrow, event, flow);
 					needBlank = false;
 				}
 			}
@@ -119,31 +120,51 @@ public class Diagram {
 		System.out.println(lineHeader.toString());
 	}
 	
-	private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, Event node) {
+	private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, Event node, MSG_FLOW flow) {
 		String eventType = node.getEventType();
 		StringBuffer msg = new StringBuffer();
 
 		msg.append(" (");
-		msg.append(node.getNodeSeqence() + 1);
+		msg.append(node.getNodeSeqence());
 		msg.append(") ");
 		if (EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GXA_CCR_EVENT.toString().equals(eventType)
 		) {
 			if (node.getRequestType().equals(REQUEST_TYPE.INITIAL_REQUEST.toString())) {
-				msg.append(MSG_TYPE.CCR_I);
+				if (MSG_FLOW.REQUEST == flow) {
+					msg.append(MSG_TYPE.CCR_I);
+				} else {
+					msg.append(MSG_TYPE.CCA_I);
+				}
 			} else
 			if (node.getRequestType().equals(REQUEST_TYPE.UPDATE_REQUEST.toString())) {
-				msg.append(MSG_TYPE.CCR_U);
+				if (MSG_FLOW.REQUEST == flow) {
+					msg.append(MSG_TYPE.CCR_U);
+				} else {
+					msg.append(MSG_TYPE.CCA_U);
+				}
 			} else
 			if (node.getRequestType().equals(REQUEST_TYPE.TERMINATION_REQUEST.toString())) {
-				msg.append(MSG_TYPE.CCR_U);
+				if (MSG_FLOW.REQUEST == flow) {
+					msg.append(MSG_TYPE.CCR_T);
+				} else {
+					msg.append(MSG_TYPE.CCA_T);
+				}
 			}
 			lineMessage.append(msg.toString());
 			if (node.getNodePosition() < 1){
-				lineArrow.append(RIGHT);
+				if (MSG_FLOW.REQUEST == flow) {
+					lineArrow.append(RIGHT);
+				} else {
+					lineArrow.append(LEFT);
+				}
 			} else {
-				lineArrow.append(LEFT);
+				if (MSG_FLOW.REQUEST == flow) {
+					lineArrow.append(LEFT);
+				} else {
+					lineArrow.append(RIGHT);
+				}
 				
 			}
 		} else
@@ -154,13 +175,21 @@ public class Diagram {
 			msg.append(MSG_TYPE.RAR);
 			lineMessage.append(msg.toString());
 			if (node.getNodePosition() < 1){
-				lineArrow.append(LEFT);
+				if (MSG_FLOW.REQUEST == flow) {
+					lineArrow.append(LEFT);
+				} else {
+					lineArrow.append(RIGHT);
+				}
 			} else {
-				lineArrow.append(RIGHT);
+				
+				if (MSG_FLOW.REQUEST == flow) {
+					lineArrow.append(RIGHT);
+				} else {
+					lineArrow.append(LEFT);
+				}
 				
 			}
 		}
-		
 		
 		// fill more blank to the line until the Diagram.MIDDLE
 		for ( int i = 0; i < BLANK.length() - msg.length(); ++i ) {

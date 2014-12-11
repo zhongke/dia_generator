@@ -99,4 +99,9 @@ public class ConstantType {
 		LEFT,
 		RIGHT
 	}
+	
+	public enum MSG_FLOW {
+		REQUEST,
+		RESPONSE
+	}
 }
