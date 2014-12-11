@@ -66,10 +66,10 @@ public class Diagram {
 		lineMessage.append(Diagram.BEGIN);
 		lineArrow.append(Diagram.BEGIN);
 		
-		int sequence = event.getNodeSeqence();
 		// Get node position
 		boolean needBlank = true;
 		int position = nodeList.indexOf(event.getNodeName());
+		event.setNodePosition(position);
 
 		for (int i = 0; i < nodeList.size(); ++i) {
 			if ( i != 2 || position != 2) {
@@ -82,11 +82,11 @@ public class Diagram {
 				if (i == 2) {
 					lineMessage.delete(lineMessage.lastIndexOf(Diagram.BLANK), lineMessage.length());
 					lineArrow.delete(lineArrow.lastIndexOf(Diagram.BLANK), lineArrow.length());
-					assembleMessage(lineMessage, lineArrow, sequence, event);
+					assembleMessage(lineMessage, lineArrow, event);
 					lineMessage.append(Diagram.MIDDLE);
 					lineArrow.append(Diagram.MIDDLE);
 				} else {
-					assembleMessage(lineMessage, lineArrow, sequence, event);
+					assembleMessage(lineMessage, lineArrow, event);
 					needBlank = false;
 				}
 			}
@@ -119,12 +119,12 @@ public class Diagram {
 		System.out.println(lineHeader.toString());
 	}
 	
-	private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, int sequence, Event node) {
+	private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, Event node) {
 		String eventType = node.getEventType();
 		StringBuffer msg = new StringBuffer();
 
 		msg.append(" (");
-		msg.append(sequence + 1);
+		msg.append(node.getNodeSeqence() + 1);
 		msg.append(") ");
 		if (EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
@@ -140,7 +140,12 @@ public class Diagram {
 				msg.append(MSG_TYPE.CCR_U);
 			}
 			lineMessage.append(msg.toString());
-			lineArrow.append(LEFT);
+			if (node.getNodePosition() < 1){
+				lineArrow.append(RIGHT);
+			} else {
+				lineArrow.append(LEFT);
+				
+			}
 		} else
 		if (EVENT_TYPE.SX_RAR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GX_RAR_EVENT.toString().equals(eventType)
@@ -148,7 +153,12 @@ public class Diagram {
 		) {
 			msg.append(MSG_TYPE.RAR);
 			lineMessage.append(msg.toString());
-			lineArrow.append(RIGHT);
+			if (node.getNodePosition() < 1){
+				lineArrow.append(LEFT);
+			} else {
+				lineArrow.append(RIGHT);
+				
+			}
 		}
 		
 		

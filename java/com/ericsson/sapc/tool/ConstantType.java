@@ -3,35 +3,49 @@ package com.ericsson.sapc.tool;
 public class ConstantType {
 
 	public enum NODE_TYPE {
-		EMA,
-		SAPC,
-		GGSN,
-		GGSN2,
-		SGSN_MME,
-		BBERF,
-		AF,
-		AF2,
-		OCS,
-		OCS2,
-		OCS3GPP,
-		OCS3GPP2
+		EMA("EMA"),
+		SAPC("SAPC"),
+		GGSN("GGSN"),
+		GGSN2("GGSN2"),
+		SGSN_MME("SGSN_MME"),
+		BBERF("BBERF"),
+		AF("AF"),
+		AF2("AF2"),
+		OCS("OCS"),
+		OCS2("OCS2"),
+		OCS3GPP("OCS3GPP"),
+		OCS3GPP2("OCS3GPP2");
+		
+
+		private String name;
+		private NODE_TYPE() {}
+		private NODE_TYPE(String name) {
+			this.name = name;
+		}
+		
+		public String toString() {
+			return this.name;
+		}
 	}
 
 	public enum EVENT_TYPE {
 				
 		GX_CCR_EVENT("t_gx_ccr_event"),
-		GX_RAR_EVENT,
+		GX_RAR_EVENT("t_gx_rar_event"),
 		GXA_CCR_EVENT("t_gxa_ccr_event"),
-		GXA_RAR_EVENT,
+		GXA_RAR_EVENT("t_gxa_rar_event"),
 		SX_CCR_EVENT("t_sx_ccr_event"),
-		SX_RAR_EVENT,
-		RX_AAR_EVENT,
-		RX_ASR_EVENT,
-		RX_RAR_EVENT,
-		RX_STR_EVENT,
-		SY_SLR_EVENT,
-		SY_SNR_EVENT,
-		SY_STR_EVENT;
+		SX_RAR_EVENT("t_sx_rar_event"),
+		RX_AAR_EVENT("t_rx_aar_event"),
+		RX_ASR_EVENT("t_rx_asr_event"),
+		RX_RAR_EVENT("t_rx_rar_event"),
+		RX_STR_EVENT("t_rx_str_event"),
+		SY_SLR_EVENT("t_sy_3gpp_slr_event"),
+		SY_SNR_EVENT("t_sy_3gpp_snr_event"),
+		SY_STR_EVENT("t_sy_3gpp_str_event"),
+		ESY_SLR_EVENT("t_sy_slr_event"),
+		ESY_SNR_EVENT("t_sy_snr_event"),
+		ESY_STR_EVENT("t_sy_str_event");
 		
 		private String event;
 		private EVENT_TYPE() {}

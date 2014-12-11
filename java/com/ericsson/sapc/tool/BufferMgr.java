@@ -84,7 +84,7 @@ public class BufferMgr {
 
 	}
 
-	private void getEventInfo(String line, String eventType, Event node) {
+	private void getEventInfo(String line, String eventType, Event event) {
 		String release;
 		String requestType;
 		// Get the request type if the event is ccr event from Gx, Gxa, Sx
@@ -92,9 +92,9 @@ public class BufferMgr {
 				|| ("t_gxa_ccr_event").equals(eventType)
 				|| ("t_sx_ccr_event").equals(eventType)) {
 			release = line.split(",")[2];
-			node.setRelease(release);
+			event.setRelease(release);
 			requestType = line.split(",")[3].split("\\)")[0].trim();
-			node.setRequestType(requestType);
+			event.setRequestType(requestType);
 		}
 	}
 

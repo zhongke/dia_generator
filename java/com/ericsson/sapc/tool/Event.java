@@ -5,7 +5,7 @@ public class Event {
 	private int nodeSeqence;
 	private String nodeMsgType;
 	private String eventType;
-	private String nodeMsgDirection;
+	private int nodePosition;
 	private String release;
 	private String requestType;
 
@@ -41,12 +41,12 @@ public class Event {
 		this.eventType = eventType;
 	}
 
-	public String getNodeMsgDirection() {
-		return nodeMsgDirection;
+	public int getNodePosition() {
+		return nodePosition;
 	}
 
-	public void setNodeMsgDirection(String nodeMsgDirection) {
-		this.nodeMsgDirection = nodeMsgDirection;
+	public void setNodePosition(int nodePosition) {
+		this.nodePosition = nodePosition;
 	}
 
 	public String getRelease() {
