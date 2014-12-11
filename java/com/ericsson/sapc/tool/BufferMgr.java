@@ -11,10 +11,16 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
+
 public class BufferMgr {
-	List<Event> events		= new LinkedList<Event>();
-	Set<String> nodeSet		= new HashSet<String>();
-	List<String> nodeList	= new LinkedList<String>();
+	private static String PATTERN_EVENT		= "t_[a-z]*_[a-z]*_event";
+	private static String PATTERN_FUNCTION	= "f_runEvent";
+	
+	private List<Event> events		= new LinkedList<Event>();
+	private Set<String> nodeSet		= new HashSet<String>();
+	private List<String> nodeList	= new LinkedList<String>();
+	
 
 	public void readInputFromFile(String fileName) {
 
@@ -35,19 +41,18 @@ public class BufferMgr {
 				}
 				if (null != line && !"".equals(line)) {
 					// Get event list from input by reqex
-					Pattern pattern = Pattern.compile("t_[a-z]*_[a-z]*_event");
+					Pattern pattern = Pattern.compile(PATTERN_EVENT);
 					Matcher matcher = pattern.matcher(line);
 					if (matcher.find()) {
 						eventType = matcher.group(0);
 						event.setEventType(eventType);
-						getEventInfo(line, eventType, event);
+						getEventInfo(line, event);
 						isSameFlow = true;
-					} else if (line.contains("f_runEvent")) { 
+					} else if (line.contains(PATTERN_FUNCTION)) { 
 						// Get node list from input
 						String nodeName = line.split("\\]")[1].split("\\[")[1];
 						event.setNodeName(nodeName);
 						nodeSet.add(nodeName);
-						
 
 						// Create a map to contain the node list and node
 						// message
@@ -55,11 +60,10 @@ public class BufferMgr {
 						isSameFlow = false;
 						++sequenceNumber;
 					}
-
 				}
 			}
 			// Add SAPC node into the second position
-			// Put this info into a map
+			// Put this info into a list
 			for (int i = 0; i < nodeSet.size(); ++i) {
 				nodeList.add(i, nodeSet.toArray()[i].toString());
 			}
@@ -84,13 +88,15 @@ public class BufferMgr {
 
 	}
 
-	private void getEventInfo(String line, String eventType, Event event) {
+	private void getEventInfo(String line, Event event) {
 		String release;
 		String requestType;
+		String eventType = event.getEventType();
 		// Get the request type if the event is ccr event from Gx, Gxa, Sx
-		if (("t_gx_ccr_event").equals(eventType)
-				|| ("t_gxa_ccr_event").equals(eventType)
-				|| ("t_sx_ccr_event").equals(eventType)) {
+		if (EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
+		 || EVENT_TYPE.GXA_CCR_EVENT.toString().equals(eventType)
+		 || EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)) 
+		{
 			release = line.split(",")[2];
 			event.setRelease(release);
 			requestType = line.split(",")[3].split("\\)")[0].trim();
