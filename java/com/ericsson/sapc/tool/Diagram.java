@@ -106,11 +106,15 @@ public class Diagram {
 	public static void showHeaderLine(List<String> nodeList) {
 		StringBuffer lineHeader = new StringBuffer();
 		lineHeader.append(Diagram.BEGIN);
+		String nodeName = null;
 		for (int i = 0; i < nodeList.size(); ++i) {
-			String nodeName = nodeList.get(i).toString();
-			lineHeader.append(nodeName);
+			nodeName = nodeList.get(i).toString();
 			// fill more blank to the line until the Diagram.MIDDLE
-			for ( int j = 0; j < HEADER.length() - nodeName.length(); ++j ) {
+			for ( int j = 0; j < (HEADER.length() - nodeName.length()) / 2; ++j ) {
+				lineHeader.append(" ");
+			}
+			lineHeader.append(nodeName);
+			for ( int j = 0; j < (HEADER.length() - nodeName.length()) / 2; ++j ) {
 				lineHeader.append(" ");
 			}
 			if (i < nodeList.size() - 1) {
@@ -124,7 +128,7 @@ public class Diagram {
 		String eventType = node.getEventType();
 		StringBuffer msg = new StringBuffer();
 
-		msg.append(" (");
+		msg.append("  (");
 		msg.append(node.getNodeSeqence());
 		msg.append(") ");
 		if (EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)
@@ -169,8 +173,8 @@ public class Diagram {
 			}
 		} else
 		if (EVENT_TYPE.SX_RAR_EVENT.toString().equals(eventType)
-				|| EVENT_TYPE.GX_RAR_EVENT.toString().equals(eventType)
-				|| EVENT_TYPE.GXA_RAR_EVENT.toString().equals(eventType)
+		 || EVENT_TYPE.GX_RAR_EVENT.toString().equals(eventType)
+		 || EVENT_TYPE.GXA_RAR_EVENT.toString().equals(eventType)
 		) {
 			msg.append(MSG_TYPE.RAR);
 			lineMessage.append(msg.toString());
