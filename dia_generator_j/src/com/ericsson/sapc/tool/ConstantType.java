@@ -74,7 +74,7 @@ public class ConstantType {
 		STR("STR"),
 		STA("STA"),
 		AAR("AAR"),
-		AAA("AAR"),
+		AAA("AAA"),
 		ASR("ASR"),
 		ASA("ASA");
 		
