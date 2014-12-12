@@ -97,6 +97,7 @@ public class ConstantType {
 
 	
 	public enum MSG_FLOW {
+	    BOTH,
 		REQUEST,
 		ANSWER
 	}

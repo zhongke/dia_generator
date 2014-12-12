@@ -34,16 +34,17 @@ public class BufferMgr {
             String line = null;
             Event event = new Event();
             boolean isSameFlow = true;
-            int sequenceNumber = 0;
+            boolean isAnswer = false;
+            int sequenceNumber = 1;
             Matcher matcher_event = null;
             Pattern pattern_event = Pattern.compile(PATTERN_EVENT);
             while (bufferedReader.ready()) {
                 line = bufferedReader.readLine();
-                event.setNodeSeqence(sequenceNumber);
                 if (!isSameFlow) {
                     event = new Event();
                 }
-                if (null != line && !"".equals(line)) {
+
+                if (null != line && !("".equals(line)) && !(line.contains("vl_diaCerEvent"))) {
                     // Get event list from input by reqex
                     matcher_event = pattern_event.matcher(line);
                     if (matcher_event.find()) {
@@ -51,9 +52,15 @@ public class BufferMgr {
                         getEventInfo(line, event);
                         isSameFlow = true;
                     } else if (line.contains(PATTERN_EVENT_FLOW)) {
+                        // System.out.println(line);
                         // Get event flow if has
                         String eventFlow = line.split("=")[1].split(";")[0].trim();
-                        event.setEventFlow(eventFlow);
+                        if (MSG_FLOW.REQUEST.toString().equals(eventFlow)) {
+                            event.setEventFlow(MSG_FLOW.REQUEST.toString());
+                        } else if (MSG_FLOW.ANSWER.toString().equals(eventFlow)) {
+                            event.setEventFlow(MSG_FLOW.ANSWER.toString());
+                            isAnswer = true;
+                        }
                         isSameFlow = true;
                     } else if (line.contains(PATTERN_FUNCTION)) {
                         // Get node list from input
@@ -64,6 +71,14 @@ public class BufferMgr {
                         // Create a map to contain the node list and node message
                         events.add(event);
                         isSameFlow = false;
+                        if (isAnswer) {
+                            event.setEventSeqence(sequenceNumber - 2);
+                            --sequenceNumber;
+                            isAnswer = false;
+                        } else {
+                            event.setEventSeqence(sequenceNumber);
+
+                        }
                         ++sequenceNumber;
                     }
                 }
@@ -83,7 +98,6 @@ public class BufferMgr {
                 System.out.println(nodeList.get(i));
             }
 
-            System.out.println("----------------------------------------");
 
         } catch (IOException e) {
             System.out.println("File does not exist");
@@ -130,7 +144,6 @@ public class BufferMgr {
             if (null == eventFlow) {
                 event.setEventFlow(MSG_FLOW.REQUEST.toString());
                 Diagram.showMessageLine(event, nodeList);
-                // Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
                 event.setEventFlow(MSG_FLOW.ANSWER.toString());
                 Diagram.showMessageLine(event, nodeList);
             } else {
@@ -142,6 +155,7 @@ public class BufferMgr {
                 } else {
                     // Due to no event initialization for ANSWER event flow
                     // So reuse the REQUEST info above
+                    // TODO How to get the info from the readInputFromFile
                     event.setEventFlow(MSG_FLOW.ANSWER.toString());
                     event.setEventType(eventType);
                     event.setRequestType(requestType);

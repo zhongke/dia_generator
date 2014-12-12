@@ -122,7 +122,7 @@ public class Diagram {
         String flow = event.getEventFlow();
 
         msg.append("  (");
-        msg.append(event.getNodeSeqence());
+        msg.append(event.getEventSeqence());
         msg.append(") ");
         if (EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)

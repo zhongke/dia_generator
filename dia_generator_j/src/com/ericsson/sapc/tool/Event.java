@@ -2,7 +2,8 @@ package com.ericsson.sapc.tool;
 
 public class Event {
     private String nodeName;
-    private int nodeSeqence;
+    private int eventSeqence;
+
     private String nodeMsgType;
     private String eventType;
     private int nodePosition;
@@ -20,13 +21,15 @@ public class Event {
         this.nodeName = nodeName;
     }
 
-    public int getNodeSeqence() {
-        return nodeSeqence;
+    public int getEventSeqence() {
+        return eventSeqence;
     }
 
-    public void setNodeSeqence(int nodeSeqence) {
-        this.nodeSeqence = nodeSeqence;
+    public void setEventSeqence(int eventSeqence) {
+        this.eventSeqence = eventSeqence;
     }
+
+
 
     public String getNodeMsgType() {
         return nodeMsgType;
