@@ -108,17 +108,17 @@ public class Diagram {
 			nodeName = nodeList.get(i).toString();
 			// fill more blank to the line until the Diagram.MIDDLE
 			int blankSpace = HEADER.length() - nodeName.length();
-			int previousBlank = 0;
+			int nextBlank = 0;
 			if (blankSpace % 2 == 0) {
-				previousBlank = blankSpace / 2;
+				nextBlank = blankSpace / 2;
 			} else {
-				previousBlank = blankSpace / 2 + 1;
+				nextBlank = blankSpace / 2 + 1;
 			}
-			for (int j = 0; j < previousBlank; ++j) {
+			for (int j = 0; j < blankSpace / 2; ++j) {
 				lineHeader.append(" ");
 			}
 			lineHeader.append(nodeName);
-			for (int j = 0; j < blankSpace / 2; ++j) {
+			for (int j = 0; j < nextBlank; ++j) {
 				lineHeader.append(" ");
 			}
 			if (i < nodeList.size() - 1) {
@@ -141,22 +141,20 @@ public class Diagram {
 		if (EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GXA_CCR_EVENT.toString().equals(eventType)) {
-			if (event.getRequestType().equals(
-					REQUEST_TYPE.INITIAL_REQUEST.toString())) {
+			String requestType = event.getRequestType();
+			if (REQUEST_TYPE.INITIAL_REQUEST.toString().equals(requestType)) {
 				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
 					msg.append(MSG_TYPE.CCR_I);
 				} else {
 					msg.append(MSG_TYPE.CCA_I);
 				}
-			} else if (event.getRequestType().equals(
-					REQUEST_TYPE.UPDATE_REQUEST.toString())) {
+			} else if (REQUEST_TYPE.UPDATE_REQUEST.toString().equals(requestType)) {
 				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
 					msg.append(MSG_TYPE.CCR_U);
 				} else {
 					msg.append(MSG_TYPE.CCA_U);
 				}
-			} else if (event.getRequestType().equals(
-					REQUEST_TYPE.TERMINATION_REQUEST.toString())) {
+			} else if (REQUEST_TYPE.TERMINATION_REQUEST.toString().equals(requestType)) {
 				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
 					msg.append(MSG_TYPE.CCR_T);
 				} else {
