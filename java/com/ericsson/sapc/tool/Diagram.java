@@ -75,7 +75,7 @@ public class Diagram {
 			}
 			if (i == position) {
 				// Check the message type
-				if (i == 2) {
+				if (i >= 2) {
 					lineMessage.delete(lineMessage.lastIndexOf(Diagram.BLANK),
 							lineMessage.length());
 					lineArrow.delete(lineArrow.lastIndexOf(Diagram.BLANK),
