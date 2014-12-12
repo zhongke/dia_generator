@@ -131,7 +131,6 @@ public class Diagram {
 	private static void assembleMessage(StringBuffer lineMessage,
 			StringBuffer lineArrow, Event event) {
 		String eventType = event.getEventType();
-//		System.out.println(eventType);
 		StringBuffer msg = new StringBuffer();
 		String flow = event.getEventFlow();
 
@@ -142,6 +141,7 @@ public class Diagram {
 				|| EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GXA_CCR_EVENT.toString().equals(eventType)) {
 			String requestType = event.getRequestType();
+			event.setSapcInitialized(false);
 			if (REQUEST_TYPE.INITIAL_REQUEST.toString().equals(requestType)) {
 				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
 					msg.append(MSG_TYPE.CCR_I);
@@ -161,102 +161,65 @@ public class Diagram {
 					msg.append(MSG_TYPE.CCA_T);
 				}
 			}
-			lineMessage.append(msg.toString());
-			if (event.getNodePosition() < 1) {
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(RIGHT);
-				} else {
-					lineArrow.append(LEFT);
-				}
-			} else {
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(LEFT);
-				} else {
-					lineArrow.append(RIGHT);
-				}
-
-			}
 		} else if (EVENT_TYPE.SX_RAR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GX_RAR_EVENT.toString().equals(eventType)
 				|| EVENT_TYPE.GXA_RAR_EVENT.toString().equals(eventType)
 		) {
-			
+			event.setSapcInitialized(true);
 			msg.append(MSG_TYPE.RAR);
-			lineMessage.append(msg.toString());
-			if (event.getNodePosition() < 1) {
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(LEFT);
-				} else {
-					lineArrow.append(RIGHT);
-				}
-			} else {
-
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(RIGHT);
-				} else {
-					lineArrow.append(LEFT);
-				}
-
-			}
 		} else if (EVENT_TYPE.SY_SLR_EVENT.toString().equals(eventType)) {
+			event.setSapcInitialized(true);
 			msg.append(MSG_TYPE.SLR);
-			lineMessage.append(msg.toString());
-			if (event.getNodePosition() < 1) {
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(LEFT);
-				} else {
-					lineArrow.append(RIGHT);
-				}
-			} else {
-
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(RIGHT);
-				} else {
-					lineArrow.append(LEFT);
-				}
-
-			}
 		} else if (EVENT_TYPE.SY_SNR_EVENT.toString().equals(eventType)) {
+			event.setSapcInitialized(false);
 			msg.append(MSG_TYPE.SNR);
-			lineMessage.append(msg.toString());
-			if (event.getNodePosition() < 1) {
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(RIGHT);
-				} else {
-					lineArrow.append(LEFT);
-				}
-			} else {
-
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(LEFT);
-				} else {
-					lineArrow.append(RIGHT);
-				}
-
-			}
 		} else if (EVENT_TYPE.SY_STR_EVENT.toString().equals(eventType)) {
 			msg.append(MSG_TYPE.STR);
-			lineMessage.append(msg.toString());
-			if (event.getNodePosition() < 1) {
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(LEFT);
-				} else {
-					lineArrow.append(RIGHT);
-				}
-			} else {
+			event.setSapcInitialized(false);
 
-				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-					lineArrow.append(RIGHT);
-				} else {
-					lineArrow.append(LEFT);
-				}
-
-			}
 		}
 
+		lineMessage.append(msg.toString());
+		showFlow(lineArrow, event, flow);
+		
 		// fill more blank to the line until the Diagram.MIDDLE
 		for (int i = 0; i < BLANK.length() - msg.length(); ++i) {
 			lineMessage.append(" ");
+		}
+	}
+
+	private static void showFlow(StringBuffer lineArrow, Event event,
+			String flow) {
+		if (!event.isSapcInitialized()){
+			if (event.getNodePosition() < 1) {
+				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+					lineArrow.append(RIGHT);
+				} else {
+					lineArrow.append(LEFT);
+				}
+			} else {
+				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+					lineArrow.append(LEFT);
+				} else {
+					lineArrow.append(RIGHT);
+				}
+				
+			}
+		} else {
+			if (event.getNodePosition() < 1) {
+				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+					lineArrow.append(LEFT);
+				} else {
+					lineArrow.append(RIGHT);
+				}
+			} else {
+				if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+					lineArrow.append(RIGHT);
+				} else {
+					lineArrow.append(LEFT);
+				}
+				
+			}
 		}
 	}
 

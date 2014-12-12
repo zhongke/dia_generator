@@ -9,6 +9,8 @@ public class Event {
 	private String release;
 	private String requestType;
 	private String eventFlow;
+	private boolean isSapcInitialized;
+
 
 	public String getNodeName() {
 		return nodeName;
@@ -72,6 +74,15 @@ public class Event {
 
 	public void setEventFlow(String eventFlow) {
 		this.eventFlow = eventFlow;
+	}
+	
+
+	public boolean isSapcInitialized() {
+		return isSapcInitialized;
+	}
+
+	public void setSapcInitialized(boolean isSapcInitialized) {
+		this.isSapcInitialized = isSapcInitialized;
 	}
 
 }
