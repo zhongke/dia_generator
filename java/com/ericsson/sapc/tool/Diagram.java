@@ -166,17 +166,32 @@ public class Diagram {
 				|| EVENT_TYPE.GXA_RAR_EVENT.toString().equals(eventType)
 		) {
 			event.setSapcInitialized(true);
-			msg.append(MSG_TYPE.RAR);
+			if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+				msg.append(MSG_TYPE.RAR);
+			} else {
+				msg.append(MSG_TYPE.RAA);
+			}
 		} else if (EVENT_TYPE.SY_SLR_EVENT.toString().equals(eventType)) {
 			event.setSapcInitialized(true);
-			msg.append(MSG_TYPE.SLR);
+			if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+				msg.append(MSG_TYPE.SLR);
+			} else {
+				msg.append(MSG_TYPE.SLA);
+			}
 		} else if (EVENT_TYPE.SY_SNR_EVENT.toString().equals(eventType)) {
 			event.setSapcInitialized(false);
-			msg.append(MSG_TYPE.SNR);
+			if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+				msg.append(MSG_TYPE.SNR);
+			} else {
+				msg.append(MSG_TYPE.SNA);
+			}
 		} else if (EVENT_TYPE.SY_STR_EVENT.toString().equals(eventType)) {
-			msg.append(MSG_TYPE.STR);
 			event.setSapcInitialized(false);
-
+			if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+				msg.append(MSG_TYPE.STR);
+			} else {
+				msg.append(MSG_TYPE.STA);
+			}
 		}
 
 		lineMessage.append(msg.toString());
