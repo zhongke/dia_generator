@@ -130,7 +130,7 @@ public class BufferMgr {
             if (null == eventFlow) {
                 event.setEventFlow(MSG_FLOW.REQUEST.toString());
                 Diagram.showMessageLine(event, nodeList);
-                Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
+                // Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
                 event.setEventFlow(MSG_FLOW.ANSWER.toString());
                 Diagram.showMessageLine(event, nodeList);
             } else {

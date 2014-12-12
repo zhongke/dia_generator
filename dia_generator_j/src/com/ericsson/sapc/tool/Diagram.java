@@ -14,6 +14,8 @@ public class Diagram {
     public static String HEADER = " ________ ";
     public static String MIDDLE = "|        |";
     public static String BOTTOM = "|________|";
+    public static String EMPTY_RIGHT = " ---------------------------";
+    public static String EMPTY_LEFT = "--------------------------- ";
     public static String LEFT = " <--------------- ";
     public static String RIGHT = " ---------------> ";
 
@@ -63,6 +65,9 @@ public class Diagram {
                 if (i >= 2) {
                     lineMessage.delete(lineMessage.lastIndexOf(Diagram.BLANK), lineMessage.length());
                     lineArrow.delete(lineArrow.lastIndexOf(Diagram.BLANK), lineArrow.length());
+                    lineArrow.delete(
+                            lineArrow.indexOf(Diagram.BLANK) + Diagram.BLANK.length() + Diagram.MIDDLE.length(),
+                            lineArrow.length());
                     assembleMessage(lineMessage, lineArrow, event);
                     lineMessage.append(Diagram.MIDDLE);
                     lineArrow.append(Diagram.MIDDLE);
@@ -185,8 +190,9 @@ public class Diagram {
     }
 
     private static void showFlow(StringBuffer lineArrow, Event event, String flow) {
-        if (!event.isSapcInitialized()) {
-            if (event.getNodePosition() < 1) {
+        int position = event.getNodePosition();
+        if (position < 1) {
+            if (!event.isSapcInitialized()) {
                 if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                     lineArrow.append(RIGHT);
                 } else {
@@ -197,25 +203,56 @@ public class Diagram {
                     lineArrow.append(LEFT);
                 } else {
                     lineArrow.append(RIGHT);
+                }
+
+            }
+        } else if (position == 1 || position == 2) {
+            if (!event.isSapcInitialized()) {
+                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                    lineArrow.append(LEFT);
+                } else {
+                    lineArrow.append(RIGHT);
+                }
+            } else {
+                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                    lineArrow.append(RIGHT);
+                } else {
+                    lineArrow.append(LEFT);
                 }
 
             }
         } else {
-            if (event.getNodePosition() < 1) {
+            if (!event.isSapcInitialized()) {
                 if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                    lineArrow.append(LEFT);
+                    lineArrow.append(LEFT.substring(0, LEFT.length() - 1));
+                    lineArrow.append("-");
+                    for (int i = 0; i < position - 2; ++i) {
+                        lineArrow.append(Diagram.EMPTY_LEFT);
+                    }
                 } else {
-                    lineArrow.append(RIGHT);
+                    for (int i = 0; i < position - 2; ++i) {
+                        lineArrow.append(Diagram.EMPTY_RIGHT);
+                    }
+                    lineArrow.append("-");
+                    lineArrow.append(RIGHT.substring(1, LEFT.length()));
                 }
             } else {
                 if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                    lineArrow.append(RIGHT);
+                    for (int i = 0; i < position - 2; ++i) {
+                        lineArrow.append(Diagram.EMPTY_RIGHT);
+                    }
+                    lineArrow.append("-");
+                    lineArrow.append(RIGHT.substring(1, LEFT.length()));
                 } else {
-                    lineArrow.append(LEFT);
+                    lineArrow.append(LEFT.substring(0, LEFT.length() - 1));
+                    lineArrow.append("-");
+                    for (int i = 0; i < position - 2; ++i) {
+                        lineArrow.append(Diagram.EMPTY_LEFT);
+                    }
                 }
 
             }
         }
-    }
 
+    }
 }
