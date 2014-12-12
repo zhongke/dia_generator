@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.ericsson.sapc.tool.ConstantType.MSG_FLOW;
 
 public class KevinRender implements Render {
+	
 	public void showDiagramFromBuffer(Conversation conv) {
 
 		Diagram.showHeaderLine(conv.nodeList);
@@ -44,4 +45,5 @@ public class KevinRender implements Render {
 		Diagram.showCommonLine(Diagram.COMMON.MIDDLE, conv.nodeList);
 		Diagram.showCommonLine(Diagram.COMMON.LAST, conv.nodeList);
 	}
+	
 }

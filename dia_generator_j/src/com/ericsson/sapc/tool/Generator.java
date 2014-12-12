@@ -14,7 +14,10 @@ public class Generator {
 		
 		buffMgr.readInputFromFile(FILENAME, conv);
 		
-		Render render = new KevinRender();
+//		Render render = new KevinRender();
+//		render.showDiagramFromBuffer(conv);
+		
+		Render render = new PlantumlRender();
 		render.showDiagramFromBuffer(conv);
 	}
 
