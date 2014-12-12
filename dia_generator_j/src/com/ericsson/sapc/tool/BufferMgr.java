@@ -15,18 +15,13 @@ import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
 import com.ericsson.sapc.tool.ConstantType.MSG_FLOW;
 
 public class BufferMgr {
-//	private static String PATTERN_EVENT = "t_[a-z]*_[a-z]*_event";
+	// private static String PATTERN_EVENT = "t_[a-z]*_[a-z]*_event";
 	private static String PATTERN_EVENT = "t_[3,a-z,/_]*_event";
-//	private static String PATTERN_EVENT_SY = "t_[a-z]*_[a-z]*_[a-z]*_event";
+	// private static String PATTERN_EVENT_SY = "t_[a-z]*_[a-z]*_[a-z]*_event";
 	private static String PATTERN_FUNCTION = "f_runEvent";
 	private static String PATTERN_EVENT_FLOW = "eventFlow";
-	// vl_gxa_Event.eventFlow := REQUEST;
 
-	private List<Event> events = new LinkedList<Event>();
-	private Set<String> nodeSet = new HashSet<String>();
-	private List<String> nodeList = new LinkedList<String>();
-
-	public void readInputFromFile(String fileName) {
+	public void readInputFromFile(String fileName, Conversation conv) {
 
 		BufferedReader bufferedReader = null;
 		try {
@@ -52,35 +47,37 @@ public class BufferMgr {
 						isSameFlow = true;
 					} else if (line.contains(PATTERN_EVENT_FLOW)) {
 						// Get event flow if has
-						String eventFlow = line.split("=")[1].split(";")[0].trim();
+						String eventFlow = line.split("=")[1].split(";")[0]
+								.trim();
 						event.setEventFlow(eventFlow);
 						isSameFlow = true;
 					} else if (line.contains(PATTERN_FUNCTION)) {
 						// Get node list from input
 						String nodeName = line.split("\\]")[1].split("\\[")[1];
 						event.setNodeName(nodeName);
-						nodeSet.add(nodeName);
+						conv.nodeSet.add(nodeName);
 
-						// Create a map to contain the node list and node message
-						events.add(event);
+						// Create a map to contain the node list and node
+						// message
+						conv.events.add(event);
 						isSameFlow = false;
 						++sequenceNumber;
 					}
 				}
 			}
 			// Put this info into a list
-			
+
 			// Get node list from events
-			for (Event e : events) {
-				if (!nodeList.contains(e.getNodeName())){
-					nodeList.add(e.getNodeName());
+			for (Event e : conv.events) {
+				if (!conv.nodeList.contains(e.getNodeName())) {
+					conv.nodeList.add(e.getNodeName());
 				}
 			}
-			
+
 			// Add SAPC node into the second position
-			nodeList.add(1, "SAPC");
-			for (int i = 0; i < nodeList.size(); ++i) {
-				System.out.println(nodeList.get(i));
+			conv.nodeList.add(1, "SAPC");
+			for (int i = 0; i < conv.nodeList.size(); ++i) {
+				System.out.println(conv.nodeList.get(i));
 			}
 
 			System.out.println("----------------------------------------");
@@ -115,44 +112,6 @@ public class BufferMgr {
 		}
 	}
 
-	public void showDiagramFromBuffer() {
 
-		Diagram.showHeaderLine(nodeList);
-		Diagram.showCommonLine(Diagram.COMMON.FIRST, nodeList);
-		Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
-
-		Iterator<Event> iter = events.iterator();
-		String eventType = null;
-		String requestType = null;
-		while (iter.hasNext()) {
-			Event event = (Event) iter.next();
-			String eventFlow = event.getEventFlow();
-			if (null == eventFlow) {
-				event.setEventFlow(MSG_FLOW.REQUEST.toString());
-				Diagram.showMessageLine(event, nodeList);
-				Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
-				event.setEventFlow(MSG_FLOW.ANSWER.toString());
-				Diagram.showMessageLine(event, nodeList);
-			} else {
-				if (MSG_FLOW.REQUEST.toString().equals(eventFlow)) {
-					event.setEventFlow(MSG_FLOW.REQUEST.toString());
-					Diagram.showMessageLine(event, nodeList);
-					eventType = event.getEventType();
-					requestType = event.getRequestType();
-				} else {
-					// Due to no event initialization for ANSWER event flow
-					// So reuse the REQUEST info above
-					event.setEventFlow(MSG_FLOW.ANSWER.toString());
-					event.setEventType(eventType);
-					event.setRequestType(requestType);
-					Diagram.showMessageLine(event, nodeList);
-				}
-				Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
-			}
-
-		}
-		Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
-		Diagram.showCommonLine(Diagram.COMMON.LAST, nodeList);
-	}
 
 }

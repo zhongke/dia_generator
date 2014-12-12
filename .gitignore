@@ -1,1 +1,4 @@
 /bin
+
+tc_02_15_01_BasicUseCase.ttcn
+tc_05_01_02_SessionReauth_By_PRA_status_Update.ttcn

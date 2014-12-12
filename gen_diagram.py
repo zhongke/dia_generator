@@ -4,24 +4,18 @@
 # Generate diagram for traffic flow in the test case for test spec
 
 
+import sys
 import fileinput
+
+#print sys.argv[1:][0]
 
 
 print( "import ttcn file ..." )
-file = open( "/Users/kevinzhong/ttcn/script/tc_05_01_02_SessionReauth_By_PRA_status_Update.ttcn" )
+file = open( "tc_05_01_02_SessionReauth_By_PRA_status_Update.ttcn" )
 
-isReadable = True
-while isReadable :
+while 1==1 :
     data = file.readline()
     if data != "":
-        print( data )
+        print data,
     else:
-        isReadable = False
-
-file.seek( 0 )
-print( file.readlines() )
-
-file.close()
-
-
-# xxx
+        break
