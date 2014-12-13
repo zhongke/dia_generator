@@ -188,7 +188,7 @@ public class Diagram {
                 msg.append(MSG_TYPE.AAA);
             }
         } else if (EVENT_TYPE.RX_ASR_EVENT.toString().equals(eventType)) {
-            event.setSapcInitialized(false);
+            event.setSapcInitialized(true);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.ASR);
             } else {
