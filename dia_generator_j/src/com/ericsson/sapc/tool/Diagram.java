@@ -77,7 +77,7 @@ public class Diagram {
                 }
             }
 
-            if (i < nodeList.size() - 1 && needBlank) {
+            if (i < (nodeList.size() - 1) && needBlank) {
                 lineMessage.append(Diagram.BLANK);
                 lineArrow.append(Diagram.BLANK);
             }
@@ -150,7 +150,8 @@ public class Diagram {
             }
         } else if (EVENT_TYPE.SX_RAR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.GX_RAR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.GXA_RAR_EVENT.toString().equals(eventType)) {
+                || EVENT_TYPE.GXA_RAR_EVENT.toString().equals(eventType)
+                || EVENT_TYPE.RX_RAR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(true);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.RAR);
@@ -171,14 +172,31 @@ public class Diagram {
             } else {
                 msg.append(MSG_TYPE.SNA);
             }
-        } else if (EVENT_TYPE.SY_STR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.SY_STR_EVENT.toString().equals(eventType)
+                || EVENT_TYPE.RX_STR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(false);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.STR);
             } else {
                 msg.append(MSG_TYPE.STA);
             }
+        } else if (EVENT_TYPE.RX_AAR_EVENT.toString().equals(eventType)) {
+            event.setSapcInitialized(false);
+            if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                msg.append(MSG_TYPE.AAR);
+            } else {
+                msg.append(MSG_TYPE.AAA);
+            }
+        } else if (EVENT_TYPE.RX_ASR_EVENT.toString().equals(eventType)) {
+            event.setSapcInitialized(false);
+            if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                msg.append(MSG_TYPE.ASR);
+            } else {
+                msg.append(MSG_TYPE.ASA);
+            }
         }
+
+
 
         lineMessage.append(msg.toString());
         showFlow(lineArrow, event, flow);
@@ -206,7 +224,7 @@ public class Diagram {
                 }
 
             }
-        } else if (position == 1 || position == 2) {
+        } else if (position <= 2) {
             if (!event.isSapcInitialized()) {
                 if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                     lineArrow.append(LEFT);

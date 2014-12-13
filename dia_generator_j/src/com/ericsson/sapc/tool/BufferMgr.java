@@ -77,7 +77,6 @@ public class BufferMgr {
                             isAnswer = false;
                         } else {
                             event.setEventSeqence(sequenceNumber);
-
                         }
                         ++sequenceNumber;
                     }
@@ -97,7 +96,6 @@ public class BufferMgr {
             for (int i = 0; i < nodeList.size(); ++i) {
                 System.out.println(nodeList.get(i));
             }
-
 
         } catch (IOException e) {
             System.out.println("File does not exist");
