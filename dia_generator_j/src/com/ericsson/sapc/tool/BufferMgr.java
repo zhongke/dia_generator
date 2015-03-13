@@ -64,6 +64,8 @@ public class BufferMgr {
                         isSameFlow = true;
                     } else if (line.contains(PATTERN_FUNCTION)) {
                         // Get node list from input
+
+                        System.out.println(line);
                         String nodeName = line.split("\\]")[1].split("\\[")[1];
                         event.setNodeName(nodeName);
                         nodeSet.add(nodeName);

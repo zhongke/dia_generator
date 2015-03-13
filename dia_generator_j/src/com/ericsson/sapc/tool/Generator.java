@@ -27,7 +27,7 @@ public class Generator {
         files.add(file_03);
         files.add(file_04);
         files.add(file_05);
-        // files.add(file_06);
+        files.add(file_06);
         files.add(file_07);
         files.add(file_08);
         files.add(file_09);

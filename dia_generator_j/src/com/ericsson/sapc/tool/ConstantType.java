@@ -29,23 +29,30 @@ public class ConstantType {
 	}
 
 	public enum EVENT_TYPE {
-				
+        // Gx, Gxa, Sx
 		GX_CCR_EVENT("t_gx_ccr_event"),
 		GX_RAR_EVENT("t_gx_rar_event"),
 		GXA_CCR_EVENT("t_gxa_ccr_event"),
 		GXA_RAR_EVENT("t_gxa_rar_event"),
 		SX_CCR_EVENT("t_sx_ccr_event"),
 		SX_RAR_EVENT("t_sx_rar_event"),
+        // Rx
 		RX_AAR_EVENT("t_rx_aar_event"),
 		RX_ASR_EVENT("t_rx_asr_event"),
 		RX_RAR_EVENT("t_rx_rar_event"),
 		RX_STR_EVENT("t_rx_str_event"),
+        // Sy
 		SY_SLR_EVENT("t_sy_3gpp_slr_event"),
 		SY_SNR_EVENT("t_sy_3gpp_snr_event"),
 		SY_STR_EVENT("t_sy_3gpp_str_event"),
+        // Esy
 		ESY_SLR_EVENT("t_sy_slr_event"),
 		ESY_SNR_EVENT("t_sy_snr_event"),
-		ESY_STR_EVENT("t_sy_str_event");
+ ESY_STR_EVENT("t_sy_str_event"),
+        // Sys
+        SYS_TIME_EVENT("t_setSutDateTime_ini"),
+        // OAM
+        LDAP_EVENT("");
 		
 		private String event;
 		private EVENT_TYPE() {}

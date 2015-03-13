@@ -158,14 +158,16 @@ public class Diagram {
             } else {
                 msg.append(MSG_TYPE.RAA);
             }
-        } else if (EVENT_TYPE.SY_SLR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.SY_SLR_EVENT.toString().equals(eventType)
+                || EVENT_TYPE.ESY_SLR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(true);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.SLR);
             } else {
                 msg.append(MSG_TYPE.SLA);
             }
-        } else if (EVENT_TYPE.SY_SNR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.SY_SNR_EVENT.toString().equals(eventType)
+                || EVENT_TYPE.ESY_SNR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(false);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.SNR);
@@ -173,6 +175,7 @@ public class Diagram {
                 msg.append(MSG_TYPE.SNA);
             }
         } else if (EVENT_TYPE.SY_STR_EVENT.toString().equals(eventType)
+                || EVENT_TYPE.ESY_STR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.RX_STR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(false);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
