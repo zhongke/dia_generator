@@ -1,5 +1,7 @@
 package com.ericsson.sapc.tool;
 
+import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
+
 public class Event {
     private int eventSeqence;
     private int nodePosition;
@@ -15,6 +17,7 @@ public class Event {
     private boolean isSameFlow;
     private boolean isAnswer;
 
+    private EVENT_TYPE eventEnumType;
 
     public boolean isAnswer() {
         return isAnswer;
@@ -58,12 +61,19 @@ public class Event {
         this.nodeMsgType = nodeMsgType;
     }
 
-    public String getEventType() {
-        return eventType;
+    /*
+     * public String getEventType() { return eventType; }
+     * 
+     * public void setEventType(String eventType) { this.eventType = eventType; }
+     */
+
+    public EVENT_TYPE getEventTypeToEnum() {
+        return eventEnumType;
     }
 
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
+
+    public void setEventTypeToEnum(String eventType) {
+        this.eventEnumType = EVENT_TYPE.valueOf(eventType);
     }
 
     public int getNodePosition() {

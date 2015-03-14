@@ -132,7 +132,7 @@ public class Diagram {
 
     private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, Event event) {
 
-        String eventType = event.getEventType();
+        EVENT_TYPE eventType = event.getEventTypeToEnum();
         StringBuffer msg = new StringBuffer();
         String flow = event.getEventFlow();
 
@@ -140,9 +140,9 @@ public class Diagram {
         msg.append(event.getEventSeqence());
         msg.append(") ");
 
-        if (EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.GXA_CCR_EVENT.toString().equals(eventType)) {
+        if (EVENT_TYPE.SX_CCR_EVENT == eventType
+                || EVENT_TYPE.GX_CCR_EVENT == eventType
+                || EVENT_TYPE.GXA_CCR_EVENT == eventType) {
             String requestType = event.getRequestType();
             event.setSapcInitialized(false);
 
@@ -166,10 +166,10 @@ public class Diagram {
                 }
             }
 
-        } else if (EVENT_TYPE.SX_RAR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.GX_RAR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.GXA_RAR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.RX_RAR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.SX_RAR_EVENT == eventType
+                || EVENT_TYPE.GX_RAR_EVENT == eventType
+                || EVENT_TYPE.GXA_RAR_EVENT == eventType
+                || EVENT_TYPE.RX_RAR_EVENT == eventType) {
             event.setSapcInitialized(true);
 
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
@@ -178,8 +178,7 @@ public class Diagram {
                 msg.append(MSG_TYPE.RAA);
             }
 
-        } else if (EVENT_TYPE.SY_SLR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.ESY_SLR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.SY_3GPP_SLR_EVENT == eventType || EVENT_TYPE.SY_SLR_EVENT == eventType) {
 
             event.setSapcInitialized(true);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
@@ -188,8 +187,7 @@ public class Diagram {
                 msg.append(MSG_TYPE.SLA);
             }
 
-        } else if (EVENT_TYPE.SY_SNR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.ESY_SNR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.SY_3GPP_SNR_EVENT == eventType || EVENT_TYPE.SY_SNR_EVENT == eventType) {
             event.setSapcInitialized(false);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.SNR);
@@ -197,9 +195,8 @@ public class Diagram {
                 msg.append(MSG_TYPE.SNA);
             }
 
-        } else if (EVENT_TYPE.SY_STR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.ESY_STR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.RX_STR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.SY_3GPP_STR_EVENT == eventType || EVENT_TYPE.SY_STR_EVENT == eventType
+                || EVENT_TYPE.RX_STR_EVENT == eventType) {
             event.setSapcInitialized(false);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.STR);
@@ -207,7 +204,7 @@ public class Diagram {
                 msg.append(MSG_TYPE.STA);
             }
 
-        } else if (EVENT_TYPE.RX_AAR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.RX_AAR_EVENT == eventType) {
             event.setSapcInitialized(false);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.AAR);
@@ -215,7 +212,7 @@ public class Diagram {
                 msg.append(MSG_TYPE.AAA);
             }
 
-        } else if (EVENT_TYPE.RX_ASR_EVENT.toString().equals(eventType)) {
+        } else if (EVENT_TYPE.RX_ASR_EVENT == eventType) {
             event.setSapcInitialized(true);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.ASR);

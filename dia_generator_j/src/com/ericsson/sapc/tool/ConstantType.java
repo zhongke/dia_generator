@@ -30,27 +30,28 @@ public class ConstantType {
 
 	public enum EVENT_TYPE {
         // Gx, Gxa, Sx
-		GX_CCR_EVENT("t_gx_ccr_event"),
-		GX_RAR_EVENT("t_gx_rar_event"),
-		GXA_CCR_EVENT("t_gxa_ccr_event"),
-		GXA_RAR_EVENT("t_gxa_rar_event"),
-		SX_CCR_EVENT("t_sx_ccr_event"),
-		SX_RAR_EVENT("t_sx_rar_event"),
+        // GX_CCR_EVENT("t_gx_ccr_event"),
+        GX_CCR_EVENT("GX_CCR_EVENT"),
+		GX_RAR_EVENT("GX_RAR_EVENT"),
+		GXA_CCR_EVENT("GXA_CCR_EVENT"),
+		GXA_RAR_EVENT( "GXA_RAR_EVENT"),
+		SX_CCR_EVENT("SX_CCR_EVENT"),
+		SX_RAR_EVENT("SX_RAR_EVENT"),
         // Rx
-		RX_AAR_EVENT("t_rx_aar_event"),
-		RX_ASR_EVENT("t_rx_asr_event"),
-		RX_RAR_EVENT("t_rx_rar_event"),
-		RX_STR_EVENT("t_rx_str_event"),
+        RX_AAR_EVENT("RX_AAR_EVENT"),
+		RX_ASR_EVENT("RX_ASR_EVENT"),
+		RX_RAR_EVENT("RX_RAR_EVENT"),
+		RX_STR_EVENT( "RX_STR_EVENT"),
         // Sy
-		SY_SLR_EVENT("t_sy_3gpp_slr_event"),
-		SY_SNR_EVENT("t_sy_3gpp_snr_event"),
-		SY_STR_EVENT("t_sy_3gpp_str_event"),
+        SY_3GPP_SLR_EVENT("SY_3GPP_SLR_EVENT"),
+		SY_3GPP_SNR_EVENT("SY_3GPP_SNR_EVENT"),
+		SY_3GPP_STR_EVENT( "SY_3GPP_STR_EVENT"),
         // Esy
-		ESY_SLR_EVENT("t_sy_slr_event"),
-		ESY_SNR_EVENT("t_sy_snr_event"),
- ESY_STR_EVENT("t_sy_str_event"),
+        SY_SLR_EVENT("SY_SLR_EVENT"),
+		SY_SNR_EVENT("SY_SNR_EVENT"),
+		SY_STR_EVENT("SY_STR_EVENT"),
         // Sys
-        SYS_TIME_EVENT("t_setSutDateTime_ini"),
+        // SYS_TIME_EVENT("setSutDateTime_ini"),
         // OAM
         LDAP_EVENT("");
 		
@@ -63,6 +64,8 @@ public class ConstantType {
 		public String toString() {
 			return this.event;
 		}
+
+
 	}
 
 	public enum MSG_TYPE {

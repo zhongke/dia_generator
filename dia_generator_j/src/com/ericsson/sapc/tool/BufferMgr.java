@@ -53,8 +53,12 @@ public class BufferMgr {
                     matcher_event = pattern_event.matcher(line);
 
                     if (matcher_event.find()) {
+                        System.out.println("-------------------------");
+                        System.out.println(matcher_event.group(0));
+                        System.out.println("-------------------------");
 
-                        event.setEventType(matcher_event.group(0));
+                        event.setEventTypeToEnum(matcher_event.group(0).toUpperCase()
+                                .substring(2, matcher_event.group(0).length()));
                         event.setSameFlow(true);
                         setCcrEventSpeicialInfo(line, event);
 
@@ -149,15 +153,13 @@ public class BufferMgr {
 
         String release;
         String requestType;
-        String eventType = event.getEventType();
-
+        EVENT_TYPE eventType = event.getEventTypeToEnum();
         release = line.split(",")[2];
         event.setRelease(release);
 
         // Get the request type if the event is ccr event from Gx, Gxa, Sx
-        if (EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.GXA_CCR_EVENT.toString().equals(eventType)
-                || EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)) {
+        if (EVENT_TYPE.GX_CCR_EVENT == eventType || EVENT_TYPE.GXA_CCR_EVENT == eventType
+                || EVENT_TYPE.SX_CCR_EVENT == eventType) {
 
             requestType = line.split(",")[3].split("\\)")[0].trim();
             event.setRequestType(requestType);
@@ -173,7 +175,7 @@ public class BufferMgr {
         Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
 
         Iterator<Event> iter = events.iterator();
-        String eventType = null;
+        EVENT_TYPE eventType = null;
         String requestType = null;
 
         while (iter.hasNext()) {
@@ -192,7 +194,7 @@ public class BufferMgr {
                 if (MSG_FLOW.REQUEST.toString().equals(eventFlow)) {
                     event.setEventFlow(MSG_FLOW.REQUEST.toString());
                     Diagram.showMessageLine(event, nodeList);
-                    eventType = event.getEventType();
+                    eventType = event.getEventTypeToEnum();
                     requestType = event.getRequestType();
 
                 } else {
@@ -201,7 +203,7 @@ public class BufferMgr {
                     // So reuse the REQUEST info above
                     // TODO: How to get the info from the readInputFromFile
                     event.setEventFlow(MSG_FLOW.ANSWER.toString());
-                    event.setEventType(eventType);
+                    event.setEventTypeToEnum(eventType.toString());
                     event.setRequestType(requestType);
 
                     Diagram.showMessageLine(event, nodeList);
