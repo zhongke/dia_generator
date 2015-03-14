@@ -24,11 +24,13 @@ public class Diagram {
     }
 
     public static void showCommonLine(COMMON type, List<String> nodeList) {
+
         // Take the SAPC node into the second position
         StringBuffer lineMessage = new StringBuffer();
         lineMessage.append(Diagram.BEGIN);
 
         for (int i = 0; i < nodeList.size(); ++i) {
+
             if (Diagram.COMMON.FIRST == type) {
                 lineMessage.append(Diagram.HEADER);
             } else if (Diagram.COMMON.MIDDLE == type) {
@@ -36,14 +38,17 @@ public class Diagram {
             } else if (Diagram.COMMON.LAST == type) {
                 lineMessage.append(Diagram.BOTTOM);
             }
+
             if (i != nodeList.size() - 1) {
                 lineMessage.append(Diagram.BLANK);
             }
         }
+
         System.out.println(lineMessage);
     }
 
     public static void showMessageLine(Event event, List<String> nodeList) {
+
         StringBuffer lineMessage = new StringBuffer();
         StringBuffer lineArrow = new StringBuffer();
         lineMessage.append(Diagram.BEGIN);
@@ -55,11 +60,13 @@ public class Diagram {
         event.setNodePosition(position);
 
         for (int i = 0; i < nodeList.size(); ++i) {
+
             if (i != 2 || position != 2) {
                 lineMessage.append(Diagram.MIDDLE);
                 lineArrow.append(Diagram.MIDDLE);
                 needBlank = true;
             }
+
             if (i == position) {
                 // Check the message type
                 if (i >= 2) {
@@ -83,16 +90,20 @@ public class Diagram {
             }
             needBlank = true;
         }
+
         System.out.println(lineMessage.toString());
         System.out.println(lineArrow.toString());
     }
 
     // * SGSN_MME SAPC GGSN
     public static void showHeaderLine(List<String> nodeList) {
+
         StringBuffer lineHeader = new StringBuffer();
         lineHeader.append(Diagram.BEGIN);
         String nodeName = null;
+
         for (int i = 0; i < nodeList.size(); ++i) {
+
             nodeName = nodeList.get(i).toString();
             // fill more blank to the line until the Diagram.MIDDLE
             int blankSpace = HEADER.length() - nodeName.length();
@@ -112,11 +123,15 @@ public class Diagram {
             if (i < nodeList.size() - 1) {
                 lineHeader.append(Diagram.BLANK);
             }
+
         }
+
         System.out.println(lineHeader.toString());
+
     }
 
     private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, Event event) {
+
         String eventType = event.getEventType();
         StringBuffer msg = new StringBuffer();
         String flow = event.getEventFlow();
@@ -124,11 +139,13 @@ public class Diagram {
         msg.append("  (");
         msg.append(event.getEventSeqence());
         msg.append(") ");
+
         if (EVENT_TYPE.SX_CCR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.GX_CCR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.GXA_CCR_EVENT.toString().equals(eventType)) {
             String requestType = event.getRequestType();
             event.setSapcInitialized(false);
+
             if (REQUEST_TYPE.INITIAL_REQUEST.toString().equals(requestType)) {
                 if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                     msg.append(MSG_TYPE.CCR_I);
@@ -148,24 +165,29 @@ public class Diagram {
                     msg.append(MSG_TYPE.CCA_T);
                 }
             }
+
         } else if (EVENT_TYPE.SX_RAR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.GX_RAR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.GXA_RAR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.RX_RAR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(true);
+
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.RAR);
             } else {
                 msg.append(MSG_TYPE.RAA);
             }
+
         } else if (EVENT_TYPE.SY_SLR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.ESY_SLR_EVENT.toString().equals(eventType)) {
+
             event.setSapcInitialized(true);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                 msg.append(MSG_TYPE.SLR);
             } else {
                 msg.append(MSG_TYPE.SLA);
             }
+
         } else if (EVENT_TYPE.SY_SNR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.ESY_SNR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(false);
@@ -174,6 +196,7 @@ public class Diagram {
             } else {
                 msg.append(MSG_TYPE.SNA);
             }
+
         } else if (EVENT_TYPE.SY_STR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.ESY_STR_EVENT.toString().equals(eventType)
                 || EVENT_TYPE.RX_STR_EVENT.toString().equals(eventType)) {
@@ -183,6 +206,7 @@ public class Diagram {
             } else {
                 msg.append(MSG_TYPE.STA);
             }
+
         } else if (EVENT_TYPE.RX_AAR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(false);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
@@ -190,6 +214,7 @@ public class Diagram {
             } else {
                 msg.append(MSG_TYPE.AAA);
             }
+
         } else if (EVENT_TYPE.RX_ASR_EVENT.toString().equals(eventType)) {
             event.setSapcInitialized(true);
             if (MSG_FLOW.REQUEST.toString().equals(flow)) {
@@ -212,6 +237,7 @@ public class Diagram {
 
     private static void showFlow(StringBuffer lineArrow, Event event, String flow) {
         int position = event.getNodePosition();
+
         if (position < 1) {
             if (!event.isSapcInitialized()) {
                 if (MSG_FLOW.REQUEST.toString().equals(flow)) {
@@ -225,9 +251,10 @@ public class Diagram {
                 } else {
                     lineArrow.append(RIGHT);
                 }
-
             }
+
         } else if (position <= 2) {
+
             if (!event.isSapcInitialized()) {
                 if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                     lineArrow.append(LEFT);
@@ -242,7 +269,9 @@ public class Diagram {
                 }
 
             }
+
         } else {
+
             if (!event.isSapcInitialized()) {
                 if (MSG_FLOW.REQUEST.toString().equals(flow)) {
                     lineArrow.append(LEFT.substring(0, LEFT.length() - 1));
