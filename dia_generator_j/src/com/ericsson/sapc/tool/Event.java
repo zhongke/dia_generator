@@ -1,6 +1,8 @@
 package com.ericsson.sapc.tool;
 
 import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
+import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
+import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
 public class Event {
     private int eventSeqence;
@@ -8,16 +10,50 @@ public class Event {
 
     private String nodeMsgType;
     private String nodeName;
-    private String eventType;
     private String release;
-    private String requestType;
-    private String eventFlow;
+    // private String requestType;`
+    // private String eventFlow;
 
     private boolean isSapcInitialized;
     private boolean isSameFlow;
     private boolean isAnswer;
 
+    // Define some enum for easy handling
     private EVENT_TYPE eventEnumType;
+    private REQUEST_TYPE requestType;
+    private EVENT_FLOW messageFlow;
+
+
+
+    public EVENT_FLOW getMessageFlow() {
+        return messageFlow;
+    }
+
+
+    public void setMessageFlow(EVENT_FLOW messageFlow) {
+        this.messageFlow = messageFlow;
+    }
+
+
+    public EVENT_TYPE getEventType() {
+        return eventEnumType;
+    }
+
+
+    public void setEventType(String eventType) {
+        this.eventEnumType = EVENT_TYPE.valueOf(eventType);
+    }
+
+
+
+    public REQUEST_TYPE getRequestType() {
+        return requestType;
+    }
+
+    public void setRequestType(String requestType) {
+        this.requestType = REQUEST_TYPE.valueOf(requestType);
+    }
+
 
     public boolean isAnswer() {
         return isAnswer;
@@ -61,20 +97,6 @@ public class Event {
         this.nodeMsgType = nodeMsgType;
     }
 
-    /*
-     * public String getEventType() { return eventType; }
-     * 
-     * public void setEventType(String eventType) { this.eventType = eventType; }
-     */
-
-    public EVENT_TYPE getEventTypeToEnum() {
-        return eventEnumType;
-    }
-
-
-    public void setEventTypeToEnum(String eventType) {
-        this.eventEnumType = EVENT_TYPE.valueOf(eventType);
-    }
 
     public int getNodePosition() {
         return nodePosition;
@@ -92,21 +114,6 @@ public class Event {
         this.release = release;
     }
 
-    public String getRequestType() {
-        return requestType;
-    }
-
-    public void setRequestType(String requestType) {
-        this.requestType = requestType;
-    }
-
-    public String getEventFlow() {
-        return eventFlow;
-    }
-
-    public void setEventFlow(String eventFlow) {
-        this.eventFlow = eventFlow;
-    }
 
 
     public boolean isSapcInitialized() {

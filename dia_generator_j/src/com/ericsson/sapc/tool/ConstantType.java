@@ -30,40 +30,41 @@ public class ConstantType {
 
 	public enum EVENT_TYPE {
         // Gx, Gxa, Sx
-        // GX_CCR_EVENT("t_gx_ccr_event"),
         GX_CCR_EVENT("GX_CCR_EVENT"),
 		GX_RAR_EVENT("GX_RAR_EVENT"),
 		GXA_CCR_EVENT("GXA_CCR_EVENT"),
-		GXA_RAR_EVENT( "GXA_RAR_EVENT"),
+		GXA_RAR_EVENT("GXA_RAR_EVENT"),
 		SX_CCR_EVENT("SX_CCR_EVENT"),
 		SX_RAR_EVENT("SX_RAR_EVENT"),
         // Rx
         RX_AAR_EVENT("RX_AAR_EVENT"),
 		RX_ASR_EVENT("RX_ASR_EVENT"),
 		RX_RAR_EVENT("RX_RAR_EVENT"),
-		RX_STR_EVENT( "RX_STR_EVENT"),
+		RX_STR_EVENT("RX_STR_EVENT"),
         // Sy
         SY_3GPP_SLR_EVENT("SY_3GPP_SLR_EVENT"),
 		SY_3GPP_SNR_EVENT("SY_3GPP_SNR_EVENT"),
-		SY_3GPP_STR_EVENT( "SY_3GPP_STR_EVENT"),
+		SY_3GPP_STR_EVENT("SY_3GPP_STR_EVENT"),
         // Esy
         SY_SLR_EVENT("SY_SLR_EVENT"),
 		SY_SNR_EVENT("SY_SNR_EVENT"),
-		SY_STR_EVENT("SY_STR_EVENT"),
+ SY_STR_EVENT("SY_STR_EVENT");
         // Sys
         // SYS_TIME_EVENT("setSutDateTime_ini"),
         // OAM
-        LDAP_EVENT("");
-		
-		private String event;
-		private EVENT_TYPE() {}
-		private EVENT_TYPE(String event) {
-			this.event = event;
-		}
-		
-		public String toString() {
-			return this.event;
-		}
+        // LDAP_EVENT("");
+
+        private String event;
+
+        private EVENT_TYPE() {}
+
+        private EVENT_TYPE(String event) {
+            this.event = event;
+        }
+
+        public String toString() {
+            return this.event;
+        }
 
 
 	}
@@ -100,13 +101,24 @@ public class ConstantType {
 	}
 
 	public enum REQUEST_TYPE {
-		INITIAL_REQUEST,
-		UPDATE_REQUEST,
-		TERMINATION_REQUEST
+        INITIAL_REQUEST("INITIAL_REQUEST"), UPDATE_REQUEST("UPDATE_REQUEST"), TERMINATION_REQUEST("TERMINATION_REQUEST");
+
+
+        private String request;
+
+        private REQUEST_TYPE() {}
+
+        private REQUEST_TYPE(String request) {
+            this.request = request;
+        }
+
+        public String toString() {
+            return this.request;
+        }
 	}
 
 	
-	public enum MSG_FLOW {
+	public enum EVENT_FLOW {
 	    BOTH,
 		REQUEST,
 		ANSWER

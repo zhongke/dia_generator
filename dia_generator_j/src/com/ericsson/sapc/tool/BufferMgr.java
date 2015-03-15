@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
 import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
-import com.ericsson.sapc.tool.ConstantType.MSG_FLOW;
+import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
 public class BufferMgr {
     private static String PATTERN_EVENT = "t_[3,a-z,/_]*_event";
@@ -53,19 +54,18 @@ public class BufferMgr {
                     matcher_event = pattern_event.matcher(line);
 
                     if (matcher_event.find()) {
-                        System.out.println("-------------------------");
-                        System.out.println(matcher_event.group(0));
-                        System.out.println("-------------------------");
 
-                        event.setEventTypeToEnum(matcher_event.group(0).toUpperCase()
-                                .substring(2, matcher_event.group(0).length()));
+                        String str_event = matcher_event.group(0);
+                        // Remove event prefix in order to covert to enum directly
+                        event.setEventType(str_event.toUpperCase().substring(2, str_event.length()));
+
                         event.setSameFlow(true);
                         setCcrEventSpeicialInfo(line, event);
 
                     } else if (line.contains(PATTERN_EVENT_FLOW)) {
 
                         // System.out.println(line);
-                        // Get event flow if has
+                        // Get event flow if it has
                         event.setSameFlow(true);
                         setEventFlow(line, event);
 
@@ -135,14 +135,14 @@ public class BufferMgr {
 
         String eventFlow = line.split("=")[1].split(";")[0].trim();
 
-        if (MSG_FLOW.REQUEST.toString().equals(eventFlow)) {
+        if (EVENT_FLOW.REQUEST.toString().equals(eventFlow)) {
 
-            event.setEventFlow(MSG_FLOW.REQUEST.toString());
+            event.setMessageFlow(EVENT_FLOW.REQUEST);
             event.setAnswer(false);
 
-        } else if (MSG_FLOW.ANSWER.toString().equals(eventFlow)) {
+        } else if (EVENT_FLOW.ANSWER.toString().equals(eventFlow)) {
 
-            event.setEventFlow(MSG_FLOW.ANSWER.toString());
+            event.setMessageFlow(EVENT_FLOW.ANSWER);
             event.setAnswer(true);
 
         }
@@ -153,7 +153,7 @@ public class BufferMgr {
 
         String release;
         String requestType;
-        EVENT_TYPE eventType = event.getEventTypeToEnum();
+        EVENT_TYPE eventType = event.getEventType();
         release = line.split(",")[2];
         event.setRelease(release);
 
@@ -176,25 +176,24 @@ public class BufferMgr {
 
         Iterator<Event> iter = events.iterator();
         EVENT_TYPE eventType = null;
-        String requestType = null;
+        REQUEST_TYPE requestType = null;
 
         while (iter.hasNext()) {
 
             Event event = (Event) iter.next();
-            String eventFlow = event.getEventFlow();
+            EVENT_FLOW eventFlow = event.getMessageFlow();
 
             if (null == eventFlow) {
-                event.setEventFlow(MSG_FLOW.REQUEST.toString());
+                event.setMessageFlow(EVENT_FLOW.REQUEST);
                 Diagram.showMessageLine(event, nodeList);
-                event.setEventFlow(MSG_FLOW.ANSWER.toString());
+                event.setMessageFlow(EVENT_FLOW.ANSWER);
                 Diagram.showMessageLine(event, nodeList);
 
             } else {
 
-                if (MSG_FLOW.REQUEST.toString().equals(eventFlow)) {
-                    event.setEventFlow(MSG_FLOW.REQUEST.toString());
-                    Diagram.showMessageLine(event, nodeList);
-                    eventType = event.getEventTypeToEnum();
+                if (EVENT_FLOW.REQUEST == eventFlow) {
+                    event.setMessageFlow(EVENT_FLOW.REQUEST);
+                    eventType = event.getEventType();
                     requestType = event.getRequestType();
 
                 } else {
@@ -202,16 +201,21 @@ public class BufferMgr {
                     // Due to no event initialization for ANSWER event flow
                     // So reuse the REQUEST info above
                     // TODO: How to get the info from the readInputFromFile
-                    event.setEventFlow(MSG_FLOW.ANSWER.toString());
-                    event.setEventTypeToEnum(eventType.toString());
-                    event.setRequestType(requestType);
+                    event.setMessageFlow(EVENT_FLOW.ANSWER);
+                    if (null != eventType)
+                        event.setEventType(eventType.toString());
+                    if (null != requestType)
+                        event.setRequestType(requestType.toString());
 
-                    Diagram.showMessageLine(event, nodeList);
                 }
+
+                Diagram.showMessageLine(event, nodeList);
 
                 Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
 
             }
+
+            Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
 
         }
 

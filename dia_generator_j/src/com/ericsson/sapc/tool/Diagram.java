@@ -3,7 +3,7 @@ package com.ericsson.sapc.tool;
 import java.util.List;
 
 import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
-import com.ericsson.sapc.tool.ConstantType.MSG_FLOW;
+import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
 import com.ericsson.sapc.tool.ConstantType.MSG_TYPE;
 import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
@@ -132,99 +132,19 @@ public class Diagram {
 
     private static void assembleMessage(StringBuffer lineMessage, StringBuffer lineArrow, Event event) {
 
-        EVENT_TYPE eventType = event.getEventTypeToEnum();
+        EVENT_TYPE eventType = event.getEventType();
         StringBuffer msg = new StringBuffer();
-        String flow = event.getEventFlow();
+        EVENT_FLOW eventFlow = event.getMessageFlow();
 
         msg.append("  (");
         msg.append(event.getEventSeqence());
         msg.append(") ");
 
-        if (EVENT_TYPE.SX_CCR_EVENT == eventType
-                || EVENT_TYPE.GX_CCR_EVENT == eventType
-                || EVENT_TYPE.GXA_CCR_EVENT == eventType) {
-            String requestType = event.getRequestType();
-            event.setSapcInitialized(false);
 
-            if (REQUEST_TYPE.INITIAL_REQUEST.toString().equals(requestType)) {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                    msg.append(MSG_TYPE.CCR_I);
-                } else {
-                    msg.append(MSG_TYPE.CCA_I);
-                }
-            } else if (REQUEST_TYPE.UPDATE_REQUEST.toString().equals(requestType)) {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                    msg.append(MSG_TYPE.CCR_U);
-                } else {
-                    msg.append(MSG_TYPE.CCA_U);
-                }
-            } else if (REQUEST_TYPE.TERMINATION_REQUEST.toString().equals(requestType)) {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                    msg.append(MSG_TYPE.CCR_T);
-                } else {
-                    msg.append(MSG_TYPE.CCA_T);
-                }
-            }
-
-        } else if (EVENT_TYPE.SX_RAR_EVENT == eventType
-                || EVENT_TYPE.GX_RAR_EVENT == eventType
-                || EVENT_TYPE.GXA_RAR_EVENT == eventType
-                || EVENT_TYPE.RX_RAR_EVENT == eventType) {
-            event.setSapcInitialized(true);
-
-            if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                msg.append(MSG_TYPE.RAR);
-            } else {
-                msg.append(MSG_TYPE.RAA);
-            }
-
-        } else if (EVENT_TYPE.SY_3GPP_SLR_EVENT == eventType || EVENT_TYPE.SY_SLR_EVENT == eventType) {
-
-            event.setSapcInitialized(true);
-            if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                msg.append(MSG_TYPE.SLR);
-            } else {
-                msg.append(MSG_TYPE.SLA);
-            }
-
-        } else if (EVENT_TYPE.SY_3GPP_SNR_EVENT == eventType || EVENT_TYPE.SY_SNR_EVENT == eventType) {
-            event.setSapcInitialized(false);
-            if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                msg.append(MSG_TYPE.SNR);
-            } else {
-                msg.append(MSG_TYPE.SNA);
-            }
-
-        } else if (EVENT_TYPE.SY_3GPP_STR_EVENT == eventType || EVENT_TYPE.SY_STR_EVENT == eventType
-                || EVENT_TYPE.RX_STR_EVENT == eventType) {
-            event.setSapcInitialized(false);
-            if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                msg.append(MSG_TYPE.STR);
-            } else {
-                msg.append(MSG_TYPE.STA);
-            }
-
-        } else if (EVENT_TYPE.RX_AAR_EVENT == eventType) {
-            event.setSapcInitialized(false);
-            if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                msg.append(MSG_TYPE.AAR);
-            } else {
-                msg.append(MSG_TYPE.AAA);
-            }
-
-        } else if (EVENT_TYPE.RX_ASR_EVENT == eventType) {
-            event.setSapcInitialized(true);
-            if (MSG_FLOW.REQUEST.toString().equals(flow)) {
-                msg.append(MSG_TYPE.ASR);
-            } else {
-                msg.append(MSG_TYPE.ASA);
-            }
-        }
-
-
+        setEventTypeInfo(event, eventType, msg, eventFlow);
 
         lineMessage.append(msg.toString());
-        showFlow(lineArrow, event, flow);
+        showFlow(lineArrow, event, eventFlow);
 
         // fill more blank to the line until the Diagram.MIDDLE
         for (int i = 0; i < BLANK.length() - msg.length(); ++i) {
@@ -232,18 +152,133 @@ public class Diagram {
         }
     }
 
-    private static void showFlow(StringBuffer lineArrow, Event event, String flow) {
+    private static void setEventTypeInfo(Event event, EVENT_TYPE eventType, StringBuffer msg, EVENT_FLOW flow) {
+        if (null != eventType) {
+
+
+            switch (eventType) {
+
+                case SX_CCR_EVENT:
+                case GX_CCR_EVENT:
+                case GXA_CCR_EVENT:
+
+                    REQUEST_TYPE requestType = event.getRequestType();
+                    event.setSapcInitialized(false);
+
+                    if (REQUEST_TYPE.INITIAL_REQUEST == requestType) {
+                        if (EVENT_FLOW.REQUEST == flow) {
+                            msg.append(MSG_TYPE.CCR_I);
+                        } else {
+                            msg.append(MSG_TYPE.CCA_I);
+                        }
+                    } else if (REQUEST_TYPE.UPDATE_REQUEST == requestType) {
+                        if (EVENT_FLOW.REQUEST == flow) {
+                            msg.append(MSG_TYPE.CCR_U);
+                        } else {
+                            msg.append(MSG_TYPE.CCA_U);
+                        }
+                    } else if (REQUEST_TYPE.TERMINATION_REQUEST == requestType) {
+                        if (EVENT_FLOW.REQUEST == flow) {
+                            msg.append(MSG_TYPE.CCR_T);
+                        } else {
+                            msg.append(MSG_TYPE.CCA_T);
+                        }
+                    }
+
+                    break;
+
+                case SX_RAR_EVENT:
+                case GX_RAR_EVENT:
+                case GXA_RAR_EVENT:
+                case RX_RAR_EVENT:
+
+                    event.setSapcInitialized(true);
+
+                    if (EVENT_FLOW.REQUEST == flow) {
+                        msg.append(MSG_TYPE.RAR);
+                    } else {
+                        msg.append(MSG_TYPE.RAA);
+                    }
+
+                    break;
+
+                case SY_3GPP_SLR_EVENT:
+                case SY_SLR_EVENT:
+
+                    event.setSapcInitialized(true);
+                    if (EVENT_FLOW.REQUEST == flow) {
+                        msg.append(MSG_TYPE.SLR);
+                    } else {
+                        msg.append(MSG_TYPE.SLA);
+                    }
+
+                    break;
+
+                case SY_3GPP_SNR_EVENT:
+                case SY_SNR_EVENT:
+
+                    event.setSapcInitialized(false);
+                    if (EVENT_FLOW.REQUEST == flow) {
+                        msg.append(MSG_TYPE.SNR);
+                    } else {
+                        msg.append(MSG_TYPE.SNA);
+                    }
+
+                    break;
+
+
+                case SY_3GPP_STR_EVENT:
+                case SY_STR_EVENT:
+                case RX_STR_EVENT:
+
+
+                    event.setSapcInitialized(false);
+                    if (EVENT_FLOW.REQUEST == flow) {
+                        msg.append(MSG_TYPE.STR);
+                    } else {
+                        msg.append(MSG_TYPE.STA);
+                    }
+
+                    break;
+
+                case RX_AAR_EVENT:
+
+                    event.setSapcInitialized(false);
+                    if (EVENT_FLOW.REQUEST == flow) {
+                        msg.append(MSG_TYPE.AAR);
+                    } else {
+                        msg.append(MSG_TYPE.AAA);
+                    }
+
+                    break;
+                    
+                case RX_ASR_EVENT:
+                    
+                    event.setSapcInitialized(true);
+                    if (EVENT_FLOW.REQUEST == flow) {
+                        msg.append(MSG_TYPE.ASR);
+                    } else {
+                        msg.append(MSG_TYPE.ASA);
+                    }
+                    
+                    break;
+            }
+
+        }
+    }
+
+    private static void showFlow(StringBuffer lineArrow, Event event, EVENT_FLOW flow) {
         int position = event.getNodePosition();
 
         if (position < 1) {
             if (!event.isSapcInitialized()) {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                if (EVENT_FLOW.REQUEST == flow) {
                     lineArrow.append(RIGHT);
                 } else {
                     lineArrow.append(LEFT);
                 }
             } else {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                if (EVENT_FLOW.REQUEST == flow) {
                     lineArrow.append(LEFT);
                 } else {
                     lineArrow.append(RIGHT);
@@ -253,13 +288,13 @@ public class Diagram {
         } else if (position <= 2) {
 
             if (!event.isSapcInitialized()) {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                if (EVENT_FLOW.REQUEST == flow) {
                     lineArrow.append(LEFT);
                 } else {
                     lineArrow.append(RIGHT);
                 }
             } else {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                if (EVENT_FLOW.REQUEST == flow) {
                     lineArrow.append(RIGHT);
                 } else {
                     lineArrow.append(LEFT);
@@ -270,7 +305,7 @@ public class Diagram {
         } else {
 
             if (!event.isSapcInitialized()) {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                if (EVENT_FLOW.REQUEST == flow) {
                     lineArrow.append(LEFT.substring(0, LEFT.length() - 1));
                     lineArrow.append("-");
                     for (int i = 0; i < position - 2; ++i) {
@@ -284,7 +319,7 @@ public class Diagram {
                     lineArrow.append(RIGHT.substring(1, LEFT.length()));
                 }
             } else {
-                if (MSG_FLOW.REQUEST.toString().equals(flow)) {
+                if (EVENT_FLOW.REQUEST == flow) {
                     for (int i = 0; i < position - 2; ++i) {
                         lineArrow.append(Diagram.EMPTY_RIGHT);
                     }
