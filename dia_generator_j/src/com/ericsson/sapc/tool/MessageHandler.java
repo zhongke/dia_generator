@@ -8,15 +8,15 @@ import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
 public class MessageHandler {
 
-    private String BLANK = "*";
-    private String IN = "*          -> ";
-    private String OUT = "*          <- ";
-    private String HEADER = "*             -";
-    private String START = "*       ";
-    private String FROM = " message is sent from ";
-    private String TO = " to ";
+    private String BLANK    = "*";
+    private String IN       = "*          -> ";
+    private String OUT      = "*          <- ";
+    private String HEADER   = "*             -";
+    private String START    = "*       ";
+    private String FROM     = " message is sent from ";
+    private String TO       = " to ";
     private String REQUEST_TYPE = " Request-Type         : ";
-    private String RESULT_CODE = " Result-Code          : 2001 (SUCCESS)";
+    private String RESULT_CODE  = " Result-Code          : 2001 (SUCCESS)";
 
     public void showMessageLine(Event event) {
 
