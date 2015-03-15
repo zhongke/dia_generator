@@ -48,7 +48,7 @@ public class ConstantType {
         // Esy
         SY_SLR_EVENT("SY_SLR_EVENT"),
 		SY_SNR_EVENT("SY_SNR_EVENT"),
- SY_STR_EVENT("SY_STR_EVENT");
+		SY_STR_EVENT("SY_STR_EVENT");
         // Sys
         // SYS_TIME_EVENT("setSutDateTime_ini"),
         // OAM
@@ -101,7 +101,9 @@ public class ConstantType {
 	}
 
 	public enum REQUEST_TYPE {
-        INITIAL_REQUEST("INITIAL_REQUEST"), UPDATE_REQUEST("UPDATE_REQUEST"), TERMINATION_REQUEST("TERMINATION_REQUEST");
+        INITIAL_REQUEST("INITIAL_REQUEST"),
+		UPDATE_REQUEST("UPDATE_REQUEST"),
+		TERMINATION_REQUEST("TERMINATION_REQUEST");
 
 
         private String request;

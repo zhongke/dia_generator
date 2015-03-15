@@ -181,9 +181,10 @@ public class BufferMgr {
         while (iter.hasNext()) {
 
             Event event = (Event) iter.next();
-            EVENT_FLOW eventFlow = event.getMessageFlow();
+            EVENT_FLOW eventFlow = event.getEventFlow();
 
             if (null == eventFlow) {
+
                 event.setMessageFlow(EVENT_FLOW.REQUEST);
                 Diagram.showMessageLine(event, nodeList);
                 event.setMessageFlow(EVENT_FLOW.ANSWER);
@@ -210,8 +211,6 @@ public class BufferMgr {
                 }
 
                 Diagram.showMessageLine(event, nodeList);
-
-                Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
 
             }
 

@@ -19,29 +19,29 @@ public class Event {
     private boolean isAnswer;
 
     // Define some enum for easy handling
-    private EVENT_TYPE eventEnumType;
+    private EVENT_TYPE eventType;
     private REQUEST_TYPE requestType;
-    private EVENT_FLOW messageFlow;
+    private EVENT_FLOW eventFlow;
 
 
 
-    public EVENT_FLOW getMessageFlow() {
-        return messageFlow;
+    public EVENT_FLOW getEventFlow() {
+        return eventFlow;
     }
 
 
-    public void setMessageFlow(EVENT_FLOW messageFlow) {
-        this.messageFlow = messageFlow;
+    public void setMessageFlow(EVENT_FLOW eventFlow) {
+        this.eventFlow = eventFlow;
     }
 
 
     public EVENT_TYPE getEventType() {
-        return eventEnumType;
+        return eventType;
     }
 
 
     public void setEventType(String eventType) {
-        this.eventEnumType = EVENT_TYPE.valueOf(eventType);
+        this.eventType = EVENT_TYPE.valueOf(eventType);
     }
 
 

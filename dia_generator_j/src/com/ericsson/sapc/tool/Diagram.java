@@ -134,7 +134,7 @@ public class Diagram {
 
         EVENT_TYPE eventType = event.getEventType();
         StringBuffer msg = new StringBuffer();
-        EVENT_FLOW eventFlow = event.getMessageFlow();
+        EVENT_FLOW eventFlow = event.getEventFlow();
 
         msg.append("  (");
         msg.append(event.getEventSeqence());
