@@ -5,6 +5,7 @@ import java.util.List;
 
 
 public class Generator {
+
     private static List<String> files = new ArrayList<String>();
 
     private static String DIR = "/Users/Kevinzhong/ttcn/script/";
@@ -37,17 +38,9 @@ public class Generator {
         files.add(file_13);
 
     }
-    // public static String FILENAME =
-    // "C:\\Kevin\\tc_05_01_02_SessionReauth_By_PRA_status_Update.ttcn";
-    // public static String FILENAME = "C:\\Kevin\\tc_02_15_01_BasicUseCase.ttcn";
-
-    // public static String FILENAME =
-    // "/Users/Kevinzhong/Downloads/tc_05_01_02_SessionReauth_By_PRA_status_Update.ttcn";
-
-    // public static String FILENAME = "/Users/Kevinzhong/Downloads/tc_02_15_01_BasicUseCase.ttcn";
-    public static String FILENAME = "/Users/Kevinzhong/ttcn/script/tc_authenticationAuthorization_07.ttcn";
 
     public static void main(String[] args) {
+/*
         for (String file : files) {
             System.out.println(file);
 
@@ -56,6 +49,24 @@ public class Generator {
 
             buffMgr.showDiagramFromBuffer();
         }
+*/
+
+        if (args.length > 0) {
+
+            for (String file : args) {
+
+                BufferMgr buffMgr = new BufferMgr();
+                buffMgr.readInputFromFile(file);
+
+                buffMgr.showDiagramFromBuffer();
+
+                buffMgr.showMessageFromBuffer();
+            }
+
+        } else {
+            System.out.println("Please input the fileName!");
+        }
+
 
     }
 

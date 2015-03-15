@@ -1,18 +1,35 @@
 package com.ericsson.sapc.tool;
 
-import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
 import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
+import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
 import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
-public class Event {
+public class Event implements Cloneable {
+
+
+    public Event() {}
+
+
+    public Event(int eventSeqence, int nodePosition, String nodeName, String release, boolean isSapcInitialized,
+            boolean isSameFlow, boolean isAnswer, EVENT_TYPE eventType, REQUEST_TYPE requestType, EVENT_FLOW eventFlow) {
+        super();
+        this.eventSeqence = eventSeqence;
+        this.nodePosition = nodePosition;
+        this.nodeName = nodeName;
+        this.release = release;
+        this.isSapcInitialized = isSapcInitialized;
+        this.isSameFlow = isSameFlow;
+        this.isAnswer = isAnswer;
+        this.eventType = eventType;
+        this.requestType = requestType;
+        this.eventFlow = eventFlow;
+    }
+
     private int eventSeqence;
     private int nodePosition;
 
-    private String nodeMsgType;
     private String nodeName;
     private String release;
-    // private String requestType;`
-    // private String eventFlow;
 
     private boolean isSapcInitialized;
     private boolean isSameFlow;
@@ -23,14 +40,19 @@ public class Event {
     private REQUEST_TYPE requestType;
     private EVENT_FLOW eventFlow;
 
-
+    public Object clone() {
+        Event event =
+                new Event(this.eventSeqence, this.nodePosition, this.nodeName, this.release, this.isSapcInitialized,
+                        this.isSameFlow, this.isAnswer, this.eventType, this.requestType, this.eventFlow);
+        return event;
+    }
 
     public EVENT_FLOW getEventFlow() {
         return eventFlow;
     }
 
 
-    public void setMessageFlow(EVENT_FLOW eventFlow) {
+    public void setEventFlow(EVENT_FLOW eventFlow) {
         this.eventFlow = eventFlow;
     }
 
@@ -87,17 +109,6 @@ public class Event {
         this.eventSeqence = eventSeqence;
     }
 
-
-
-    public String getNodeMsgType() {
-        return nodeMsgType;
-    }
-
-    public void setNodeMsgType(String nodeMsgType) {
-        this.nodeMsgType = nodeMsgType;
-    }
-
-
     public int getNodePosition() {
         return nodePosition;
     }
@@ -113,8 +124,6 @@ public class Event {
     public void setRelease(String release) {
         this.release = release;
     }
-
-
 
     public boolean isSapcInitialized() {
         return isSapcInitialized;

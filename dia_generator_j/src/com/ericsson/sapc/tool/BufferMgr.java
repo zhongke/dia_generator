@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
 import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
-import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
 public class BufferMgr {
     private static String PATTERN_EVENT = "t_[3,a-z,/_]*_event";
@@ -62,12 +61,22 @@ public class BufferMgr {
                         event.setSameFlow(true);
                         setCcrEventSpeicialInfo(line, event);
 
+
                     } else if (line.contains(PATTERN_EVENT_FLOW)) {
 
                         // System.out.println(line);
                         // Get event flow if it has
                         event.setSameFlow(true);
-                        setEventFlow(line, event);
+                        setFlow(line, event);
+
+                        if (event.getEventFlow() == EVENT_FLOW.ANSWER) {
+                            // Set eventType and requestType from the previous event x - 2
+                            Event linkedEvent = events.get(events.size() - 2);
+                            // event = events.get(events.size() - 2);
+                            // event.setMessageFlow(EVENT_FLOW.ANSWER);
+                            event.setEventType(linkedEvent.getEventType().toString());
+                            event.setRequestType(linkedEvent.getRequestType().toString());
+                        }
 
                     } else if (line.contains(PATTERN_FUNCTION)) {
 
@@ -113,9 +122,13 @@ public class BufferMgr {
         String nodeName = line.split("\\]")[1].split("\\[")[1];
         event.setNodeName(nodeName);
 
-        // Create a map to contain the node list and node message
-        events.add(event);
+        if (null == event.getEventFlow()) {
+            event.setEventFlow(EVENT_FLOW.BOTH);
+        }
+
         event.setSameFlow(false);
+
+
 
         if (event.isAnswer()) {
 
@@ -128,21 +141,24 @@ public class BufferMgr {
             event.setEventSeqence(sequenceNumber);
         }
 
+        // Create a map to contain the node list and node message
+        events.add(event);
+
         return ++sequenceNumber;
     }
 
-    private void setEventFlow(String line, Event event) {
+    private void setFlow(String line, Event event) {
 
         String eventFlow = line.split("=")[1].split(";")[0].trim();
 
         if (EVENT_FLOW.REQUEST.toString().equals(eventFlow)) {
 
-            event.setMessageFlow(EVENT_FLOW.REQUEST);
+            event.setEventFlow(EVENT_FLOW.REQUEST);
             event.setAnswer(false);
 
         } else if (EVENT_FLOW.ANSWER.toString().equals(eventFlow)) {
 
-            event.setMessageFlow(EVENT_FLOW.ANSWER);
+            event.setEventFlow(EVENT_FLOW.ANSWER);
             event.setAnswer(true);
 
         }
@@ -158,8 +174,9 @@ public class BufferMgr {
         event.setRelease(release);
 
         // Get the request type if the event is ccr event from Gx, Gxa, Sx
-        if (EVENT_TYPE.GX_CCR_EVENT == eventType || EVENT_TYPE.GXA_CCR_EVENT == eventType
-                || EVENT_TYPE.SX_CCR_EVENT == eventType) {
+        if (EVENT_TYPE.GX_CCR_EVENT == eventType 
+         || EVENT_TYPE.GXA_CCR_EVENT == eventType
+         || EVENT_TYPE.SX_CCR_EVENT == eventType) {
 
             requestType = line.split(",")[3].split("\\)")[0].trim();
             event.setRequestType(requestType);
@@ -170,56 +187,53 @@ public class BufferMgr {
 
     public void showDiagramFromBuffer() {
 
-        Diagram.showHeaderLine(nodeList);
-        Diagram.showCommonLine(Diagram.COMMON.FIRST, nodeList);
-        Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
+        DiagramHanlder.showHeaderLine(nodeList);
+        DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.FIRST, nodeList);
+        DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.MIDDLE, nodeList);
 
         Iterator<Event> iter = events.iterator();
-        EVENT_TYPE eventType = null;
-        REQUEST_TYPE requestType = null;
+        Event event = null;
 
         while (iter.hasNext()) {
 
-            Event event = (Event) iter.next();
+            event = (Event) iter.next().clone();
             EVENT_FLOW eventFlow = event.getEventFlow();
 
-            if (null == eventFlow) {
+            if (EVENT_FLOW.BOTH == eventFlow) {
 
-                event.setMessageFlow(EVENT_FLOW.REQUEST);
-                Diagram.showMessageLine(event, nodeList);
-                event.setMessageFlow(EVENT_FLOW.ANSWER);
-                Diagram.showMessageLine(event, nodeList);
+                event.setEventFlow(EVENT_FLOW.REQUEST);
+                DiagramHanlder.showMessageLine(event, nodeList);
+                event.setEventFlow(EVENT_FLOW.ANSWER);
+                DiagramHanlder.showMessageLine(event, nodeList);
 
             } else {
 
-                if (EVENT_FLOW.REQUEST == eventFlow) {
-                    event.setMessageFlow(EVENT_FLOW.REQUEST);
-                    eventType = event.getEventType();
-                    requestType = event.getRequestType();
-
-                } else {
-
-                    // Due to no event initialization for ANSWER event flow
-                    // So reuse the REQUEST info above
-                    // TODO: How to get the info from the readInputFromFile
-                    event.setMessageFlow(EVENT_FLOW.ANSWER);
-                    if (null != eventType)
-                        event.setEventType(eventType.toString());
-                    if (null != requestType)
-                        event.setRequestType(requestType.toString());
-
-                }
-
-                Diagram.showMessageLine(event, nodeList);
+                DiagramHanlder.showMessageLine(event, nodeList);
 
             }
 
-            Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
+            DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.MIDDLE, nodeList);
 
         }
 
-        Diagram.showCommonLine(Diagram.COMMON.MIDDLE, nodeList);
-        Diagram.showCommonLine(Diagram.COMMON.LAST, nodeList);
+        DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.MIDDLE, nodeList);
+        DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.LAST, nodeList);
+
+    }
+
+    public void showMessageFromBuffer() {
+
+        Iterator<Event> iter = events.iterator();
+        Event event = null;
+
+        while (iter.hasNext()) {
+
+            event = (Event) iter.next();
+
+            MessageHandler messageHandler = new MessageHandler();
+            messageHandler.showMessageLine(event);
+
+        }
 
     }
 
