@@ -9,15 +9,15 @@ import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
 
 public class DiagramHanlder {
-    public static String BEGIN = "*       ";
-    public static String BLANK = "                  ";
-    public static String HEADER = " ________ ";
-    public static String MIDDLE = "|        |";
-    public static String BOTTOM = "|________|";
-    public static String EMPTY_RIGHT = " ---------------------------";
-    public static String EMPTY_LEFT = "--------------------------- ";
-    public static String LEFT = " <--------------- ";
-    public static String RIGHT = " ---------------> ";
+    public static String BEGIN          = "*       ";
+    public static String BLANK          = "                  ";
+    public static String HEADER         = " ________ ";
+    public static String MIDDLE         = "|        |";
+    public static String BOTTOM         = "|________|";
+    public static String LEFT           = " <--------------- ";
+    public static String RIGHT          = " ---------------> ";
+    public static String EMPTY_RIGHT    = " ---------------------------";
+    public static String EMPTY_LEFT     = "--------------------------- ";
 
     enum COMMON {
         FIRST, MIDDLE, LAST
@@ -259,71 +259,49 @@ public class DiagramHanlder {
     private static void showFlow(StringBuffer lineArrow, Event event, EVENT_FLOW flow) {
         int position = event.getNodePosition();
 
-        if (position < 1) {
-            if (!event.isSapcInitialized()) {
-                if (EVENT_FLOW.REQUEST == flow) {
-                    lineArrow.append(RIGHT);
-                } else {
-                    lineArrow.append(LEFT);
-                }
-            } else {
-                if (EVENT_FLOW.REQUEST == flow) {
-                    lineArrow.append(LEFT);
-                } else {
-                    lineArrow.append(RIGHT);
-                }
-            }
+        if ((EVENT_FLOW.REQUEST == flow && (!event.isSapcInitialized()))
+                || (EVENT_FLOW.ANSWER == flow && (event.isSapcInitialized()))) {
 
-        } else if (position <= 2) {
+            if (position < 1) {
 
-            if (!event.isSapcInitialized()) {
-                if (EVENT_FLOW.REQUEST == flow) {
-                    lineArrow.append(LEFT);
-                } else {
-                    lineArrow.append(RIGHT);
-                }
+                lineArrow.append(RIGHT);
+
+            } else if (position <= 2) {
+
+                lineArrow.append(LEFT);
+
             } else {
-                if (EVENT_FLOW.REQUEST == flow) {
-                    lineArrow.append(RIGHT);
-                } else {
-                    lineArrow.append(LEFT);
+
+                lineArrow.append(LEFT.substring(0, LEFT.length() - 1));
+                lineArrow.append("-");
+
+                for (int i = 0; i < position - 2; ++i) {
+                    lineArrow.append(EMPTY_LEFT);
                 }
 
             }
 
         } else {
 
-            if (!event.isSapcInitialized()) {
-                if (EVENT_FLOW.REQUEST == flow) {
-                    lineArrow.append(LEFT.substring(0, LEFT.length() - 1));
-                    lineArrow.append("-");
-                    for (int i = 0; i < position - 2; ++i) {
-                        lineArrow.append(EMPTY_LEFT);
-                    }
-                } else {
-                    for (int i = 0; i < position - 2; ++i) {
-                        lineArrow.append(EMPTY_RIGHT);
-                    }
-                    lineArrow.append("-");
-                    lineArrow.append(RIGHT.substring(1, LEFT.length()));
-                }
+            if (position < 1) {
+
+                lineArrow.append(LEFT);
+
+            } else if (position <= 2) {
+
+                lineArrow.append(RIGHT);
+
             } else {
-                if (EVENT_FLOW.REQUEST == flow) {
-                    for (int i = 0; i < position - 2; ++i) {
-                        lineArrow.append(EMPTY_RIGHT);
-                    }
-                    lineArrow.append("-");
-                    lineArrow.append(RIGHT.substring(1, LEFT.length()));
-                } else {
-                    lineArrow.append(LEFT.substring(0, LEFT.length() - 1));
-                    lineArrow.append("-");
-                    for (int i = 0; i < position - 2; ++i) {
-                        lineArrow.append(EMPTY_LEFT);
-                    }
+
+                for (int i = 0; i < position - 2; ++i) {
+                    lineArrow.append(EMPTY_RIGHT);
                 }
+
+                lineArrow.append("-");
+                lineArrow.append(RIGHT.substring(1, LEFT.length()));
 
             }
-        }
 
+        }
     }
 }
