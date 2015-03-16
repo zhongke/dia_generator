@@ -127,8 +127,6 @@ public class BufferMgr {
 
         event.setSameFlow(false);
 
-
-
         if (event.isAnswer()) {
 
             event.setAnswer(false);

@@ -173,7 +173,8 @@ public class MessageHandler {
         String fromNode = "";
         String toNode = "";
 
-        if (event.getNodeName().equals(NODE_TYPE.OCS3GPP) || event.getNodeName().equals(NODE_TYPE.OCS3GPP2)) {
+        if (event.getNodeName().equals(NODE_TYPE.OCS3GPP.toString())
+                || event.getNodeName().equals(NODE_TYPE.OCS3GPP2.toString())) {
             eventTypeStr = event.getEventType().toString().split("_")[2];
         } else {
             eventTypeStr = event.getEventType().toString().split("_")[1];
