@@ -14,7 +14,7 @@ import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
 
 public class BufferMgr {
     private static String PATTERN_EVENT = "t_[3,a-z,/_]*_event";
-    private static String PATTERN_FUNCTION = "f_runEvent";
+    private static String PATTERN_FUNCTION = "f_runEvent(";
     private static String PATTERN_EVENT_FLOW = "eventFlow";
 
     // Initiate list to store all the events in the test case,
@@ -47,7 +47,8 @@ public class BufferMgr {
                     event = new Event();
                 }
 
-                if (null != line && !("".equals(line)) && !(line.contains("vl_diaCerEvent"))) {
+                if (null != line && !("".equals(line)) && !(line.trim().startsWith("\\/\\/"))
+                        && !(line.contains("vl_diaCerEvent")) && !(line.contains("t_dia_cer_event_server"))) {
 
                     // Get event list from input by reqex
                     matcher_event = pattern_event.matcher(line);
@@ -55,33 +56,34 @@ public class BufferMgr {
                     if (matcher_event.find()) {
 
                         String str_event = matcher_event.group(0);
-                        // Remove event prefix in order to covert to enum directly
-                        event.setEventType(str_event.toUpperCase().substring(2, str_event.length()));
+                        if ((null != str_event) && (!"".equals(str_event))) {
+                            // Remove event prefix in order to covert to enum directly
+                            event.setEventType(str_event.toUpperCase().substring(2, str_event.length()));
 
-                        event.setSameFlow(true);
-                        setCcrEventSpeicialInfo(line, event);
+                            event.setSameFlow(true);
+                            setCcrEventSpeicialInfo(line, event);
+                            getSapcInitilazed(event);
+                        }
 
 
                     } else if (line.contains(PATTERN_EVENT_FLOW)) {
 
-                        // System.out.println(line);
                         // Get event flow if it has
                         event.setSameFlow(true);
                         setFlow(line, event);
 
                         if (event.getEventFlow() == EVENT_FLOW.ANSWER) {
+
                             // Set eventType and requestType from the previous event x - 2
                             Event linkedEvent = events.get(events.size() - 2);
-                            // event = events.get(events.size() - 2);
-                            // event.setMessageFlow(EVENT_FLOW.ANSWER);
                             event.setEventType(linkedEvent.getEventType().toString());
                             event.setRequestType(linkedEvent.getRequestType().toString());
+
                         }
 
                     } else if (line.contains(PATTERN_FUNCTION)) {
 
                         // Get node list from input
-                        // System.out.println(line);
                         sequenceNumber = getEventSquence(line, event, sequenceNumber);
 
                     }
@@ -99,9 +101,6 @@ public class BufferMgr {
 
             // Add SAPC node into the second position
             nodeList.add(1, "SAPC");
-            for (int i = 0; i < nodeList.size(); ++i) {
-                // System.out.println(nodeList.get(i));
-            }
 
         } catch (IOException e) {
             System.out.println("File does not exist");
@@ -174,15 +173,51 @@ public class BufferMgr {
         event.setRelease(release);
 
         // Get the request type if the event is ccr event from Gx, Gxa, Sx
-        if (EVENT_TYPE.GX_CCR_EVENT == eventType 
-         || EVENT_TYPE.GXA_CCR_EVENT == eventType
-         || EVENT_TYPE.SX_CCR_EVENT == eventType) {
+        if (EVENT_TYPE.GX_CCR_EVENT == eventType || EVENT_TYPE.GXA_CCR_EVENT == eventType
+                || EVENT_TYPE.SX_CCR_EVENT == eventType) {
 
             requestType = line.split(",")[3].split("\\)")[0].trim();
             event.setRequestType(requestType);
 
         }
 
+    }
+
+
+    private static void getSapcInitilazed(Event event) {
+        EVENT_TYPE eventType = event.getEventType();
+        if (null != eventType) {
+
+            switch (eventType) {
+
+                case SX_CCR_EVENT:
+                case GX_CCR_EVENT:
+                case GXA_CCR_EVENT:
+                case SY_3GPP_SNR_EVENT:
+                case SY_SNR_EVENT:
+                case SY_3GPP_STR_EVENT:
+                case SY_STR_EVENT:
+                case RX_STR_EVENT:
+                case RX_AAR_EVENT:
+
+                    event.setSapcInitialized(false);
+
+                    break;
+
+                case SX_RAR_EVENT:
+                case GX_RAR_EVENT:
+                case GXA_RAR_EVENT:
+                case RX_RAR_EVENT:
+                case SY_3GPP_SLR_EVENT:
+                case SY_SLR_EVENT:
+                case RX_ASR_EVENT:
+
+                    event.setSapcInitialized(true);
+
+                    break;
+            }
+
+        }
     }
 
     public void showDiagramFromBuffer() {

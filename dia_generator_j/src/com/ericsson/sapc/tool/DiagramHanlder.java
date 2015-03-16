@@ -9,15 +9,15 @@ import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
 
 
 public class DiagramHanlder {
-    public static String BEGIN      = "*       ";
-    public static String BLANK      = "                  ";
-    public static String HEADER     = " ________ ";
-    public static String MIDDLE     = "|        |";
-    public static String BOTTOM     = "|________|";
-    public static String EMPTY_RIGHT= " ---------------------------";
+    public static String BEGIN = "*       ";
+    public static String BLANK = "                  ";
+    public static String HEADER = " ________ ";
+    public static String MIDDLE = "|        |";
+    public static String BOTTOM = "|________|";
+    public static String EMPTY_RIGHT = " ---------------------------";
     public static String EMPTY_LEFT = "--------------------------- ";
-    public static String LEFT       = " <--------------- ";
-    public static String RIGHT      = " ---------------> ";
+    public static String LEFT = " <--------------- ";
+    public static String RIGHT = " ---------------> ";
 
     enum COMMON {
         FIRST, MIDDLE, LAST
@@ -160,7 +160,6 @@ public class DiagramHanlder {
                 case GXA_CCR_EVENT:
 
                     REQUEST_TYPE requestType = event.getRequestType();
-                    event.setSapcInitialized(false);
 
                     if (REQUEST_TYPE.INITIAL_REQUEST == requestType) {
                         if (EVENT_FLOW.REQUEST == flow) {
@@ -189,7 +188,6 @@ public class DiagramHanlder {
                 case GXA_RAR_EVENT:
                 case RX_RAR_EVENT:
 
-                    event.setSapcInitialized(true);
 
                     if (EVENT_FLOW.REQUEST == flow) {
                         msg.append(MSG_TYPE.RAR);
@@ -202,7 +200,6 @@ public class DiagramHanlder {
                 case SY_3GPP_SLR_EVENT:
                 case SY_SLR_EVENT:
 
-                    event.setSapcInitialized(true);
                     if (EVENT_FLOW.REQUEST == flow) {
                         msg.append(MSG_TYPE.SLR);
                     } else {
@@ -214,7 +211,6 @@ public class DiagramHanlder {
                 case SY_3GPP_SNR_EVENT:
                 case SY_SNR_EVENT:
 
-                    event.setSapcInitialized(false);
                     if (EVENT_FLOW.REQUEST == flow) {
                         msg.append(MSG_TYPE.SNR);
                     } else {
@@ -228,7 +224,6 @@ public class DiagramHanlder {
                 case SY_STR_EVENT:
                 case RX_STR_EVENT:
 
-                    event.setSapcInitialized(false);
                     if (EVENT_FLOW.REQUEST == flow) {
                         msg.append(MSG_TYPE.STR);
                     } else {
@@ -239,7 +234,6 @@ public class DiagramHanlder {
 
                 case RX_AAR_EVENT:
 
-                    event.setSapcInitialized(false);
                     if (EVENT_FLOW.REQUEST == flow) {
                         msg.append(MSG_TYPE.AAR);
                     } else {
@@ -247,16 +241,15 @@ public class DiagramHanlder {
                     }
 
                     break;
-                    
+
                 case RX_ASR_EVENT:
-                    
-                    event.setSapcInitialized(true);
+
                     if (EVENT_FLOW.REQUEST == flow) {
                         msg.append(MSG_TYPE.ASR);
                     } else {
                         msg.append(MSG_TYPE.ASA);
                     }
-                    
+
                     break;
             }
 
