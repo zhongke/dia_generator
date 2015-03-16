@@ -48,6 +48,7 @@ public class Generator {
             buffMgr.readInputFromFile(file);
 
             buffMgr.showDiagramFromBuffer();
+            buffMgr.showMessageFromBuffer();
         }
 */
 

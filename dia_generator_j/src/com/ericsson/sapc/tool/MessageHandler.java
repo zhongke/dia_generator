@@ -49,7 +49,7 @@ public class MessageHandler {
 
 
 
-            getSequenceMessage(currentEvent, sequenceMessage, detailMessage);
+            getSequenceMessage(currentEvent, sequenceMessage);
             getDirectionMessage(currentEvent, directionMessage);
 
             // prepare detail message
@@ -155,7 +155,7 @@ public class MessageHandler {
         } while (messageCount > 0);
     }
 
-    private void getSequenceMessage(Event event, StringBuffer sequenceMessage, StringBuffer detailMessage) {
+    private void getSequenceMessage(Event event, StringBuffer sequenceMessage) {
         sequenceMessage.append(START);
         sequenceMessage.append(event.getEventSeqence());
         sequenceMessage.append(") ");
@@ -206,6 +206,16 @@ public class MessageHandler {
 
         directionMessage.append(TO);
         directionMessage.append(toNode);
+
+    }
+
+    /**
+     * It could be a big class to handle specific message based on different events.
+     * 
+     * @param event
+     * @param detailMessage
+     */
+    private void getDetailSpecificMessage(Event event, StringBuffer detailMessage) {
 
     }
 }
