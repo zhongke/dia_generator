@@ -3,11 +3,15 @@ package com.ericsson.sapc.tool;
 import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
 import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
 import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
+import com.ericsson.sapc.tool.message.RequestData;
 
 public class Event implements Cloneable {
 
 
-    public Event() {}
+
+    public Event() {
+        requestData = new RequestData();
+    }
 
 
     public Event(int eventSeqence, int nodePosition, String nodeName, String release, boolean isSapcInitialized,
@@ -23,6 +27,17 @@ public class Event implements Cloneable {
         this.eventType = eventType;
         this.requestType = requestType;
         this.eventFlow = eventFlow;
+    }
+
+    private RequestData requestData;
+
+    public RequestData getRequestData() {
+        return requestData;
+    }
+
+
+    public void setRequestData(RequestData requestData) {
+        this.requestData = requestData;
     }
 
     private int eventSeqence;

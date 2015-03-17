@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
 import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
+import com.ericsson.sapc.tool.message.RequestData;
 
 public class BufferMgr {
     private static String PATTERN_EVENT = "t_[3,a-z,/_]*_event";
@@ -81,6 +82,13 @@ public class BufferMgr {
 
                         }
 
+                        // Get detailed information from input
+                        // requestedData, expectedData, expectedResult
+                    } else if (line.contains("requestData")) {
+
+                        System.out.println(line);
+                        getRequestData(event, line);
+
                     } else if (line.contains(PATTERN_FUNCTION)) {
 
                         // Get node list from input
@@ -115,6 +123,20 @@ public class BufferMgr {
             }
         }
 
+    }
+
+    private void getRequestData(Event event, String line) {
+        RequestData requestData = new RequestData();
+        if (line.contains("ipCanType")) {
+            requestData.setIpCanType(getRequestDataValue(line));
+            System.out.println(requestData.getIpCanType());
+        }
+
+    }
+
+    private String getRequestDataValue(String line) {
+        String value = line.split(":=")[1].trim();
+        return value.substring(0, value.length() - 1);
     }
 
     private int getEventSquence(String line, Event event, int sequenceNumber) {
