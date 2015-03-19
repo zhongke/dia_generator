@@ -10,6 +10,6 @@ package com.ericsson.sapc.tool.config;
  */
 public interface ConfigurationHandler {
 
-    public void getConfiguration();
+    public void getConfiguration(String fileName);
 
 }

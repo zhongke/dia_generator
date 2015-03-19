@@ -3,6 +3,9 @@ package com.ericsson.sapc.tool;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ericsson.sapc.tool.config.ConfigurationHandler;
+import com.ericsson.sapc.tool.config.LdapConfigurationHandler;
+
 
 public class Generator {
 
@@ -55,13 +58,16 @@ public class Generator {
         if (args.length > 0) {
 
             for (String file : args) {
-
+/*
                 BufferMgr buffMgr = new BufferMgr();
                 buffMgr.readInputFromFile(file);
 
                 buffMgr.showDiagramFromBuffer();
-
                 buffMgr.showMessageFromBuffer();
+*/
+                ConfigurationHandler configurationHandler = new LdapConfigurationHandler();
+                configurationHandler.getConfiguration(file);
+                
             }
 
         } else {
