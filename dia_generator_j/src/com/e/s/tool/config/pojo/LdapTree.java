@@ -7,10 +7,6 @@ import java.util.List;
 
 public class LdapTree {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 852670006354184487L;
 
     private List<Node> nodes;
 
@@ -29,16 +25,14 @@ public class LdapTree {
     public void setParent(List<Node> nodes) {
         for (int i = 0; i < nodes.size(); ++i) {
             Node child = nodes.get(i);
-            int position = child.getNodeName().indexOf(',');
-            String parentDn = child.getNodeName().substring(position + 1, child.getNodeName().length());
+            String ChildDn = child.getNodeName();
+            int position = ChildDn.indexOf(',');
+            String parentDn = ChildDn.substring(position + 1, ChildDn.length());
             for (int j = 0; j < nodes.size(); ++j) {
 
                 Node parent = nodes.get(j);
                 if (parent.getNodeName().split(":")[1].equals(parentDn)) {
                     child.setParent(parent);
-                    System.out.println("child   : " + child.getNodeName());
-                    System.out.println("parent  : " + parent.getNodeName());
-                    System.out.println();
                     break;
 
                 }

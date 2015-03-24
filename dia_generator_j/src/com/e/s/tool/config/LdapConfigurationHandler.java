@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.e.s.tool.config.pojo.LdapTree;
 import com.e.s.tool.config.pojo.Node;
@@ -15,19 +13,18 @@ import com.e.s.tool.config.pojo.PolicyLocator;
 import com.e.s.tool.config.pojo.Rule;
 
 public class LdapConfigurationHandler implements ConfigurationHandler {
-    private static String PATTERN_DN_CONTEXT = "dn:EPC-ContextName=";
-    private static String PATTERN_DN_RESOURCE = "";
-    private static String PATTERN_DN_SUBJECT = "";
-    private static String PATTERN_DN_POLICY = "dn:EPC-PolicyId=";
-    private static String PATTERN_DN_RULE = "dn:EPC-RuleId=";
+    private static String PATTERN_DN_CONTEXT    = "dn:EPC-ContextName";
+    private static String PATTERN_DN_POLICY     = "dn:EPC-PolicyId=";
+    private static String PATTERN_DN_RULE       = "dn:EPC-RuleId=";
 
-    private static String PATTERN_EPC_GLOBAL = "EPC-GlobalPolicyLocators";
-    private static String PATTERN_EPC_POLICY_IDS = "EPC-PolicyIds:";
-    private static String PATTERN_EPC_RULES = "EPC-Rules:";
+    private static String PATTERN_EPC_GLOBAL    = "EPC-GlobalPolicyLocators";
+    private static String PATTERN_EPC_POLICY_IDS= "EPC-PolicyIds";
+    private static String PATTERN_EPC_RULES     = "EPC-Rules";
 
     private static String PATTERN_COMBINING_ALG = "EPC-RuleCombiningAlgorithm";
-    private static String PATTERN_CONDITION = "EPC-ConditionFormula:";
-    private static String PATTERN_OUTPUT = "EPC-OutputAttributes:Permit:";
+    private static String PATTERN_CONDITION     = "EPC-ConditionFormula";
+    private static String PATTERN_OUTPUT        = "EPC-OutputAttributes";
+    private static String PATTERN_PERMIT        = ":Permit:";
 
     private static int COLUMN_LENTH_CONTEXT = 15;
     private static int COLUMN_LENTH_POLICY = 20;
@@ -45,17 +42,60 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
     }
 
 
-    private static List<PolicyLocator> policies = new ArrayList<PolicyLocator>();
+    private static List<PolicyLocator> policyLocators = new ArrayList<PolicyLocator>();
 
     @Override
     public void getConfiguration(String fileName) {
+        constructLdapTree(fileName);
+
+
+    }
+
+
+
+    private void constructLdapTree(String fileName) {
+        // Construct Tree model
         LineNumberReader lineNumberReader = null;
+
 
         try {
 
             lineNumberReader = new LineNumberReader(new FileReader(fileName));
-            getPolicyConfiguartion(fileName, lineNumberReader);
 
+            String line = "";
+
+            Node node = new Node();
+
+            while (lineNumberReader.ready()) {
+                line = lineNumberReader.readLine();
+
+
+                if (checkLine(line)) {
+                    line = cleanWhiteSpace(line);
+
+                    if (line.startsWith("dn:")) {
+
+                        node.setNodeName(line);
+                        tree.setParent(tree.getNodes());
+
+                        tree.getNodes().add(node);
+                    } else {
+                        node.getAttributes().add(line);
+                    }
+
+
+
+                } else if (null == line || line.trim().equals("")) {
+                    node = new Node();
+                    continue;
+                }
+
+            }
+
+
+            getPolicyConfiguartion();
+
+            showPolicyConfiguration(policyLocators);
             /*
              * getSubscriberConfiguration getSubscriberGroupConfiguration getServiceConfiguration
              */
@@ -72,88 +112,40 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                 e.printStackTrace();
             }
         }
-
-
     }
 
 
 
-    private void getPolicyConfiguartion(String fileName, LineNumberReader lineNumberReader) throws IOException {
-        PolicyLocator policy = null;
+    private void getPolicyConfiguartion() {
+        PolicyLocator policyLocator = null;
 
-        Matcher matcher_context = null;
-        Pattern pattern_context = Pattern.compile(PATTERN_DN_CONTEXT);
+        for (Node node : tree.getNodes()) {
 
-        String line = "";
-        Node node = null;
-        node = new Node();
+            if (PATTERN_DN_CONTEXT.equals(node.getNodeName().split(",")[0].split("=")[0])) {
 
-        while (lineNumberReader.ready()) {
-            line = lineNumberReader.readLine();
+                policyLocator = new PolicyLocator();
 
+                getContextInfo(node, policyLocator);
 
-            if (checkLine(line)) {
-                line = cleanWhiteSpace(line);
-                // System.out.println(line);
+                getPolicyDn(node, policyLocator);
 
-                if (line.startsWith("dn:")) {
-
-                    node.setNodeName(line);
-
-                } else {
-                    node.getAttributes().add(line);
-                }
+                policyLocators.add(policyLocator);
 
 
-                tree.setParent(tree.getNodes());
-                tree.getNodes().add(node);
+                System.out.println();
 
-                matcher_context = pattern_context.matcher(line);
-
-                if (matcher_context.find()) {
-                    policy = new PolicyLocator();
-
-                    getContextInfo(line, policy);
-
-                    getPolicyDn(lineNumberReader.getLineNumber(), fileName, policy);
-
-                    policies.add(policy);
-
-
-                    System.out.println();
-
-                }
-
-            } else if (null == line || line.trim().equals("")) {
-                node = new Node();
-                continue;
             }
 
         }
 
-
-        showPolicyConfiguration(policies);
-
     }
 
 
 
-    private String cleanWhiteSpace(String line) {
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < line.length(); ++i) {
-            if (line.charAt(i) != ' ') {
-                buffer.append(line.charAt(i));
-            }
-        }
-        return buffer.toString();
-    }
-
-
-
-    private void getContextInfo(String line, PolicyLocator policyLocator) {
-        String context = line.split(",")[0].trim().split("=")[1].trim();
-        String resource = line.split(",")[1].trim().split("=")[1].trim();
-        String subject = line.split(",")[2].trim().split("=")[1].trim();
+    private void getContextInfo(Node node, PolicyLocator policyLocator) {
+        String context = node.getNodeName().split(":")[1].split(",")[0].trim().split("=")[1].trim();
+        String resource = node.getNodeName().split(":")[1].split(",")[1].trim().split("=")[1].trim();
+        String subject = node.getNodeName().split(":")[1].split(",")[2].trim().split("=")[1].trim();
 
         policyLocator.setContext(context);
         policyLocator.setResource(resource);
@@ -164,41 +156,26 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
             policyLocator.setSubject(subject);
         }
 
-
     }
 
 
-    private void getPolicyDn(int lineNumber, String fileName, PolicyLocator policyLocator) throws IOException {
-        LineNumberReader lineNumberReader;
-        lineNumberReader = new LineNumberReader(new FileReader(fileName));
-        Policy policy;
+    private void getPolicyDn(Node node, PolicyLocator policyLocator) {
 
+        Policy policy = null;
+        String attributeName = "";
 
-        int counter = 0;
-        Matcher matcher_policyId = null;
-        Pattern pattern_policyId = Pattern.compile(PATTERN_EPC_POLICY_IDS);
+        for (String attribute : node.getAttributes()) {
+            attributeName = attribute.split(":")[0];
+            if (attributeName.equals(PATTERN_EPC_POLICY_IDS)) {
 
-        while (lineNumberReader.ready()) {
+                policy = new Policy();
+                policy.setPolicyId(attribute.split(":")[2]);
 
-            String line = lineNumberReader.readLine();
-            if (counter > lineNumber) {
-                if (checkLine(line)) {
-                    matcher_policyId = pattern_policyId.matcher(line);
+                getPolicyInfo(policy);
 
-                    // Think about one or more policies
-                    if (matcher_policyId.find()) {
-                        policy = new Policy();
-                        policy.setPolicyId(line.split(":")[2].trim());
-                        getPolicyInfo(fileName, policy);
-                        policyLocator.getPolicies().add(policy);
-                    }
-
-                } else {
-                    break;
-                }
+                policyLocator.getPolicies().add(policy);
 
             }
-            ++counter;
 
         }
 
@@ -206,142 +183,66 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
 
 
-    private void getPolicyInfo(String fileName, Policy policy) throws IOException {
-
-        LineNumberReader lineNumberReader;
-        lineNumberReader = new LineNumberReader(new FileReader(fileName));
-        Matcher matcher_policy = null;
+    private void getPolicyInfo(Policy policy) {
         String regex = PATTERN_DN_POLICY + policy.getPolicyId();
-        Pattern pattern_policy = Pattern.compile(regex);
+        String attributeName = "";
+        Rule rule = null;
+        for (Node node : tree.getNodes()) {
 
-        while (lineNumberReader.ready()) {
+            if (regex.equals(node.getNodeName().split(",")[0])) {
 
-            String line = lineNumberReader.readLine();
-            if (checkLine(line)) {
-                matcher_policy = pattern_policy.matcher(line);
+                for (String attribute : node.getAttributes()) {
 
-                // Think about one or more policies
-                if (matcher_policy.find()) {
-                    getPolicyDetailInfo(lineNumberReader.getLineNumber(), fileName, policy);
-                }
-            }
+                    attributeName = attribute.split(":")[0];
+                    if (attributeName.equals(PATTERN_EPC_RULES)) {
 
-        }
-
-    }
-
-    private void getPolicyDetailInfo(int lineNumber, String fileName, Policy policy) throws IOException {
-        LineNumberReader lineNumberReader;
-        lineNumberReader = new LineNumberReader(new FileReader(fileName));
-        Rule rule;
-
-
-        int counter = 0;
-        Matcher matcher_RuleId = null;
-        Matcher matcher_RuleAlg = null;
-        Pattern pattern_RuleId = Pattern.compile(PATTERN_EPC_RULES);
-        Pattern pattern_RuleAlg = Pattern.compile(PATTERN_COMBINING_ALG);
-
-        while (lineNumberReader.ready()) {
-
-            String line = lineNumberReader.readLine();
-            if (counter > lineNumber) {
-                if (checkLine(line)) {
-                    matcher_RuleId = pattern_RuleId.matcher(line);
-                    matcher_RuleAlg = pattern_RuleAlg.matcher(line);
-
-                    // Think about one or more rules
-                    if (matcher_RuleId.find()) {
                         rule = new Rule();
 
-                        rule.setRuleId(line.split(":")[2].trim());
-                        getRuleInfo(fileName, rule);
+                        rule.setRuleId(attribute.split(":")[2].trim());
+                        getRuleInfo(rule);
 
                         policy.getRules().add(rule);
-                    } else if (matcher_RuleAlg.find()) {
-                        policy.setCombineAlgorithm(line.split(":")[1].trim());
+                    } else if (attributeName.equals(PATTERN_COMBINING_ALG)) {
+                        policy.setCombineAlgorithm(attribute.split(":")[1].trim());
                     }
 
-                } else {
-                    break;
                 }
 
             }
-            ++counter;
 
         }
-
-
     }
 
 
+    private void getRuleInfo(Rule rule) {
 
-    private void getRuleInfo(String fileName, Rule rule) throws IOException {
-        LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(fileName));
-        Matcher matcher_policy = null;
         String regex = PATTERN_DN_RULE + rule.getRuleId();
-        Pattern pattern_policy = Pattern.compile(regex);
+        String attributeName = "";
+        for (Node node : tree.getNodes()) {
 
-        while (lineNumberReader.ready()) {
+            if (regex.equals(node.getNodeName().split(",")[0])) {
+                for (String attribute : node.getAttributes()) {
+                    attributeName = attribute.split(":")[0];
+                    if (attributeName.equals(PATTERN_CONDITION)) {
 
-            String line = lineNumberReader.readLine();
-            if (checkLine(line)) {
-                matcher_policy = pattern_policy.matcher(line);
+                        rule.setCondition(attribute.split(":")[1].trim());
 
-                // Think about one or more policies
-                if (matcher_policy.find()) {
-                    getRuleDetailInfo(lineNumberReader, fileName, rule);
-                }
-            }
-
-        }
-
-    }
-
-
-
-    private void getRuleDetailInfo(LineNumberReader lineNumberReader, String fileName, Rule rule) throws IOException {
-        int lineNumber = lineNumberReader.getLineNumber();
-        lineNumberReader = new LineNumberReader(new FileReader(fileName));
-
-        int counter = 0;
-        Matcher matcher_condition = null;
-        Matcher matcher_output = null;
-        Pattern pattern_condition = Pattern.compile(PATTERN_CONDITION);
-        Pattern pattern_output = Pattern.compile(PATTERN_OUTPUT);
-
-        while (lineNumberReader.ready()) {
-
-            String line = lineNumberReader.readLine();
-
-            if (counter > lineNumber) {
-                if (checkLine(line)) {
-                    matcher_condition = pattern_condition.matcher(line);
-                    matcher_output = pattern_output.matcher(line);
-
-                    // Think about one or more output
-                    if (matcher_condition.find()) {
-                        rule.setCondition(line.split(":")[1].trim());
-                    } else if (matcher_output.find()) {
-                        rule.getOutputs().add(line.substring(PATTERN_OUTPUT.length(), line.length()).trim());
+                    } else if (attributeName.equals(PATTERN_OUTPUT)) {
+                        rule.getOutputs().add(
+                                attribute.substring(PATTERN_OUTPUT.length() + PATTERN_PERMIT.length(),
+                                        attribute.length()));
                     }
 
-                } else {
-                    break;
                 }
 
+
             }
-            ++counter;
 
         }
 
     }
 
 
-
-    private boolean checkLine(String line) {
-        return (null != line) && !("".equals(line.trim())) && !(line.trim().startsWith("#"));
-    }
 
     private void showPolicyConfiguration(List<PolicyLocator> policies) {
 
@@ -490,6 +391,24 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
         }
 
         System.out.println(bf.toString());
+    }
+
+
+
+    private String cleanWhiteSpace(String line) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < line.length(); ++i) {
+            if (line.charAt(i) != ' ') {
+                buffer.append(line.charAt(i));
+            }
+        }
+        return buffer.toString();
+    }
+
+
+
+    private boolean checkLine(String line) {
+        return (null != line) && !("".equals(line.trim())) && !(line.trim().startsWith("#"));
     }
 
 }
