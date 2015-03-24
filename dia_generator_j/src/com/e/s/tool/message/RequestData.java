@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool.message;
+package com.e.s.tool.message;
 
 public class RequestData {
     private String ipCanType;

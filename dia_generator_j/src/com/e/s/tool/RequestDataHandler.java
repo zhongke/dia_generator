@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool;
+package com.e.s.tool;
 
 import java.io.IOException;
 import java.io.InputStream;

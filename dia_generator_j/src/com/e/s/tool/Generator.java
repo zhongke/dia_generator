@@ -1,10 +1,10 @@
-package com.ericsson.sapc.tool;
+package com.e.s.tool;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ericsson.sapc.tool.config.ConfigurationHandler;
-import com.ericsson.sapc.tool.config.LdapConfigurationHandler;
+import com.e.s.tool.config.ConfigurationHandler;
+import com.e.s.tool.config.LdapConfigurationHandler;
 
 
 public class Generator {

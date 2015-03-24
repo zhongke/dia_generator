@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool.config;
+package com.e.s.tool.config;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ericsson.sapc.tool.config.pojo.Policy;
-import com.ericsson.sapc.tool.config.pojo.PolicyLocator;
-import com.ericsson.sapc.tool.config.pojo.Rule;
+import com.e.s.tool.config.pojo.Policy;
+import com.e.s.tool.config.pojo.PolicyLocator;
+import com.e.s.tool.config.pojo.Rule;
 
 public class LdapConfigurationHandler implements ConfigurationHandler {
     private static String PATTERN_DN_CONTEXT    = "dn:[ ]*EPC-ContextName=";

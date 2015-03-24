@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool;
+package com.e.s.tool;
 
 public class ConstantType {
 

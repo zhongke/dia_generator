@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool.config.pojo;
+package com.e.s.tool.config.pojo;
 
 import java.util.ArrayList;
 import java.util.List;

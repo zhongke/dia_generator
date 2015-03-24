@@ -1,9 +1,9 @@
-package com.ericsson.sapc.tool;
+package com.e.s.tool;
 
-import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
-import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
-import com.ericsson.sapc.tool.ConstantType.NODE_TYPE;
-import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
+import com.e.s.tool.ConstantType.EVENT_FLOW;
+import com.e.s.tool.ConstantType.EVENT_TYPE;
+import com.e.s.tool.ConstantType.NODE_TYPE;
+import com.e.s.tool.ConstantType.REQUEST_TYPE;
 
 
 public class MessageHandler {

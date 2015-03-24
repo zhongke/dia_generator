@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool;
+package com.e.s.tool;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
-import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
+import com.e.s.tool.ConstantType.EVENT_FLOW;
+import com.e.s.tool.ConstantType.EVENT_TYPE;
 
 public class BufferMgr {
     private static String PATTERN_EVENT = "t_[3,a-z,/_]*_event";

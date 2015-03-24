@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool.config.pojo;
+package com.e.s.tool.config.pojo;
 
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;

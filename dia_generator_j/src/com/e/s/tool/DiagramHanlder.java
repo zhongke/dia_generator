@@ -1,11 +1,11 @@
-package com.ericsson.sapc.tool;
+package com.e.s.tool;
 
 import java.util.List;
 
-import com.ericsson.sapc.tool.ConstantType.EVENT_FLOW;
-import com.ericsson.sapc.tool.ConstantType.EVENT_TYPE;
-import com.ericsson.sapc.tool.ConstantType.MSG_TYPE;
-import com.ericsson.sapc.tool.ConstantType.REQUEST_TYPE;
+import com.e.s.tool.ConstantType.EVENT_FLOW;
+import com.e.s.tool.ConstantType.EVENT_TYPE;
+import com.e.s.tool.ConstantType.MSG_TYPE;
+import com.e.s.tool.ConstantType.REQUEST_TYPE;
 
 
 public class DiagramHanlder {

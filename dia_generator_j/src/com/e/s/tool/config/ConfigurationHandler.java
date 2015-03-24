@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool.config;
+package com.e.s.tool.config;
 
 /**
  * This interface provide 2 kinds of way to get configuration

@@ -1,4 +1,4 @@
-package com.ericsson.sapc.tool.config;
+package com.e.s.tool.config;
 
 public class MysqlConfigurationHandler implements ConfigurationHandler {
 
