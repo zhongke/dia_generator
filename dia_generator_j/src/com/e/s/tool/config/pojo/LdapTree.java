@@ -23,15 +23,18 @@ public class LdapTree {
     }
 
     public void setParent(List<Node> nodes) {
+
         for (int i = 0; i < nodes.size(); ++i) {
+
             Node child = nodes.get(i);
-            String ChildDn = child.getNodeName();
+            String ChildDn = child.getDn();
             int position = ChildDn.indexOf(',');
             String parentDn = ChildDn.substring(position + 1, ChildDn.length());
+
             for (int j = 0; j < nodes.size(); ++j) {
 
                 Node parent = nodes.get(j);
-                if (parent.getNodeName().split(":")[1].equals(parentDn)) {
+                if (parent.getDn().split(":")[1].equals(parentDn)) {
                     child.setParent(parent);
                     break;
 

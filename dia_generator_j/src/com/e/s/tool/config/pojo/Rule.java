@@ -5,6 +5,11 @@ import java.util.List;
 
 public class Rule {
 
+
+    private String ruleId;
+    private String condition;
+    private List<String> outputs;
+
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
@@ -19,9 +24,6 @@ public class Rule {
         return buffer.toString();
     }
 
-    private String ruleId;
-    private String condition;
-    private List<String> outputs;
 
     public Rule() {
         outputs = new ArrayList<String>();

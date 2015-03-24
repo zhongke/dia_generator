@@ -5,6 +5,14 @@ import java.util.List;
 
 public class Policy {
 
+    private String policyId;
+    private String combineAlgorithm;
+    private List<Rule> rules;
+
+    public Policy() {
+        rules = new ArrayList<Rule>();
+    }
+
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
@@ -20,13 +28,7 @@ public class Policy {
     }
 
 
-    private String policyId;
-    private String combineAlgorithm;
-    private List<Rule> rules;
 
-    public Policy() {
-        rules = new ArrayList<Rule>();
-    }
 
     public List<Rule> getRules() {
         return rules;

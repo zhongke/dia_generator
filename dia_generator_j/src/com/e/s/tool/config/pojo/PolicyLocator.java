@@ -5,6 +5,13 @@ import java.util.List;
 
 public class PolicyLocator {
 
+
+    private String Context;
+    private String Resource;
+    private String Subject;
+
+    private List<Policy> policies;
+
     public PolicyLocator() {
         policies = new ArrayList<Policy>();
     }
@@ -57,11 +64,6 @@ public class PolicyLocator {
         this.policies = policies;
     }
 
-    private String Context;
-    private String Resource;
-    private String Subject;
-
-    private List<Policy> policies;
 
 
 }

@@ -1,6 +1,3 @@
-/*
- * $HeadURL: $ $Id: $ Copyright (c) 2012 by Ericsson, all rights reserved.
- */
 
 package com.e.s.tool.config.pojo;
 
@@ -8,16 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
+
+    private String nodeDn;
+    private Node parent;
+
     public Node() {
         attributes = new ArrayList<String>();
     }
-
-    /** Revision of the class */
-    public static final String _REV_ID_ = "$Revision: $";
-
-    private String nodeName;
-
-    private Node parent;
 
     public Node getParent() {
         return parent;
@@ -37,12 +31,12 @@ public class Node {
         this.attributes = attributes;
     }
 
-    public String getNodeName() {
-        return nodeName;
+    public String getDn() {
+        return nodeDn;
     }
 
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
+    public void setNodeDn(String nodeDn) {
+        this.nodeDn = nodeDn;
     }
 
 

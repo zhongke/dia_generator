@@ -75,7 +75,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
                     if (line.startsWith("dn:")) {
 
-                        node.setNodeName(line);
+                        node.setNodeDn(line);
                         tree.setParent(tree.getNodes());
 
                         tree.getNodes().add(node);
@@ -121,7 +121,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
         for (Node node : tree.getNodes()) {
 
-            if (PATTERN_DN_CONTEXT.equals(node.getNodeName().split(",")[0].split("=")[0])) {
+            if (PATTERN_DN_CONTEXT.equals(node.getDn().split(",")[0].split("=")[0])) {
 
                 policyLocator = new PolicyLocator();
 
@@ -143,9 +143,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
 
     private void getContextInfo(Node node, PolicyLocator policyLocator) {
-        String context = node.getNodeName().split(":")[1].split(",")[0].trim().split("=")[1].trim();
-        String resource = node.getNodeName().split(":")[1].split(",")[1].trim().split("=")[1].trim();
-        String subject = node.getNodeName().split(":")[1].split(",")[2].trim().split("=")[1].trim();
+        String context = node.getDn().split(":")[1].split(",")[0].trim().split("=")[1].trim();
+        String resource = node.getDn().split(":")[1].split(",")[1].trim().split("=")[1].trim();
+        String subject = node.getDn().split(":")[1].split(",")[2].trim().split("=")[1].trim();
 
         policyLocator.setContext(context);
         policyLocator.setResource(resource);
@@ -189,7 +189,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
         Rule rule = null;
         for (Node node : tree.getNodes()) {
 
-            if (regex.equals(node.getNodeName().split(",")[0])) {
+            if (regex.equals(node.getDn().split(",")[0])) {
 
                 for (String attribute : node.getAttributes()) {
 
@@ -220,7 +220,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
         String attributeName = "";
         for (Node node : tree.getNodes()) {
 
-            if (regex.equals(node.getNodeName().split(",")[0])) {
+            if (regex.equals(node.getDn().split(",")[0])) {
                 for (String attribute : node.getAttributes()) {
                     attributeName = attribute.split(":")[0];
                     if (attributeName.equals(PATTERN_CONDITION)) {
