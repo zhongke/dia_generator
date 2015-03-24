@@ -8,27 +8,37 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.e.s.tool.config.pojo.LdapTree;
+import com.e.s.tool.config.pojo.Node;
 import com.e.s.tool.config.pojo.Policy;
 import com.e.s.tool.config.pojo.PolicyLocator;
 import com.e.s.tool.config.pojo.Rule;
 
 public class LdapConfigurationHandler implements ConfigurationHandler {
-    private static String PATTERN_DN_CONTEXT    = "dn:[ ]*EPC-ContextName=";
-    private static String PATTERN_DN_RESOURCE   = "";
-    private static String PATTERN_DN_SUBJECT    = "";
-    private static String PATTERN_DN_POLICY     = "dn:[ ]*EPC-PolicyId=";
-    private static String PATTERN_DN_RULE       = "dn:[ ]*EPC-RuleId=";
+    private static String PATTERN_DN_CONTEXT = "dn:EPC-ContextName=";
+    private static String PATTERN_DN_RESOURCE = "";
+    private static String PATTERN_DN_SUBJECT = "";
+    private static String PATTERN_DN_POLICY = "dn:EPC-PolicyId=";
+    private static String PATTERN_DN_RULE = "dn:EPC-RuleId=";
 
-    private static String PATTERN_EPC_GLOBAL    = "EPC-GlobalPolicyLocators";
-    private static String PATTERN_EPC_POLICY_IDS= "EPC-PolicyIds:";
-    private static String PATTERN_EPC_RULES     = "EPC-Rules:";
-    
+    private static String PATTERN_EPC_GLOBAL = "EPC-GlobalPolicyLocators";
+    private static String PATTERN_EPC_POLICY_IDS = "EPC-PolicyIds:";
+    private static String PATTERN_EPC_RULES = "EPC-Rules:";
+
     private static String PATTERN_COMBINING_ALG = "EPC-RuleCombiningAlgorithm";
-    private static String PATTERN_CONDITION     = "EPC-ConditionFormula:";
-    private static String PATTERN_OUTPUT        = "EPC-OutputAttributes:Permit:";
-    
-    private static int COLUMN_LENTH_CONTEXT     = 15;
-    private static int COLUMN_LENTH_POLICY      = 20;
+    private static String PATTERN_CONDITION = "EPC-ConditionFormula:";
+    private static String PATTERN_OUTPUT = "EPC-OutputAttributes:Permit:";
+
+    private static int COLUMN_LENTH_CONTEXT = 15;
+    private static int COLUMN_LENTH_POLICY = 20;
+
+    private LdapTree tree = null;
+
+    public LdapConfigurationHandler() {
+        tree = new LdapTree();
+    }
+
+
 
     private enum COLUMN_TYPE {
         CONTEXT, POLICY
@@ -47,10 +57,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
             getPolicyConfiguartion(fileName, lineNumberReader);
 
             /*
-             * getSubscriberConfiguration
-             * getSubscriberGroupConfiguration 
-             * getServiceConfiguration
-             * 
+             * getSubscriberConfiguration getSubscriberGroupConfiguration getServiceConfiguration
              */
 
         } catch (IOException e) {
@@ -72,18 +79,34 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
 
     private void getPolicyConfiguartion(String fileName, LineNumberReader lineNumberReader) throws IOException {
-        PolicyLocator policy;
+        PolicyLocator policy = null;
 
         Matcher matcher_context = null;
         Pattern pattern_context = Pattern.compile(PATTERN_DN_CONTEXT);
 
         String line = "";
+        Node node = null;
+        node = new Node();
 
         while (lineNumberReader.ready()) {
             line = lineNumberReader.readLine();
 
 
             if (checkLine(line)) {
+                line = cleanWhiteSpace(line);
+                // System.out.println(line);
+
+                if (line.startsWith("dn:")) {
+
+                    node.setNodeName(line);
+
+                } else {
+                    node.getAttributes().add(line);
+                }
+
+
+                tree.setParent(tree.getNodes());
+                tree.getNodes().add(node);
 
                 matcher_context = pattern_context.matcher(line);
 
@@ -101,12 +124,28 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
                 }
 
+            } else if (null == line || line.trim().equals("")) {
+                node = new Node();
+                continue;
             }
 
         }
 
+
         showPolicyConfiguration(policies);
 
+    }
+
+
+
+    private String cleanWhiteSpace(String line) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < line.length(); ++i) {
+            if (line.charAt(i) != ' ') {
+                buffer.append(line.charAt(i));
+            }
+        }
+        return buffer.toString();
     }
 
 
@@ -232,7 +271,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
         }
 
-        
+
     }
 
 
@@ -338,7 +377,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                     policyBuffer.append(tempBuffer);
                 }
 
-            // Rule
+                // Rule
                 for (int j = 0; j < policy.getRules().size(); ++j) {
                     tempBuffer = new StringBuffer();
                     Rule rule = policy.getRules().get(j);
@@ -396,15 +435,15 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
 
     private String getColumn(String resource, COLUMN_TYPE type) {
-        
+
         int length = 0;
-        
+
         if (COLUMN_TYPE.CONTEXT == type) {
             length = COLUMN_LENTH_CONTEXT;
         } else if (COLUMN_TYPE.POLICY == type) {
             length = COLUMN_LENTH_POLICY;
         }
-        
+
         StringBuffer buffer = new StringBuffer();
         buffer.append(resource);
 

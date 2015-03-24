@@ -4,46 +4,37 @@
 
 package com.e.s.tool.config.pojo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Node {
+    public Node() {
+        attributes = new ArrayList<String>();
+    }
+
     /** Revision of the class */
     public static final String _REV_ID_ = "$Revision: $";
 
-    private int index = 0;
-
-    private boolean hasParent = true;
-
-    private String parentName = "";
-
-    private int level;
-
     private String nodeName;
 
-    private boolean isDirectory;
+    private Node parent;
 
-    private boolean isLeaf;
-
-    public boolean isLeaf() {
-        return isLeaf;
+    public Node getParent() {
+        return parent;
     }
 
-    public void setLeaf(boolean isLeaf) {
-        this.isLeaf = isLeaf;
+    public void setParent(Node parent) {
+        this.parent = parent;
     }
 
-    public String getParentName() {
-        return parentName;
+    private List<String> attributes;
+
+    public List<String> getAttributes() {
+        return attributes;
     }
 
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
+    public void setAttributes(List<String> attributes) {
+        this.attributes = attributes;
     }
 
     public String getNodeName() {
@@ -54,28 +45,5 @@ public class Node {
         this.nodeName = nodeName;
     }
 
-    public boolean isDirectory() {
-        return isDirectory;
-    }
-
-    public void setDirectory(boolean isDirectory) {
-        this.isDirectory = isDirectory;
-    }
-
-    public boolean isHasParent() {
-        return hasParent;
-    }
-
-    public void setHasParent(boolean hasParent) {
-        this.hasParent = hasParent;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
 
 }
