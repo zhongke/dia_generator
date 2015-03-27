@@ -43,31 +43,26 @@ public class Generator {
     }
 
     public static void main(String[] args) {
-/*
-        for (String file : files) {
-            System.out.println(file);
-
-            BufferMgr buffMgr = new BufferMgr();
-            buffMgr.readInputFromFile(file);
-
-            buffMgr.showDiagramFromBuffer();
-            buffMgr.showMessageFromBuffer();
-        }
-*/
+        /*
+         * for (String file : files) { System.out.println(file);
+         * 
+         * BufferMgr buffMgr = new BufferMgr(); buffMgr.readInputFromFile(file);
+         * 
+         * buffMgr.showDiagramFromBuffer(); buffMgr.showMessageFromBuffer(); }
+         */
 
         if (args.length > 0) {
 
             for (String file : args) {
-/*
                 BufferMgr buffMgr = new BufferMgr();
-                buffMgr.readInputFromFile(file);
+                buffMgr.readInputFromFile(file + ".ttcn");
 
                 buffMgr.showDiagramFromBuffer();
                 buffMgr.showMessageFromBuffer();
-*/
+
                 ConfigurationHandler configurationHandler = new LdapConfigurationHandler();
-                configurationHandler.getConfiguration(file);
-                
+                configurationHandler.getConfiguration(file + ".ldif");
+
             }
 
         } else {
