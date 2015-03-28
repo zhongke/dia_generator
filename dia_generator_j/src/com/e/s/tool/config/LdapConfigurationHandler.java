@@ -3,14 +3,16 @@ package com.e.s.tool.config;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.e.s.tool.config.pojo.ConfigurationData;
 import com.e.s.tool.config.pojo.LdapTree;
 import com.e.s.tool.config.pojo.Node;
 import com.e.s.tool.config.pojo.Policy;
 import com.e.s.tool.config.pojo.PolicyLocator;
 import com.e.s.tool.config.pojo.Rule;
+import com.e.s.tool.config.pojo.Subscriber;
+import com.e.s.tool.config.pojo.SubscriberGroup;
 
 public class LdapConfigurationHandler implements ConfigurationHandler {
 
@@ -45,9 +47,11 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
     private static int COLUMN_LENTH_POLICY  = 20;
 
     private LdapTree tree = null;
+    private ConfigurationData configurationData;
 
     public LdapConfigurationHandler() {
         tree = new LdapTree();
+        configurationData = new ConfigurationData();
     }
 
 
@@ -57,7 +61,8 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
     }
 
 
-    private static List<PolicyLocator> policyLocators = new ArrayList<PolicyLocator>();
+    static {
+    }
 
     @Override
     public void getConfiguration(String fileName) {
@@ -74,7 +79,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          */
         getPolicyConfiguartion();
 
-        showPolicyConfiguration(policyLocators);
+        showPolicyConfiguration(configurationData.getPolicyLocators());
 
         /*
          * getSubscriberConfiguration
@@ -163,7 +168,37 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
 
     private void getSuscriberGroupConfiguration() {
-        // TODO Auto-generated method stub
+        SubscriberGroup subscriberGroup = null;
+        String attributeName = "";
+
+        for (Node node : tree.getNodes()) {
+            if (node.getDn().startsWith(PATTERN_DN_SUB_GROUP)) {
+                subscriberGroup = new SubscriberGroup();
+
+                subscriberGroup.setSubscriberGroupId(node.getDn().split(",")[0].split("=")[1]);
+                for (String attribute : node.getAttributes()) {
+                    attributeName = attribute.split(":")[0];
+                    if (attributeName.equals(Subscriber.PATTERN_EPC_TRAFFIC_IDS)) {
+                        subscriberGroup.setDescription(attribute.split(":")[1]);
+                    } else if (attributeName.equals(SubscriberGroup.PATTERN_EPC_SUBSCRIBED_SERVICES)) {
+                        subscriberGroup.getSubscribedServiceIds().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(SubscriberGroup.PATTERN_EPC_BLACKLIST_SERVICES)) {
+                        subscriberGroup.getBlacklistServiceIds().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(SubscriberGroup.PATTERN_EPC_NOTIFICATION_DATA)) {
+                        subscriberGroup.getNotificationData().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(SubscriberGroup.PATTERN_EPC_EVENT_TRIGGERS)) {
+                        subscriberGroup.getEventTriggers().add(new Integer(attribute.split(":")[1]));
+                    }
+                }
+
+                configurationData.getSubscriberGroups().add(subscriberGroup);
+            }
+
+        }
+
+        for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
+            System.out.println(group);
+        }
 
     }
 
@@ -174,9 +209,69 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
     }
 
 
-
+    /*
+     * TODO: How to set different attributes by reflection?
+     */
     private void getSubscriberConfiguration() {
-        // TODO Auto-generated method stub
+        Subscriber subscriber = null;
+        String attributeName = "";
+        String subscriberId = "";
+        Node node = null;
+
+
+        for (int i = 0; i < tree.getNodes().size(); ++i) {
+            node = tree.getNodes().get(i);
+            if (node.getDn().startsWith(PATTERN_DN_SUB)) {
+                subscriber = new Subscriber();
+
+                subscriberId = node.getDn().split(",")[0].split("=")[1];
+                subscriber.setSubscriberId(subscriberId);
+
+                for (String attribute : node.getAttributes()) {
+                    attributeName = attribute.split(":")[0];
+                    if (attributeName.equals(Subscriber.PATTERN_EPC_TRAFFIC_IDS)) {
+                        subscriber.getTrafficIds().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(Subscriber.PATTERN_EPC_SUBSCRIBED_SERVICES)) {
+                        subscriber.getSubscribedServiceIds().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(Subscriber.PATTERN_EPC_BLACKLIST_SERVICES)) {
+                        subscriber.getBlacklistServiceIds().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(Subscriber.PATTERN_EPC_OPERATOR_SPECIFIC_INFO)) {
+                        subscriber.getOperatorSpecificInfoList().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(Subscriber.PATTERN_EPC_NOTIFICATION_DATA)) {
+                        subscriber.getNotificationData().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(Subscriber.PATTERN_EPC_FAMILY_ID)) {
+                        subscriber.setFamilyId(attribute.split(":")[1]);
+                    } else if (attributeName.equals(Subscriber.PATTERN_EPC_GROUP_IDS)) {
+                        subscriber.getSubscriberGroupIds().add(attribute.split(":")[1]);
+                    } else if (attributeName.equals(Subscriber.PATTERN_EPC_ENABLE_MASC)) {
+                        subscriber.setEnableMasc(attribute.split(":")[1].equals("true") ? true : false);
+                    } else if (attributeName.equals(Subscriber.PATTERN_EPC_EVENT_TRIGGERS)) {
+                        subscriber.getEventTriggers().add(new Integer(attribute.split(":")[1]));
+                    }
+                }
+
+                for (int j = i; j < tree.getNodes().size(); ++j) {
+                    node = tree.getNodes().get(j);
+
+                    if (node.getDn().startsWith(PATTERN_DN_SUB_QUALIFY + subscriberId)) {
+                        for (String attribute : node.getAttributes()) {
+                            attributeName = attribute.split(":")[0];
+                            if (attributeName.equals(Subscriber.PATTERN_EPC_SUBSCRIBER_QUALIFY_DATA)) {
+                                subscriber.getSubscriberQualificationData().add(
+                                        attribute.substring(attribute.indexOf(':') + 1, attribute.length()));
+                            }
+                        }
+                    }
+                }
+                configurationData.getSubscribers().add(subscriber);
+            }
+
+
+        }
+
+        for (Subscriber sub : configurationData.getSubscribers()) {
+            System.out.println(sub);
+        }
 
     }
 
@@ -198,7 +293,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
                 getPolicyDn(node, policyLocator);
 
-                policyLocators.add(policyLocator);
+                configurationData.getPolicyLocators().add(policyLocator);
 
 
                 System.out.println();

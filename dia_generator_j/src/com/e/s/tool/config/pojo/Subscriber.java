@@ -5,43 +5,50 @@ import java.util.List;
 
 
 public class Subscriber {
+    public static String PATTERN_EPC_TRAFFIC_IDS               = "EPC-TrafficIds";
+    public static String PATTERN_EPC_SUBSCRIBED_SERVICES       = "EPC-SubscribedServices";
+    public static String PATTERN_EPC_BLACKLIST_SERVICES        = "EPC-BlacklistServices";
+    public static String PATTERN_EPC_OPERATOR_SPECIFIC_INFO    = "EPC-OperatorSpecificInfo";
+    public static String PATTERN_EPC_NOTIFICATION_DATA          = "EPC-NotificationData";
+    public static String PATTERN_EPC_FAMILY_ID                 = "EPC-FamilyId";
+    public static String PATTERN_EPC_GROUP_IDS                 = "EPC-GroupIds";
+    public static String PATTERN_EPC_ENABLE_MASC               = "EPC-EnableMasc";
+    public static String PATTERN_EPC_EVENT_TRIGGERS            = "EPC-EventTriggers";
+    public static String PATTERN_EPC_SUBSCRIBER_QUALIFY_DATA   = "EPC-SubscriberQualificationData";
+    
 /*
     EPC-SubscriberId    
-    EPC-TrafficIds
-    EPC-SubscribedServices
-    EPC-BlacklistServices
-    EPC-OperatorSpecificInfo
-    EPC-NotificationData
-    EPC-FamilyId
-    EPC-GroupIds
-    EPC-EnableMasc
-    EPC-EventTriggers
-    
     EPC-SubscriberQualificationData
 */
     private String subscriberId;
     private List<String> trafficIds;
-    private List<Service> subscribedServices;
-    private List<Service> blacklistServices;
+    private List<String> subscribedServiceIds;
+    private List<String> blacklistServiceIds;
     private List<String> operatorSpecificInfoList;
     private List<String> notificationData;
 
-    private Family family;
-    private List<SubscriberGroup> subscriberGroupList;
+    private String familyId;
+    private List<String> subscriberGroupIds;
 
     private boolean enableMasc;
-    private List<EVENT_TRIGGER> eventTriggers;
+    private List<Integer> eventTriggers;
+
+
+    private List<String> subscriberQualificationData;
 
 
 
     public Subscriber() {
-        this.subscribedServices = new ArrayList<Service>();
-        this.blacklistServices = new ArrayList<Service>();
+        this.trafficIds = new ArrayList<String>();
+        this.subscribedServiceIds = new ArrayList<String>();
+        this.blacklistServiceIds = new ArrayList<String>();
         this.operatorSpecificInfoList = new ArrayList<String>();
         this.notificationData = new ArrayList<String>();
-        this.subscriberGroupList = new ArrayList<SubscriberGroup>();
-        this.eventTriggers = new ArrayList<EVENT_TRIGGER>();
+        this.subscriberGroupIds = new ArrayList<String>();
+        this.eventTriggers = new ArrayList<Integer>();
+        this.subscriberQualificationData = new ArrayList<String>();
     }
+
 
     public String getSubscriberId() {
         return subscriberId;
@@ -59,20 +66,20 @@ public class Subscriber {
         this.trafficIds = trafficIds;
     }
 
-    public List<Service> getSubscribedServices() {
-        return subscribedServices;
+    public List<String> getSubscribedServiceIds() {
+        return subscribedServiceIds;
     }
 
-    public void setSubscribedServices(List<Service> subscribedServices) {
-        this.subscribedServices = subscribedServices;
+    public void setSubscribedServiceIds(List<String> subscribedServiceIds) {
+        this.subscribedServiceIds = subscribedServiceIds;
     }
 
-    public List<Service> getBlacklistServices() {
-        return blacklistServices;
+    public List<String> getBlacklistServiceIds() {
+        return blacklistServiceIds;
     }
 
-    public void setBlacklistServices(List<Service> blacklistServices) {
-        this.blacklistServices = blacklistServices;
+    public void setBlacklistServiceIds(List<String> blacklistServiceIds) {
+        this.blacklistServiceIds = blacklistServiceIds;
     }
 
     public List<String> getOperatorSpecificInfoList() {
@@ -91,21 +98,22 @@ public class Subscriber {
         this.notificationData = notificationData;
     }
 
-    public Family getFamily() {
-        return family;
+    public String getFamilyId() {
+        return familyId;
     }
 
-    public void setFamily(Family family) {
-        this.family = family;
+    public void setFamilyId(String familyId) {
+        this.familyId = familyId;
     }
 
-    public List<SubscriberGroup> getSubscriberGroupList() {
-        return subscriberGroupList;
+    public List<String> getSubscriberGroupIds() {
+        return subscriberGroupIds;
     }
 
-    public void setSubscriberGroupList(List<SubscriberGroup> subscriberGroupList) {
-        this.subscriberGroupList = subscriberGroupList;
+    public void setSubscriberGroupIds(List<String> subscriberGroupIds) {
+        this.subscriberGroupIds = subscriberGroupIds;
     }
+
 
 
     public boolean isEnableMasc() {
@@ -116,13 +124,92 @@ public class Subscriber {
         this.enableMasc = enableMasc;
     }
 
-    public List<EVENT_TRIGGER> getEventTriggers() {
+    public List<Integer> getEventTriggers() {
         return eventTriggers;
     }
 
-    public void setEventTriggers(List<EVENT_TRIGGER> eventTriggers) {
+    public void setEventTriggers(List<Integer> eventTriggers) {
         this.eventTriggers = eventTriggers;
     }
+
+
+
+    public List<String> getSubscriberQualificationData() {
+        return subscriberQualificationData;
+    }
+
+
+    public void setSubscriberQualificationData(List<String> subscriberQualificationData) {
+        this.subscriberQualificationData = subscriberQualificationData;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        
+        buffer.append("Subscriber [subscriberId=");
+        buffer.append(subscriberId);
+
+        for (String trafficId : trafficIds) {
+            buffer.append(", trafficId=");
+            buffer.append(trafficId);
+        }
+
+        for (String subscribedServiceId : subscribedServiceIds) {
+
+            buffer.append(", subscribedServiceId=");
+            buffer.append(subscribedServiceId);
+        }
+
+        for (String blacklistServiceId : blacklistServiceIds) {
+
+            buffer.append(", blacklistServiceId=");
+            buffer.append(blacklistServiceId);
+        }
+
+        for (String operatorSpecificInfo : operatorSpecificInfoList) {
+
+            buffer.append(", operatorSpecificInfo=");
+            buffer.append(operatorSpecificInfo);
+        }
+
+        for (String notification : notificationData) {
+
+            buffer.append(", notificationData=");
+            buffer.append(notification);
+        }
+
+        buffer.append(", familyId=");
+        buffer.append(familyId);
+
+        for (String subscriberGroupId : subscriberGroupIds) {
+
+            buffer.append(", subscriberGroupId=");
+            buffer.append(subscriberGroupId);
+        }
+
+        buffer.append(", enableMasc="); 
+        buffer.append(enableMasc); 
+
+        for (int eventTrigger : eventTriggers) {
+
+            buffer.append(", eventTrigger=");
+            buffer.append(eventTrigger);
+        }
+
+        for (String subscriberQualification : subscriberQualificationData) {
+
+            buffer.append(", subscriberQualification=");
+            buffer.append(subscriberQualification);
+        }
+
+
+        buffer.append("]");
+        
+        return buffer.toString();
+    }
+
 
 
 }
