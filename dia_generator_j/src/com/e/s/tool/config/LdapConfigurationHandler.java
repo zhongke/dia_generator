@@ -13,21 +13,36 @@ import com.e.s.tool.config.pojo.PolicyLocator;
 import com.e.s.tool.config.pojo.Rule;
 
 public class LdapConfigurationHandler implements ConfigurationHandler {
-    private static String PATTERN_DN_CONTEXT    = "dn:EPC-ContextName";
-    private static String PATTERN_DN_POLICY     = "dn:EPC-PolicyId=";
-    private static String PATTERN_DN_RULE       = "dn:EPC-RuleId=";
 
-    private static String PATTERN_EPC_GLOBAL    = "EPC-GlobalPolicyLocators";
-    private static String PATTERN_EPC_POLICY_IDS= "EPC-PolicyIds";
-    private static String PATTERN_EPC_RULES     = "EPC-Rules";
+    private static String PATTERN_DN_CONTEXT        = "dn:EPC-ContextName";
+    private static String PATTERN_DN_POLICY         = "dn:EPC-PolicyId=";
+    private static String PATTERN_DN_RULE           = "dn:EPC-RuleId=";
 
-    private static String PATTERN_COMBINING_ALG = "EPC-RuleCombiningAlgorithm";
-    private static String PATTERN_CONDITION     = "EPC-ConditionFormula";
-    private static String PATTERN_OUTPUT        = "EPC-OutputAttributes";
-    private static String PATTERN_PERMIT        = ":Permit:";
+    private static String PATTERN_DN_SUB            = "dn:EPC-SubscriberId=";
+    private static String PATTERN_DN_SUB_QUALIFY    = "dn:EPC-Name=EPC-SubscriberQualification,EPC-SubscriberId=";
+    private static String PATTERN_DN_SUB_GROUP      = "dn:EPC-SubscriberGroupId=";
+    private static String PATTERN_DN_FAMILY         = "dn:EPC-FamilyId=";
+    private static String PATTERN_DN_SERVICE        = "dn:EPC-ServiceId=";
+    private static String PATTERN_DN_PCC_RULE       = "dn:EPC-PccRuleName=EPC-PccRule,EPC-ServiceId=";
+    private static String PATTERN_DN_SERVICE_QUALIFY= "dn:EPC-ServiceQualificationName=EPC-ServiceQualification,EPC-ServiceId=";
+
+    private static String PATTERN_EPC_GLOBAL        = "EPC-GlobalPolicyLocators";
+    private static String PATTERN_EPC_POLICY_IDS    = "EPC-PolicyIds";
+    private static String PATTERN_EPC_RULES         = "EPC-Rules";
+
+    private static String PATTERN_COMBINING_ALG     = "EPC-RuleCombiningAlgorithm";
+    private static String PATTERN_CONDITION         = "EPC-ConditionFormula";
+    private static String PATTERN_OUTPUT            = "EPC-OutputAttributes";
+    private static String PATTERN_PERMIT            = ":Permit:";
+
+
+    private static String PATTERN_DN_TRIGGER        = "dn:EPC-BearerEventsNotificationName=EPC-BearerEventConfig,EPC-AccessPolicyChargingControlName=EPC-AccessPolicyChargingControl,EPC-ConfigContainerName=EPC-EpcConfigCont,applicationName=EPC-EpcNode,nodeName=jambala";
+    
+    private static String PATTERN_TRIGGER           = "EPC-EventTriggers";
+
 
     private static int COLUMN_LENTH_CONTEXT = 15;
-    private static int COLUMN_LENTH_POLICY = 20;
+    private static int COLUMN_LENTH_POLICY  = 20;
 
     private LdapTree tree = null;
 
@@ -47,6 +62,48 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
     @Override
     public void getConfiguration(String fileName) {
         constructLdapTree(fileName);
+
+        /*
+         * getPolicyConfiguration
+         * - Context
+         * - Resource
+         * - Subject
+         * - Policy
+         * - Rule
+         * 
+         */
+        getPolicyConfiguartion();
+
+        showPolicyConfiguration(policyLocators);
+
+        /*
+         * getSubscriberConfiguration
+         * - Subscriber
+         * - SubscriberQualification
+         * 
+         */
+        getSubscriberConfiguration();
+
+        /*
+         * getSubscriberGroupConfiguration 
+         * - SubscriberGroup
+         * 
+         */
+        getSuscriberGroupConfiguration();
+
+        /*
+         * getServiceConfiguration
+         * - Service
+         * - PccRule
+         * - ServiceQualification
+         * 
+         */
+        getServiceConfiguration();
+
+        /*
+         * getEventTrigger
+         */
+
 
 
     }
@@ -69,7 +126,6 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
             while (lineNumberReader.ready()) {
                 line = lineNumberReader.readLine();
 
-
                 if (checkLine(line)) {
                     line = cleanWhiteSpace(line);
 
@@ -83,22 +139,12 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                         node.getAttributes().add(line);
                     }
 
-
-
                 } else if (null == line || line.trim().equals("")) {
                     node = new Node();
                     continue;
                 }
 
             }
-
-
-            getPolicyConfiguartion();
-
-            showPolicyConfiguration(policyLocators);
-            /*
-             * getSubscriberConfiguration getSubscriberGroupConfiguration getServiceConfiguration
-             */
 
         } catch (IOException e) {
             System.out.println("File does not exist");
@@ -115,6 +161,29 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
     }
 
 
+
+    private void getSuscriberGroupConfiguration() {
+        // TODO Auto-generated method stub
+
+    }
+
+
+    private void getServiceConfiguration() {
+        // TODO Auto-generated method stub
+
+    }
+
+
+
+    private void getSubscriberConfiguration() {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * TODO: How to handle the dn in the several lines 
+     * TODO: How to handle the conditionFormula in the several lines
+     */
 
     private void getPolicyConfiguartion() {
         PolicyLocator policyLocator = null;
@@ -205,11 +274,8 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                     } else if (attributeName.equals(PATTERN_COMBINING_ALG)) {
                         policy.setCombineAlgorithm(attribute.split(":")[1].trim());
                     }
-
                 }
-
             }
-
         }
     }
 
@@ -232,14 +298,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                                 attribute.substring(PATTERN_OUTPUT.length() + PATTERN_PERMIT.length(),
                                         attribute.length()));
                     }
-
                 }
-
-
             }
-
         }
-
     }
 
 
@@ -252,7 +313,6 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
             StringBuffer buffer = new StringBuffer();
             StringBuffer policyBuffer = new StringBuffer();
             StringBuffer ruleBuffer = new StringBuffer();
-
 
             buffer.append("| ");
 
@@ -307,11 +367,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                     }
                     showOutput(rule);
                 }
-
             }
             showLine();
         }
-
     }
 
 
@@ -356,7 +414,6 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
         return buffer.toString();
     }
-
 
 
     private void showHeader() {
