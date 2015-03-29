@@ -43,8 +43,10 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - Rule
          * 
          */
-
+        System.out.println("");
         new PolicyHandler(tree, configurationData).getConfiguration();
+
+        System.out.println();
 
         /*
          * getSubscriberConfiguration
@@ -52,15 +54,17 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - SubscriberQualification
          * 
          */
+        System.out.println("");
         new SubscriberHanlder(tree, configurationData).getConfiguration();
-
+        System.out.println();
         /*
          * getSubscriberGroupConfiguration 
          * - SubscriberGroup
          * 
          */
+        System.out.println("");
         new SubscriberGroupHanlder(tree, configurationData).getConfiguration();
-
+        System.out.println();
         /*
          * getServiceConfiguration
          * - Service
@@ -68,8 +72,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - ServiceQualification
          * 
          */
+        System.out.println("");
         new ServiceHandler(tree, configurationData).getConfiguration();
-
+        System.out.println();
         /*
          * getEventTrigger
          */

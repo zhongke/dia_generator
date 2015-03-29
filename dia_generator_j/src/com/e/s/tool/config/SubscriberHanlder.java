@@ -1,5 +1,8 @@
 package com.e.s.tool.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.e.s.tool.config.pojo.ConfigurationData;
 import com.e.s.tool.config.pojo.LdapTree;
 import com.e.s.tool.config.pojo.Node;
@@ -93,6 +96,9 @@ public class SubscriberHanlder implements ConfigurationHandler {
 
     }
 
+    /*
+     * TODO How to show all the elements following the order of headers?
+     */
     private void showConfiguration() {
 
         showHeader();
@@ -172,56 +178,67 @@ public class SubscriberHanlder implements ConfigurationHandler {
 
         buffer.append("| ");
 
-        /*
-         * Think about more than one subscriber with different attributes
-         */
+        List<String> headers = new ArrayList<String>();
+
+
         for (Subscriber sub : configurationData.getSubscribers()) {
             if (null != sub.getSubscriberId()) {
-                buffer.append(getColumn("SUBSCRIBER_ID", COLUMN_TYPE.CONTEXT));
+                headers.add(getColumn("SUBSCRIBER_ID", COLUMN_TYPE.CONTEXT));
             }
 
             if (sub.getSubscribedServiceIds().size() > 0) {
-                buffer.append(getColumn("SUBSCRIBED_SERVICE", COLUMN_TYPE.CONTEXT));
+                headers.add(getColumn("SUBSCRIBED_SERVICE", COLUMN_TYPE.CONTEXT));
             }
 
 
             if (sub.getSubscriberGroupIds().size() > 0) {
-                buffer.append(getColumn("GROUP_ID", COLUMN_TYPE.CONTEXT));
+                headers.add(getColumn("GROUP_ID", COLUMN_TYPE.CONTEXT));
             }
 
             if (sub.getTrafficIds().size() > 0) {
-                buffer.append(getColumn("TRAFFIC_ID", COLUMN_TYPE.CONTEXT));
+                headers.add(getColumn("TRAFFIC_ID", COLUMN_TYPE.CONTEXT));
             }
 
 
             if (sub.getBlacklistServiceIds().size() > 0) {
-                buffer.append(getColumn("BLACKLIST", COLUMN_TYPE.CONTEXT));
+                headers.add(getColumn("BLACKLIST", COLUMN_TYPE.CONTEXT));
             }
 
             if (sub.getEventTriggers().size() > 0) {
-                buffer.append(getColumn("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
+                headers.add(getColumn("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
             }
 
 
             if (null != sub.getFamilyId()) {
-                buffer.append(getColumn("FAMILY_ID", COLUMN_TYPE.CONTEXT));
+                headers.add(getColumn("FAMILY_ID", COLUMN_TYPE.CONTEXT));
             }
 
-            buffer.append(getColumn("ENABLE_MASC", COLUMN_TYPE.CONTEXT));
+            headers.add(getColumn("ENABLE_MASC", COLUMN_TYPE.CONTEXT));
 
             if (sub.getSubscriberQualificationData().size() > 0) {
-                buffer.append(getColumn("QUALIFICATION", COLUMN_TYPE.POLICY));
+                headers.add(getColumn("QUALIFICATION", COLUMN_TYPE.POLICY));
             }
 
             if (sub.getNotificationData().size() > 0) {
-                buffer.append(getColumn("NOTIFICATION", COLUMN_TYPE.POLICY));
+                headers.add(getColumn("NOTIFICATION", COLUMN_TYPE.POLICY));
             }
             if (sub.getOperatorSpecificInfoList().size() > 0) {
-                buffer.append(getColumn("OPERATOR_SPECIFIC", COLUMN_TYPE.POLICY));
+                headers.add(getColumn("OPERATOR_SPECIFIC", COLUMN_TYPE.POLICY));
             }
-            System.out.println(buffer.toString());
 
         }
+        // Get a ordered list without duplicate element
+
+        List<String> tmp = new ArrayList<String>();
+
+        for (String header : headers) {
+            if (!tmp.contains(header)) {
+                tmp.add(header);
+                buffer.append(header);
+            }
+        }
+
+        System.out.println(buffer.toString());
         showLine();
 
     }
