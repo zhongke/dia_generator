@@ -8,4 +8,10 @@ public class MysqlConfigurationHandler implements ConfigurationHandler {
 
     }
 
+    @Override
+    public void getConfiguration() {
+        // TODO Auto-generated method stub
+
+    }
+
 }

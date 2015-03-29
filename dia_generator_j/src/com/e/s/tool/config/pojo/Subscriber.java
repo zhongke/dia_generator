@@ -9,7 +9,7 @@ public class Subscriber {
     public static String PATTERN_EPC_SUBSCRIBED_SERVICES       = "EPC-SubscribedServices";
     public static String PATTERN_EPC_BLACKLIST_SERVICES        = "EPC-BlacklistServices";
     public static String PATTERN_EPC_OPERATOR_SPECIFIC_INFO    = "EPC-OperatorSpecificInfo";
-    public static String PATTERN_EPC_NOTIFICATION_DATA          = "EPC-NotificationData";
+    public static String PATTERN_EPC_NOTIFICATION_DATA         = "EPC-NotificationData";
     public static String PATTERN_EPC_FAMILY_ID                 = "EPC-FamilyId";
     public static String PATTERN_EPC_GROUP_IDS                 = "EPC-GroupIds";
     public static String PATTERN_EPC_ENABLE_MASC               = "EPC-EnableMasc";

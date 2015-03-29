@@ -12,4 +12,6 @@ public interface ConfigurationHandler {
 
     public void getConfiguration(String fileName);
 
+    public void getConfiguration();
+
 }
