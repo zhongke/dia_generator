@@ -21,6 +21,8 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
         CONTEXT, POLICY
     }
 
+    private static String HEADER = "*       ";
+
     private LdapTree tree;
     private ConfigurationData configurationData;
 
@@ -111,7 +113,7 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
         }
 
 
-        System.out.println(buffer.toString());
+        System.out.println(HEADER + buffer.toString());
 
     }
 
@@ -168,7 +170,7 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
             }
         }
 
-        System.out.println(buffer.toString());
+        System.out.println(HEADER + buffer.toString());
         showLine();
 
     }
@@ -203,7 +205,7 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
         }
 
-        System.out.println(bf.toString());
+        System.out.println(HEADER + bf.toString());
     }
 
 

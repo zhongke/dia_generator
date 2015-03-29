@@ -21,7 +21,7 @@ public class PolicyHandler implements ConfigurationHandler {
     private static String PATTERN_OUTPUT            = "EPC-OutputAttributes";
     private static String PATTERN_PERMIT            = ":Permit:";
  
-    
+    private static String HEADER = "*       ";
 
     private enum COLUMN_TYPE {
         CONTEXT, POLICY
@@ -213,12 +213,12 @@ public class PolicyHandler implements ConfigurationHandler {
                     if (i == 0 && j == 0) {
                         buffer.append(tempBuffer);
                         buffer.append(getColumn(rule.getCondition(), COLUMN_TYPE.POLICY));
-                        System.out.println(buffer.toString());
+                        System.out.println(HEADER + buffer.toString());
 
                     } else if (i > 0 || j == 0) {
                         policyBuffer.append(tempBuffer);
                         policyBuffer.append(getColumn(rule.getCondition(), COLUMN_TYPE.POLICY));
-                        System.out.println(policyBuffer.toString());
+                        System.out.println(HEADER + policyBuffer.toString());
 
                     } else {
                         int length = 0;
@@ -229,7 +229,7 @@ public class PolicyHandler implements ConfigurationHandler {
                         }
                         ruleBuffer.append(tempBuffer);
                         ruleBuffer.append(getColumn(rule.getCondition(), COLUMN_TYPE.POLICY));
-                        System.out.println(ruleBuffer.toString());
+                        System.out.println(HEADER + ruleBuffer.toString());
 
                     }
                     showOutput(rule);
@@ -253,11 +253,35 @@ public class PolicyHandler implements ConfigurationHandler {
 
                 }
                 buffer.append(getColumn(rule.getOutputs().get(i), COLUMN_TYPE.POLICY));
-                System.out.println(buffer.toString());
+                System.out.println(HEADER + buffer.toString());
             }
         }
     }
 
+
+
+
+    private void showHeader() {
+        showLine();
+
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("| ");
+
+        buffer.append(getColumn("CONTEXT", COLUMN_TYPE.CONTEXT));
+        buffer.append(getColumn("RESOURCE", COLUMN_TYPE.CONTEXT));
+        buffer.append(getColumn("SUBJECT", COLUMN_TYPE.CONTEXT));
+        buffer.append(getColumn("POLICY", COLUMN_TYPE.POLICY));
+        // buffer.append(getColumn("CombiningAlgrithm", COLUMN_TYPE.POLICY));
+        buffer.append(getColumn("RULE", COLUMN_TYPE.POLICY));
+        buffer.append(getColumn("CONDITION", COLUMN_TYPE.POLICY));
+        buffer.append(getColumn("OUTPUT", COLUMN_TYPE.POLICY));
+
+        System.out.println(HEADER + buffer.toString());
+
+        showLine();
+
+    }
 
 
     private String getColumn(String resource, COLUMN_TYPE type) {
@@ -283,30 +307,6 @@ public class PolicyHandler implements ConfigurationHandler {
     }
 
 
-    private void showHeader() {
-        showLine();
-
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("| ");
-
-        buffer.append(getColumn("CONTEXT", COLUMN_TYPE.CONTEXT));
-        buffer.append(getColumn("RESOURCE", COLUMN_TYPE.CONTEXT));
-        buffer.append(getColumn("SUBJECT", COLUMN_TYPE.CONTEXT));
-        buffer.append(getColumn("POLICY", COLUMN_TYPE.POLICY));
-        // buffer.append(getColumn("CombiningAlgrithm", COLUMN_TYPE.POLICY));
-        buffer.append(getColumn("RULE", COLUMN_TYPE.POLICY));
-        buffer.append(getColumn("CONDITION", COLUMN_TYPE.POLICY));
-        buffer.append(getColumn("OUTPUT", COLUMN_TYPE.POLICY));
-
-        System.out.println(buffer.toString());
-
-        showLine();
-
-    }
-
-
-
     private void showLine() {
         StringBuffer bf = new StringBuffer();
         for (int i = 0; i < COLUMN_LENTH_CONTEXT * 3 + COLUMN_LENTH_POLICY * 4 + 15; ++i) {
@@ -314,7 +314,7 @@ public class PolicyHandler implements ConfigurationHandler {
 
         }
 
-        System.out.println(bf.toString());
+        System.out.println(HEADER + bf.toString());
     }
 
 

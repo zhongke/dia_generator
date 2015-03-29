@@ -17,7 +17,7 @@ public class SubscriberHanlder implements ConfigurationHandler {
     private static int COLUMN_LENTH_CONTEXT = 15;
     private static int COLUMN_LENTH_POLICY  = 20;
 
-
+    private static String HEADER = "*       ";
     private enum COLUMN_TYPE {
         CONTEXT, POLICY
     }
@@ -166,7 +166,7 @@ public class SubscriberHanlder implements ConfigurationHandler {
 
         }
 
-        System.out.println(buffer.toString());
+        System.out.println(HEADER + buffer.toString());
     }
 
 
@@ -238,7 +238,7 @@ public class SubscriberHanlder implements ConfigurationHandler {
             }
         }
 
-        System.out.println(buffer.toString());
+        System.out.println(HEADER + buffer.toString());
         showLine();
 
     }
@@ -273,7 +273,7 @@ public class SubscriberHanlder implements ConfigurationHandler {
 
         }
 
-        System.out.println(bf.toString());
+        System.out.println(HEADER + bf.toString());
     }
 
 

@@ -16,7 +16,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
     
     private static String PATTERN_TRIGGER           = "EPC-EventTriggers";
 
-
+    private static String HEADER = "*       + ";
     private LdapTree tree;
     private ConfigurationData configurationData;
 
@@ -43,7 +43,10 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - Rule
          * 
          */
-        System.out.println("");
+        System.out.print(HEADER);
+        System.out.print("POLICY");
+        System.out.println(" +");
+
         new PolicyHandler(tree, configurationData).getConfiguration();
 
         System.out.println();
@@ -54,7 +57,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - SubscriberQualification
          * 
          */
-        System.out.println("");
+        System.out.print(HEADER);
+        System.out.print("SUBSCRIBER");
+        System.out.println(" +");
         new SubscriberHanlder(tree, configurationData).getConfiguration();
         System.out.println();
         /*
@@ -62,7 +67,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - SubscriberGroup
          * 
          */
-        System.out.println("");
+        System.out.print(HEADER);
+        System.out.print("GROUP");
+        System.out.println(" +");
         new SubscriberGroupHanlder(tree, configurationData).getConfiguration();
         System.out.println();
         /*
@@ -72,7 +79,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - ServiceQualification
          * 
          */
-        System.out.println("");
+        System.out.print(HEADER);
+        System.out.print("SERVICE");
+        System.out.println(" +");
         new ServiceHandler(tree, configurationData).getConfiguration();
         System.out.println();
         /*
