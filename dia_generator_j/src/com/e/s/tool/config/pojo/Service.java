@@ -12,13 +12,16 @@ public class Service {
 
     public static String PATTERN_EPC_SERVICE_DESCRIPTION        = "EPC-ServiceDescription";
     public static String PATTERN_EPC_MASC_SERVICE_ID            = "EPC-MascServiceId";
+
     public static String PATTERN_EPC_PCC_RULE_ID                = "EPC-PccRuleId";
     public static String PATTERN_EPC_PCC_RULE_ID_V6             = "EPC-PccRuleIdv6";
     public static String PATTERN_EPC_RULE_TYPE                  = "EPC-RuleType";
     public static String PATTERN_EPC_FLOW_DESCRIPTIONS          = "EPC-FlowDescriptions";
     public static String PATTERN_EPC_PRECEDENCE                 = "EPC-Precedence";
+
     public static String PATTERN_EPC_SERVICE_QUALIFICATION_DATA = "EPC-ServiceQualificationData";
-    
+
+    public static String PATTERN_EPC_MASC_PACKAGE_NAMES         = "EPC-MascPackageNames";
     
     
     private String serviceId;
