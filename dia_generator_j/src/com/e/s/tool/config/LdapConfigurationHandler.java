@@ -249,7 +249,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                             } else if (attributeName.equals(Service.PATTERN_EPC_PCC_RULE_ID_V6)) {
                                 service.setPccRuleIdv6(attribute.split(":")[1]);
                             } else if (attributeName.equals(Service.PATTERN_EPC_RULE_TYPE)) {
-                                // service.setPccRuleType(attribute.split(":")[1]);
+                                service.setPccRuleType(new Integer(attribute.split(":")[1]).intValue());
                             } else if (attributeName.equals(Service.PATTERN_EPC_FLOW_DESCRIPTIONS)) {
                                 service.getFlowDescriptions().add(
                                         attribute.substring(attribute.indexOf(':') + 1, attribute.length()));

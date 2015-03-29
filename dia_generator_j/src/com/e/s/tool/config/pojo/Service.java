@@ -28,10 +28,9 @@ public class Service {
     private String description;
     private String mascServiceId;
 
-    private String pccRuleName;
     private String pccRuleId;
     private String pccRuleIdv6;
-    private RULE_TYPE pccRuleType;
+    private int pccRuleType;
     private List<String> flowDescriptions;
     private int precedence;
     
@@ -68,13 +67,6 @@ public class Service {
         this.mascServiceId = mascServiceId;
     }
 
-    public String getPccRuleName() {
-        return pccRuleName;
-    }
-
-    public void setPccRuleName(String pccRuleName) {
-        this.pccRuleName = pccRuleName;
-    }
 
     public String getPccRuleId() {
         return pccRuleId;
@@ -92,11 +84,11 @@ public class Service {
         this.pccRuleIdv6 = pccRuleIdv6;
     }
 
-    public RULE_TYPE getPccRuleType() {
+    public int getPccRuleType() {
         return pccRuleType;
     }
 
-    public void setPccRuleType(RULE_TYPE pccRuleType) {
+    public void setPccRuleType(int pccRuleType) {
         this.pccRuleType = pccRuleType;
     }
 
@@ -135,8 +127,6 @@ public class Service {
         buffer.append(description);
         buffer.append(", mascServiceId=");
         buffer.append(mascServiceId);
-        buffer.append(", pccRuleName=");
-        buffer.append(pccRuleName);
         buffer.append(", pccRuleId=");
         buffer.append(pccRuleId);
         buffer.append(", pccRuleIdv6=");
