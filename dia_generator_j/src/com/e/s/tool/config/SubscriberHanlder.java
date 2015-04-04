@@ -147,7 +147,9 @@ public class SubscriberHanlder implements ConfigurationHandler {
             }
 
             // enable masc
-            buffer.append(getColumn(new Boolean(sub.isEnableMasc()).toString(), COLUMN_TYPE.CONTEXT));
+            if (null != sub.isEnableMasc()) {
+                buffer.append(getColumn(new Boolean(sub.isEnableMasc()).toString(), COLUMN_TYPE.CONTEXT));
+            }
 
             // qualification data
             for (String qualification : sub.getSubscriberQualificationData()) {
@@ -213,7 +215,9 @@ public class SubscriberHanlder implements ConfigurationHandler {
                 headers.add(getColumn("FAMILY_ID", COLUMN_TYPE.CONTEXT));
             }
 
-            headers.add(getColumn("ENABLE_MASC", COLUMN_TYPE.CONTEXT));
+            if (null != sub.isEnableMasc()) {
+                headers.add(getColumn("ENABLE_MASC", COLUMN_TYPE.CONTEXT));
+            }
 
             if (sub.getSubscriberQualificationData().size() > 0) {
                 headers.add(getColumn("QUALIFICATION", COLUMN_TYPE.POLICY));

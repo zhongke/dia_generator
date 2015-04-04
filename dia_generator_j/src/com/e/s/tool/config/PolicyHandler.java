@@ -61,8 +61,6 @@ public class PolicyHandler implements ConfigurationHandler {
                 configurationData.getPolicyLocators().add(policyLocator);
 
 
-                System.out.println();
-
             }
 
         }
@@ -213,12 +211,11 @@ public class PolicyHandler implements ConfigurationHandler {
                     if (i == 0 && j == 0) {
                         buffer.append(tempBuffer);
                         buffer.append(getColumn(rule.getCondition(), COLUMN_TYPE.POLICY));
-                        System.out.println(HEADER + buffer.toString());
 
                     } else if (i > 0 || j == 0) {
                         policyBuffer.append(tempBuffer);
                         policyBuffer.append(getColumn(rule.getCondition(), COLUMN_TYPE.POLICY));
-                        System.out.println(HEADER + policyBuffer.toString());
+                        buffer = policyBuffer;
 
                     } else {
                         int length = 0;
@@ -229,9 +226,11 @@ public class PolicyHandler implements ConfigurationHandler {
                         }
                         ruleBuffer.append(tempBuffer);
                         ruleBuffer.append(getColumn(rule.getCondition(), COLUMN_TYPE.POLICY));
-                        System.out.println(HEADER + ruleBuffer.toString());
+                        buffer = ruleBuffer;
 
                     }
+
+                    System.out.println(HEADER + buffer.toString());
                     showOutput(rule);
                 }
             }

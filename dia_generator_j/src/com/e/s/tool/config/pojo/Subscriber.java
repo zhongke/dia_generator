@@ -30,7 +30,7 @@ public class Subscriber {
     private String familyId;
     private List<String> subscriberGroupIds;
 
-    private boolean enableMasc;
+    private Boolean enableMasc;
     private List<Integer> eventTriggers;
 
 
@@ -116,11 +116,11 @@ public class Subscriber {
 
 
 
-    public boolean isEnableMasc() {
+    public Boolean isEnableMasc() {
         return enableMasc;
     }
 
-    public void setEnableMasc(boolean enableMasc) {
+    public void setEnableMasc(Boolean enableMasc) {
         this.enableMasc = enableMasc;
     }
 
