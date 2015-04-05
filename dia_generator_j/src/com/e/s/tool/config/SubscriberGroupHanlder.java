@@ -77,9 +77,10 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
         StringBuffer serviceBuffer = new StringBuffer();
         String column = null;
 
-        List<StringBuffer> lineBufferList = new ArrayList<StringBuffer>();
+        List<StringBuffer> lineBufferList = null;
 
         for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
+            lineBufferList = new ArrayList<StringBuffer>();
             buffer = new StringBuffer();
             tmpBuffer = new StringBuffer();
             buffer.append("| ");
@@ -112,26 +113,25 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
             }
 
             // black list
-            int size = lineBufferList.size();
+            int lineBufferSize = lineBufferList.size();
             for (int i = 0; i < group.getBlacklistServiceIds().size(); ++i) {
                 column = getColumn(group.getBlacklistServiceIds().get(i), COLUMN_TYPE.CONTEXT);
                 if (i == 0) {
                     tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
                 buffer.append(column);
                 } else {
-                    if (0 == size) {
+                    if (0 == lineBufferSize) {
                         StringBuffer blackBuffer = new StringBuffer();
 
                         // The tmpBuffer did not add more column follow the later column
                         blackBuffer.append(tmpBuffer);
                         lineBufferList.add(blackBuffer.append(column));
-                        break;
 
                     } else {
-                        for (int j = 0; j < size; ++j) {
+                        for (int j = 0; j < lineBufferSize; ++j) {
                             if (i == j + 1) {
                                 lineBufferList.get(j).append(column);
-                            } else if (i > size) {
+                            } else if (i > lineBufferSize) {
                                 StringBuffer blackBuffer = new StringBuffer();
 
                                 // The tmpBuffer did not add more column follow the later column
@@ -145,93 +145,99 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
                 }
                 
             }
-            size = lineBufferList.size();
+            lineBufferSize = lineBufferList.size();
             // event trigger
-            for (int i = 0; i < group.getEventTriggers().size(); ++i) {
-                column = getColumn(group.getEventTriggers().get(i).toString(), COLUMN_TYPE.CONTEXT);
-                if (i == 0) {
-                    buffer.append(column);
-                tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
-                } else {
-                    for (int j = 0; j < size; ++j) {
-                        if (i == j + 1) {
-                            lineBufferList.get(j).append(column);
-                        } else if (i > size) {
+            int currentSize = group.getEventTriggers().size();
+            if (currentSize > 0) {
+                for (int i = 0; i < currentSize; ++i) {
+                    column = getColumn(group.getEventTriggers().get(i).toString(), COLUMN_TYPE.CONTEXT);
+                    if (i == 0) {
+                        buffer.append(column);
+                        tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                    } else {
+                        if (0 == lineBufferSize) {
                             StringBuffer blackBuffer = new StringBuffer();
+
+                            // The tmpBuffer did not add more column follow the later column
                             blackBuffer.append(tmpBuffer);
                             lineBufferList.add(blackBuffer.append(column));
-                            break;
+                        } else {
+                                
+                            for (int j = 0; j < lineBufferSize; ++j) {
+                                if (i == j + 1) {
+                                    lineBufferList.get(j).append(column);
+                                } else if (i > lineBufferSize) {
+                                    StringBuffer blackBuffer = new StringBuffer();
+                                    blackBuffer.append(tmpBuffer);
+                                    lineBufferList.add(blackBuffer.append(column));
+                                    break;
+                                }
+                            }
                         }
-
                     }
+
                 }
 
+                // ToDo: Please think about if the previous column is more items than current column
+                if (lineBufferSize >= currentSize) {
+                    for (int k = (lineBufferSize - currentSize); k > -1; --k) {
+                        lineBufferList.get(k).append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                    }
+                }
             }
-            size = lineBufferList.size();
-            // Notification
-            for (int i = 0; i < group.getNotificationData().size(); ++i) {
-                column = getColumn(group.getNotificationData().get(i).toString(), COLUMN_TYPE.CONTEXT);
-                if (i == 0) {
-                    buffer.append(column);
-                tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
-                } else {
-                    for (int j = 0; j < size; ++j) {
-                        if (i == j + 1) {
-                            lineBufferList.get(j).append(column);
-                        } else if (i > size) {
+
+
+
+
+            lineBufferSize = lineBufferList.size();
+            currentSize = group.getNotificationData().size();
+
+            if (currentSize > 0) {
+                // Notification
+                for (int i = 0; i < currentSize; ++i) {
+                    column = getColumn(group.getNotificationData().get(i).toString(), COLUMN_TYPE.CONTEXT);
+                    if (i == 0) {
+                        buffer.append(column);
+                        tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                    } else {
+
+                        if (0 == lineBufferSize) {
                             StringBuffer blackBuffer = new StringBuffer();
-                            blackBuffer.append(tmpBuffer);
-                            lineBufferList.add(blackBuffer.append(column));
-                            break;
-                        }
+                            // The tmpBuffer did not add more column follow the later column
+                                    blackBuffer.append(tmpBuffer);
+                                    lineBufferList.add(blackBuffer.append(column));
+                        } else {
+                            for (int j = 0; j < lineBufferSize; ++j) {
 
+                                if (i == j + 1) {
+                                    lineBufferList.get(j).append(column);
+                                } else if (i > lineBufferSize) {
+                                    StringBuffer blackBuffer = new StringBuffer();
+                                    blackBuffer.append(tmpBuffer);
+                                    lineBufferList.add(blackBuffer.append(column));
+                                    break;
+                                }
+                            }
+                        }
                     }
+
                 }
 
+                // ToDo: Please think about if the previous column is more items than current column
+                if (lineBufferSize >= currentSize) {
+                    for (int k = (lineBufferSize - currentSize); k > -1; --k) {
+                        lineBufferList.get(k).append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                    }
+                }
             }
+
+
+            System.out.println(HEADER + buffer.toString());
+            for (StringBuffer sb : lineBufferList) {
+                System.out.println(HEADER + sb.toString());
+            }
+            showLine();
         }
-        System.out.println(HEADER + buffer.toString());
-        for (StringBuffer sb : lineBufferList) {
-            System.out.println(HEADER + sb.toString());
-        }
-
-/*
-        for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
-            buffer = new StringBuffer();
-            buffer.append("| ");
-            if (null != group.getSubscriberGroupId()) {
-                buffer.append(getColumn(group.getSubscriberGroupId(), COLUMN_TYPE.CONTEXT));
-            }
-
-            if (null != group.getDescription()) {
-                buffer.append(getColumn(group.getDescription(), COLUMN_TYPE.CONTEXT));
-            }
-
-            // subscribed services
-            for (String serviceId : group.getSubscribedServiceIds()) {
-                buffer.append(getColumn(serviceId, COLUMN_TYPE.CONTEXT));
-            }
-
-
-            // black list
-            for (String blackServiceId : group.getBlacklistServiceIds()) {
-                buffer.append(getColumn(blackServiceId, COLUMN_TYPE.CONTEXT));
-            }
-
-            // event trigger
-            for (int eventTrigger : group.getEventTriggers()) {
-                buffer.append(getColumn(new Integer(eventTrigger).toString(), COLUMN_TYPE.CONTEXT));
-            }
-
-
-            // notification
-            for (String notification : group.getNotificationData()) {
-                buffer.append(getColumn(notification, COLUMN_TYPE.POLICY));
-            }
-
-
-        }
-*/
 
 
     }
