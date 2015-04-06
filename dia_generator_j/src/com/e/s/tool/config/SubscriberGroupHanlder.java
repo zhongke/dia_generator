@@ -1,7 +1,11 @@
 package com.e.s.tool.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.e.s.tool.config.pojo.ConfigurationData;
 import com.e.s.tool.config.pojo.LdapTree;
@@ -78,7 +82,10 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
         String column = null;
 
         List<StringBuffer> lineBufferList = null;
-
+        /*
+         * ToDo: How to show the cell aligned with header if there is some column absent for the
+         * current group
+         */
         for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
             lineBufferList = new ArrayList<StringBuffer>();
             buffer = new StringBuffer();
@@ -86,20 +93,20 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
             buffer.append("| ");
             tmpBuffer.append(buffer);
             if (null != group.getSubscriberGroupId()) {
-                buffer.append(getColumn(group.getSubscriberGroupId(), COLUMN_TYPE.CONTEXT));
+                buffer.append(getCell(group.getSubscriberGroupId(), COLUMN_TYPE.CONTEXT));
                 
                 // Add new empty column to tmpBuffer in order to compose the whole line later.
-                tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
             }
 
             if (null != group.getDescription()) {
-                buffer.append(getColumn(group.getDescription(), COLUMN_TYPE.CONTEXT));
-                tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                buffer.append(getCell(group.getDescription(), COLUMN_TYPE.CONTEXT));
+                tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
             }
             
             // subscribed services
             for (int i = 0; i < group.getSubscribedServiceIds().size(); ++i) {
-                column = getColumn(group.getSubscribedServiceIds().get(i), COLUMN_TYPE.CONTEXT);
+                column = getCell(group.getSubscribedServiceIds().get(i), COLUMN_TYPE.CONTEXT);
                 if (i == 0) {
                     buffer.append(column);
                     // tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
@@ -115,9 +122,9 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
             // black list
             int lineBufferSize = lineBufferList.size();
             for (int i = 0; i < group.getBlacklistServiceIds().size(); ++i) {
-                column = getColumn(group.getBlacklistServiceIds().get(i), COLUMN_TYPE.CONTEXT);
+                column = getCell(group.getBlacklistServiceIds().get(i), COLUMN_TYPE.CONTEXT);
                 if (i == 0) {
-                    tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                    tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
                 buffer.append(column);
                 } else {
                     if (0 == lineBufferSize) {
@@ -150,10 +157,10 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
             int currentSize = group.getEventTriggers().size();
             if (currentSize > 0) {
                 for (int i = 0; i < currentSize; ++i) {
-                    column = getColumn(group.getEventTriggers().get(i).toString(), COLUMN_TYPE.CONTEXT);
+                    column = getCell(group.getEventTriggers().get(i).toString(), COLUMN_TYPE.CONTEXT);
                     if (i == 0) {
                         buffer.append(column);
-                        tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                        tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
                     } else {
                         if (0 == lineBufferSize) {
                             StringBuffer blackBuffer = new StringBuffer();
@@ -181,7 +188,7 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
                 // ToDo: Please think about if the previous column is more items than current column
                 if (lineBufferSize >= currentSize) {
                     for (int k = (lineBufferSize - currentSize); k > -1; --k) {
-                        lineBufferList.get(k).append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                        lineBufferList.get(k).append(getCell(null, COLUMN_TYPE.CONTEXT));
                     }
                 }
             }
@@ -195,10 +202,10 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
             if (currentSize > 0) {
                 // Notification
                 for (int i = 0; i < currentSize; ++i) {
-                    column = getColumn(group.getNotificationData().get(i).toString(), COLUMN_TYPE.CONTEXT);
+                    column = getCell(group.getNotificationData().get(i).toString(), COLUMN_TYPE.CONTEXT);
                     if (i == 0) {
                         buffer.append(column);
-                        tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                        tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
                     } else {
 
                         if (0 == lineBufferSize) {
@@ -226,7 +233,7 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
                 // ToDo: Please think about if the previous column is more items than current column
                 if (lineBufferSize >= currentSize) {
                     for (int k = (lineBufferSize - currentSize); k > -1; --k) {
-                        lineBufferList.get(k).append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                        lineBufferList.get(k).append(getCell(null, COLUMN_TYPE.CONTEXT));
                     }
                 }
             }
@@ -244,11 +251,6 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
 
 
-    private Object getColumn(COLUMN_TYPE context) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     private void showHeader() {
         showLine();
 
@@ -257,46 +259,71 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
         buffer.append("| ");
 
         List<String> headers = new ArrayList<String>();
+        Map<Integer, String> headerMap = new HashMap<Integer, String>();
 
         /*
          * Think about more than one subscriber with different attributes
          */
         for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
+            int order = 0;
             if (null != group.getSubscriberGroupId()) {
-                headers.add(getColumn("GROUP_ID", COLUMN_TYPE.CONTEXT));
+                headers.add(getCell("GROUP_ID", COLUMN_TYPE.CONTEXT));
+                headerMap.put(order++, getCell("GROUP_ID", COLUMN_TYPE.CONTEXT));
+            } else {
+                // Add a place holder for this cell
+                addCellPlaceholder(headerMap, order++);
             }
 
             if (null != group.getDescription()) {
-                headers.add(getColumn("DESCRIPTION", COLUMN_TYPE.CONTEXT));
+                headers.add(getCell("DESCRIPTION", COLUMN_TYPE.CONTEXT));
+                headerMap.put(order++, getCell("DESCRIPTION", COLUMN_TYPE.CONTEXT));
+            } else {
+                addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getSubscribedServiceIds().size() > 0) {
-                headers.add(getColumn("SUBSCRIBED", COLUMN_TYPE.CONTEXT));
+                headers.add(getCell("SUBSCRIBED", COLUMN_TYPE.CONTEXT));
+                headerMap.put(order++, getCell("SUBSCRIBED", COLUMN_TYPE.CONTEXT));
+            } else {
+                addCellPlaceholder(headerMap, order++);
             }
 
 
             if (group.getBlacklistServiceIds().size() > 0) {
-                headers.add(getColumn("BLACKLIST", COLUMN_TYPE.CONTEXT));
+                headers.add(getCell("BLACKLIST", COLUMN_TYPE.CONTEXT));
+                headerMap.put(order++, getCell("BLACKLIST", COLUMN_TYPE.CONTEXT));
+            } else {
+                addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getEventTriggers().size() > 0) {
-                headers.add(getColumn("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
+                headers.add(getCell("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
+                headerMap.put(order++, getCell("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
+            } else {
+                addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getNotificationData().size() > 0) {
-                headers.add(getColumn("NOTIFICATION", COLUMN_TYPE.POLICY));
+                headers.add(getCell("NOTIFICATION", COLUMN_TYPE.CONTEXT));
+                headerMap.put(order++, getCell("NOTIFICATION", COLUMN_TYPE.CONTEXT));
+            } else {
+                addCellPlaceholder(headerMap, order++);
             }
 
 
         }
-        // Get an ordered list without duplicate element
 
-        List<String> tmp = new ArrayList<String>();
-
-        for (String header : headers) {
-            if (!tmp.contains(header)) {
-                tmp.add(header);
-                buffer.append(header);
+        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
+        for (Entry<Integer, String> entry : entrySet) {
+            int sequence = 0;
+            while (!(sequence > entrySet.size())) {
+                if (sequence == entry.getKey().intValue()) {
+                    if (!entry.getValue().equals("")) {
+                        buffer.append(entry.getValue());
+                        break;
+                    }
+                }
+                ++sequence;
             }
         }
 
@@ -305,8 +332,20 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
     }
 
+    private void addCellPlaceholder(Map<Integer, String> headerMap, int key) {
+        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
+        for (Entry<Integer, String> entry : entrySet) {
+            if (entry.getKey() == key) {
+                if (entry.getValue().equals("")) {
+                    System.out.println("Add place holder for :" + key);
+                    headerMap.put(key, getCell(null, COLUMN_TYPE.CONTEXT));
+                }
+            }
+        }
+    }
 
-    private String getColumn(String resource, COLUMN_TYPE type) {
+
+    private String getCell(String resource, COLUMN_TYPE type) {
 
         int length = 0;
         int count = 0;
