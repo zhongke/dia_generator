@@ -71,7 +71,7 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
     }
 
     /*
-     * TODO How to show all the elements following the order of headers?
+     * Show all the elements following the order of headers
      */
     private void showConfiguration() {
 
@@ -98,15 +98,14 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
                 
                 // Add new empty column to tmpBuffer in order to compose the whole line later.
                 tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
-            } else {
-                //addPlaceholderForRow(tmpBuffer, 0);
             }
 
             if (null != group.getDescription()) {
                 buffer.append(getCell(group.getDescription(), COLUMN_TYPE.CONTEXT));
                 tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
             } else {
-                //addPlaceholderForRow(tmpBuffer, 1);
+                addPlaceholderForRow(tmpBuffer, 1);
+                addPlaceholderForRow(buffer, 1);
             }
             
             // subscribed services
@@ -125,7 +124,10 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
                 }
             } else {
-                // addPlaceholderForRow(tmpBuffer, 2);
+                addPlaceholderForRow(buffer, 2);
+                if (lineBufferList.size() > 0) {
+                    addPlaceholderForRow(tmpBuffer, 2);
+                }
             }
 
             // black list
@@ -163,12 +165,11 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
                 }
             } else {
-                /*
+                addPlaceholderForRow(buffer, 3);
                 addPlaceholderForRow(tmpBuffer, 3);
                 for (StringBuffer sb : lineBufferList) {
                     addPlaceholderForRow(sb, 3);
                 }
-                */
             }
 
             // event trigger
@@ -206,19 +207,17 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
                 
                 // ToDo: Please think about if the previous column is more items than current column
                 if (lineBufferSize >= currentSize) {
-                    for (int k = (lineBufferSize - currentSize); k > -1; --k) {
+                    for (int k = currentSize - 1; k < lineBufferSize; ++k) {
                         lineBufferList.get(k).append(getCell(null, COLUMN_TYPE.CONTEXT));
                     }
                 }
             } else {
+                addPlaceholderForRow(buffer, 4);
                 addPlaceholderForRow(tmpBuffer, 4);
                 for (StringBuffer sb : lineBufferList) {
                     addPlaceholderForRow(sb, 4);
                 }
             }
-
-
-
 
             lineBufferSize = lineBufferList.size();
             currentSize = group.getNotificationData().size();
@@ -254,13 +253,14 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
                 }
 
-                // ToDo: Please think about if the previous column is more items than current column
+                // Please think about if the previous column is more items than current column
                 if (lineBufferSize >= currentSize) {
-                    for (int k = (lineBufferSize - currentSize); k > -1; --k) {
+                    for (int k = currentSize - 1; k < lineBufferSize; ++k) {
                         lineBufferList.get(k).append(getCell(null, COLUMN_TYPE.CONTEXT));
                     }
                 }
             } else {
+                addPlaceholderForRow(buffer, 5);
                 addPlaceholderForRow(tmpBuffer, 5);
                 for (StringBuffer sb : lineBufferList) {
                     addPlaceholderForRow(sb, 5);
@@ -282,7 +282,6 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
         Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
         for (Entry<Integer, String> entry : entrySet) {
             if (key == entry.getKey() && !entry.getValue().equals("")) {
-                System.out.println("Key: " + entry.getKey());
                 tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
                 break;
             }
@@ -299,16 +298,15 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
         buffer.append("| ");
 
-        // List<String> headers = new ArrayList<String>();
 
 
         /*
          * Think about more than one subscriber with different attributes
+         * Define the order for the header list
          */
         for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
             int order = 0;
             if (null != group.getSubscriberGroupId()) {
-                // headers.add(getCell("GROUP_ID", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("GROUP_ID", COLUMN_TYPE.CONTEXT));
             } else {
                 // Add a place holder for this cell
@@ -316,14 +314,12 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
             }
 
             if (null != group.getDescription()) {
-                // headers.add(getCell("DESCRIPTION", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("DESCRIPTION", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getSubscribedServiceIds().size() > 0) {
-                // headers.add(getCell("SUBSCRIBED", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("SUBSCRIBED", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
@@ -331,21 +327,18 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
 
             if (group.getBlacklistServiceIds().size() > 0) {
-                // headers.add(getCell("BLACKLIST", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("BLACKLIST", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getEventTriggers().size() > 0) {
-                // headers.add(getCell("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getNotificationData().size() > 0) {
-                // headers.add(getCell("NOTIFICATION", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("NOTIFICATION", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
@@ -378,7 +371,6 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
         for (Entry<Integer, String> entry : entrySet) {
             if (entry.getKey() == key) {
                 if (entry.getValue().equals("")) {
-                    System.out.println("Add place holder for :" + key);
                     headerMap.put(key, getCell(null, COLUMN_TYPE.CONTEXT));
                 }
             }
