@@ -29,6 +29,7 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
     private LdapTree tree;
     private ConfigurationData configurationData;
+    Map<Integer, String> headerMap = new HashMap<Integer, String>();
 
     public SubscriberGroupHanlder(LdapTree tree, ConfigurationData configurationData) {
         this.tree = tree;
@@ -97,63 +98,81 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
                 
                 // Add new empty column to tmpBuffer in order to compose the whole line later.
                 tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
+            } else {
+                //addPlaceholderForRow(tmpBuffer, 0);
             }
 
             if (null != group.getDescription()) {
                 buffer.append(getCell(group.getDescription(), COLUMN_TYPE.CONTEXT));
                 tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
+            } else {
+                //addPlaceholderForRow(tmpBuffer, 1);
             }
             
             // subscribed services
-            for (int i = 0; i < group.getSubscribedServiceIds().size(); ++i) {
-                column = getCell(group.getSubscribedServiceIds().get(i), COLUMN_TYPE.CONTEXT);
-                if (i == 0) {
-                    buffer.append(column);
-                    // tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
-                } else {
-                    serviceBuffer = new StringBuffer();
-                    serviceBuffer.append(tmpBuffer);
-                    serviceBuffer.append(column);
-                    lineBufferList.add(serviceBuffer);
+            if (group.getSubscribedServiceIds().size() > 0) {
+                for (int i = 0; i < group.getSubscribedServiceIds().size(); ++i) {
+                    column = getCell(group.getSubscribedServiceIds().get(i), COLUMN_TYPE.CONTEXT);
+                    if (i == 0) {
+                        buffer.append(column);
+                        // tmpBuffer.append(getColumn(null, COLUMN_TYPE.CONTEXT));
+                    } else {
+                        serviceBuffer = new StringBuffer();
+                        serviceBuffer.append(tmpBuffer);
+                        serviceBuffer.append(column);
+                        lineBufferList.add(serviceBuffer);
+                    }
+
                 }
-                
+            } else {
+                // addPlaceholderForRow(tmpBuffer, 2);
             }
 
             // black list
             int lineBufferSize = lineBufferList.size();
-            for (int i = 0; i < group.getBlacklistServiceIds().size(); ++i) {
-                column = getCell(group.getBlacklistServiceIds().get(i), COLUMN_TYPE.CONTEXT);
-                if (i == 0) {
-                    tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
-                buffer.append(column);
-                } else {
-                    if (0 == lineBufferSize) {
-                        StringBuffer blackBuffer = new StringBuffer();
-
-                        // The tmpBuffer did not add more column follow the later column
-                        blackBuffer.append(tmpBuffer);
-                        lineBufferList.add(blackBuffer.append(column));
-
+            if (group.getBlacklistServiceIds().size() > 0) {
+                for (int i = 0; i < group.getBlacklistServiceIds().size(); ++i) {
+                    column = getCell(group.getBlacklistServiceIds().get(i), COLUMN_TYPE.CONTEXT);
+                    if (i == 0) {
+                        tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
+                        buffer.append(column);
                     } else {
-                        for (int j = 0; j < lineBufferSize; ++j) {
-                            if (i == j + 1) {
-                                lineBufferList.get(j).append(column);
-                            } else if (i > lineBufferSize) {
+                        if (0 == lineBufferSize) {
                                 StringBuffer blackBuffer = new StringBuffer();
 
                                 // The tmpBuffer did not add more column follow the later column
                                 blackBuffer.append(tmpBuffer);
                                 lineBufferList.add(blackBuffer.append(column));
-                                break;
-                            }
 
+                        } else {
+                            for (int j = 0; j < lineBufferSize; ++j) {
+                                if (i == j + 1) {
+                                    lineBufferList.get(j).append(column);
+                                } else if (i > lineBufferSize) {
+                                    StringBuffer blackBuffer = new StringBuffer();
+
+                                    // The tmpBuffer did not add more column follow the later column
+                                    blackBuffer.append(tmpBuffer);
+                                    lineBufferList.add(blackBuffer.append(column));
+                                    break;
+                                }
+
+                            }
                         }
                     }
+
                 }
-                
+            } else {
+                /*
+                addPlaceholderForRow(tmpBuffer, 3);
+                for (StringBuffer sb : lineBufferList) {
+                    addPlaceholderForRow(sb, 3);
+                }
+                */
             }
-            lineBufferSize = lineBufferList.size();
+
             // event trigger
+            lineBufferSize = lineBufferList.size();
             int currentSize = group.getEventTriggers().size();
             if (currentSize > 0) {
                 for (int i = 0; i < currentSize; ++i) {
@@ -184,12 +203,17 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
                     }
 
                 }
-
+                
                 // ToDo: Please think about if the previous column is more items than current column
                 if (lineBufferSize >= currentSize) {
                     for (int k = (lineBufferSize - currentSize); k > -1; --k) {
                         lineBufferList.get(k).append(getCell(null, COLUMN_TYPE.CONTEXT));
                     }
+                }
+            } else {
+                addPlaceholderForRow(tmpBuffer, 4);
+                for (StringBuffer sb : lineBufferList) {
+                    addPlaceholderForRow(sb, 4);
                 }
             }
 
@@ -236,6 +260,11 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
                         lineBufferList.get(k).append(getCell(null, COLUMN_TYPE.CONTEXT));
                     }
                 }
+            } else {
+                addPlaceholderForRow(tmpBuffer, 5);
+                for (StringBuffer sb : lineBufferList) {
+                    addPlaceholderForRow(sb, 5);
+                }
             }
 
 
@@ -249,6 +278,18 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
     }
 
+    private void addPlaceholderForRow(StringBuffer tmpBuffer, int key) {
+        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
+        for (Entry<Integer, String> entry : entrySet) {
+            if (key == entry.getKey() && !entry.getValue().equals("")) {
+                System.out.println("Key: " + entry.getKey());
+                tmpBuffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
+                break;
+            }
+
+        }
+    }
+
 
 
     private void showHeader() {
@@ -258,8 +299,8 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
         buffer.append("| ");
 
-        List<String> headers = new ArrayList<String>();
-        Map<Integer, String> headerMap = new HashMap<Integer, String>();
+        // List<String> headers = new ArrayList<String>();
+
 
         /*
          * Think about more than one subscriber with different attributes
@@ -267,7 +308,7 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
         for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
             int order = 0;
             if (null != group.getSubscriberGroupId()) {
-                headers.add(getCell("GROUP_ID", COLUMN_TYPE.CONTEXT));
+                // headers.add(getCell("GROUP_ID", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("GROUP_ID", COLUMN_TYPE.CONTEXT));
             } else {
                 // Add a place holder for this cell
@@ -275,14 +316,14 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
             }
 
             if (null != group.getDescription()) {
-                headers.add(getCell("DESCRIPTION", COLUMN_TYPE.CONTEXT));
+                // headers.add(getCell("DESCRIPTION", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("DESCRIPTION", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getSubscribedServiceIds().size() > 0) {
-                headers.add(getCell("SUBSCRIBED", COLUMN_TYPE.CONTEXT));
+                // headers.add(getCell("SUBSCRIBED", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("SUBSCRIBED", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
@@ -290,21 +331,21 @@ public class SubscriberGroupHanlder implements ConfigurationHandler {
 
 
             if (group.getBlacklistServiceIds().size() > 0) {
-                headers.add(getCell("BLACKLIST", COLUMN_TYPE.CONTEXT));
+                // headers.add(getCell("BLACKLIST", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("BLACKLIST", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getEventTriggers().size() > 0) {
-                headers.add(getCell("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
+                // headers.add(getCell("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
             }
 
             if (group.getNotificationData().size() > 0) {
-                headers.add(getCell("NOTIFICATION", COLUMN_TYPE.CONTEXT));
+                // headers.add(getCell("NOTIFICATION", COLUMN_TYPE.CONTEXT));
                 headerMap.put(order++, getCell("NOTIFICATION", COLUMN_TYPE.CONTEXT));
             } else {
                 addCellPlaceholder(headerMap, order++);
