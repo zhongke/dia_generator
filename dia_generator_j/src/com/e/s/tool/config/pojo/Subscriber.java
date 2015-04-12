@@ -5,36 +5,54 @@ import java.util.List;
 
 
 public class Subscriber {
-    public static String PATTERN_EPC_TRAFFIC_IDS               = "EPC-TrafficIds";
     public static String PATTERN_EPC_SUBSCRIBED_SERVICES       = "EPC-SubscribedServices";
-    public static String PATTERN_EPC_BLACKLIST_SERVICES        = "EPC-BlacklistServices";
-    public static String PATTERN_EPC_OPERATOR_SPECIFIC_INFO    = "EPC-OperatorSpecificInfo";
-    public static String PATTERN_EPC_NOTIFICATION_DATA         = "EPC-NotificationData";
-    public static String PATTERN_EPC_FAMILY_ID                 = "EPC-FamilyId";
     public static String PATTERN_EPC_GROUP_IDS                 = "EPC-GroupIds";
-    public static String PATTERN_EPC_ENABLE_MASC               = "EPC-EnableMasc";
+    public static String PATTERN_EPC_TRAFFIC_IDS               = "EPC-TrafficIds";
+    public static String PATTERN_EPC_BLACKLIST_SERVICES        = "EPC-BlacklistServices";
     public static String PATTERN_EPC_EVENT_TRIGGERS            = "EPC-EventTriggers";
+    public static String PATTERN_EPC_FAMILY_ID                 = "EPC-FamilyId";
+    public static String PATTERN_EPC_ENABLE_MASC               = "EPC-EnableMasc";
     public static String PATTERN_EPC_SUBSCRIBER_QUALIFY_DATA   = "EPC-SubscriberQualificationData";
+    public static String PATTERN_EPC_NOTIFICATION_DATA         = "EPC-NotificationData";
+    public static String PATTERN_EPC_OPERATOR_SPECIFIC_INFO    = "EPC-OperatorSpecificInfo";
     
 /*
     EPC-SubscriberId    
-    EPC-SubscriberQualificationData
 */
+
+
+    public static List<String> attributeList;
+
+    static {
+        attributeList = new ArrayList<String>();
+        attributeList.add("SUBSCRIBER");
+        attributeList.add("SUBSCRIBED");
+        attributeList.add("GROUP");
+        attributeList.add("TRAFFIC");
+        attributeList.add("BLACKLIST");
+        attributeList.add("TRIGGER");
+        attributeList.add("FAMILY");
+        attributeList.add("MASC");
+        attributeList.add("QUALIFICATION");
+        attributeList.add("NOTIFICATION");
+        attributeList.add("OPERATOR");
+    }
+
     private String subscriberId;
+    private String familyId;
     private List<String> trafficIds;
     private List<String> subscribedServiceIds;
     private List<String> blacklistServiceIds;
     private List<String> operatorSpecificInfoList;
     private List<String> notificationData;
-
-    private String familyId;
     private List<String> subscriberGroupIds;
-
-    private Boolean enableMasc;
-    private List<Integer> eventTriggers;
-
-
+    private List<String> eventTriggers;
     private List<String> subscriberQualificationData;
+
+
+    private String enableMasc;
+
+
 
 
 
@@ -45,7 +63,7 @@ public class Subscriber {
         this.operatorSpecificInfoList = new ArrayList<String>();
         this.notificationData = new ArrayList<String>();
         this.subscriberGroupIds = new ArrayList<String>();
-        this.eventTriggers = new ArrayList<Integer>();
+        this.eventTriggers = new ArrayList<String>();
         this.subscriberQualificationData = new ArrayList<String>();
     }
 
@@ -116,19 +134,19 @@ public class Subscriber {
 
 
 
-    public Boolean isEnableMasc() {
+    public String isEnableMasc() {
         return enableMasc;
     }
 
-    public void setEnableMasc(Boolean enableMasc) {
+    public void setEnableMasc(String enableMasc) {
         this.enableMasc = enableMasc;
     }
 
-    public List<Integer> getEventTriggers() {
+    public List<String> getEventTriggers() {
         return eventTriggers;
     }
 
-    public void setEventTriggers(List<Integer> eventTriggers) {
+    public void setEventTriggers(List<String> eventTriggers) {
         this.eventTriggers = eventTriggers;
     }
 
@@ -192,7 +210,7 @@ public class Subscriber {
         buffer.append(", enableMasc="); 
         buffer.append(enableMasc); 
 
-        for (int eventTrigger : eventTriggers) {
+        for (String eventTrigger : eventTriggers) {
 
             buffer.append(", eventTrigger=");
             buffer.append(eventTrigger);

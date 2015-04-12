@@ -1,26 +1,27 @@
 package com.e.s.tool.config.handler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import com.e.s.tool.config.TableFormatter;
 import com.e.s.tool.config.pojo.ConfigurationData;
 import com.e.s.tool.config.pojo.LdapTree;
 import com.e.s.tool.config.pojo.Node;
 import com.e.s.tool.config.pojo.Subscriber;
 
-public class SubscriberHanlder implements ConfigurationHandler {
+public class SubscriberHanlder extends TableFormatter<String> implements ConfigurationHandler {
 
     private static String PATTERN_DN_SUB = "dn:EPC-SubscriberId=";
     private static String PATTERN_DN_SUB_QUALIFY = "dn:EPC-Name=EPC-SubscriberQualification,EPC-SubscriberId=";
 
 
-    private static int COLUMN_LENTH_CONTEXT = 15;
-    private static int COLUMN_LENTH_POLICY  = 20;
+    Map<Integer, String> headerMap = new HashMap<Integer, String>();
 
-    private static String HEADER = "*       ";
-    private enum COLUMN_TYPE {
-        CONTEXT, POLICY
-    }
+    List<Map<Integer, String>> attributeLineList;
 
     private LdapTree tree;
     private ConfigurationData configurationData;
@@ -67,9 +68,9 @@ public class SubscriberHanlder implements ConfigurationHandler {
                     } else if (attributeName.equals(Subscriber.PATTERN_EPC_GROUP_IDS)) {
                         subscriber.getSubscriberGroupIds().add(attribute.split(":")[1]);
                     } else if (attributeName.equals(Subscriber.PATTERN_EPC_ENABLE_MASC)) {
-                        subscriber.setEnableMasc(attribute.split(":")[1].equals("true") ? true : false);
+                        subscriber.setEnableMasc(attribute.split(":")[1]);
                     } else if (attributeName.equals(Subscriber.PATTERN_EPC_EVENT_TRIGGERS)) {
-                        subscriber.getEventTriggers().add(new Integer(attribute.split(":")[1]));
+                        subscriber.getEventTriggers().add(attribute.split(":")[1]);
                     }
                 }
 
@@ -103,74 +104,104 @@ public class SubscriberHanlder implements ConfigurationHandler {
 
         showHeader();
 
-        StringBuffer buffer = null;
+        Map<Integer, String> attributeMap = null;
 
 
         for (Subscriber sub : configurationData.getSubscribers()) {
-            buffer = new StringBuffer();
-            buffer.append("| ");
-            if (null != sub.getSubscriberId()) {
-            buffer.append(getColumn(sub.getSubscriberId(), COLUMN_TYPE.CONTEXT));
+            attributeLineList = new ArrayList<Map<Integer, String>>();
+            
+            for (int i = 0; i < getMaxSizeOfElement(sub); ++i) {
+                int order = 0;
+                attributeMap = new HashMap<Integer, String>();
+
+                if (null != sub.getSubscriberId() && (i == 0)) {
+                    attributeMap.put(order++, sub.getSubscriberId());
+                } else {
+                    attributeMap.put(order++, null);
+                }
+
+                // subscribed services
+                getAttribute(attributeMap, order++, sub.getSubscribedServiceIds(), i);
+
+
+                // group
+                getAttribute(attributeMap, order++, sub.getSubscriberGroupIds(), i);
+
+                // traffic
+                getAttribute(attributeMap, order++, sub.getTrafficIds(), i);
+
+
+                // black list
+                getAttribute(attributeMap, order++, sub.getBlacklistServiceIds(), i);
+
+                // event trigger
+                getAttribute(attributeMap, order++, sub.getEventTriggers(), i);
+
+                // family
+                if (null != sub.getFamilyId() && (i == 0)) {
+                    attributeMap.put(order++, sub.getFamilyId());
+                } else {
+                    attributeMap.put(order++, null);
+                }
+
+                // enable masc
+                if (null != sub.isEnableMasc() && (i == 0)) {
+                    attributeMap.put(order++, sub.isEnableMasc());
+                } else {
+                    attributeMap.put(order++, null);
+                }
+
+
+                // qualification data
+                getAttribute(attributeMap, order++, sub.getSubscriberQualificationData(), i);
+
+                // notification
+                getAttribute(attributeMap, order++, sub.getNotificationData(), i);
+
+                // operator specific
+                getAttribute(attributeMap, order++, sub.getOperatorSpecificInfoList(), i);
+
+                attributeLineList.add(attributeMap);
             }
-
-            // subscribed services
-            for (String serviceId : sub.getSubscribedServiceIds()) {
-                buffer.append(getColumn(serviceId, COLUMN_TYPE.CONTEXT));
-            }
-
-
-
-            // group
-            for (String group : sub.getSubscriberGroupIds()) {
-                buffer.append(getColumn(group, COLUMN_TYPE.CONTEXT));
-            }
-
-
-            // traffic
-            for (String traffic : sub.getTrafficIds()) {
-                buffer.append(getColumn(traffic, COLUMN_TYPE.CONTEXT));
-            }
-
-            // black list
-            for (String blackServiceId : sub.getBlacklistServiceIds()) {
-                buffer.append(getColumn(blackServiceId, COLUMN_TYPE.CONTEXT));
-            }
-
-            // event trigger
-            for (int eventTrigger : sub.getEventTriggers()) {
-                buffer.append(getColumn(new Integer(eventTrigger).toString(), COLUMN_TYPE.CONTEXT));
-            }
-
-            // family
-            if (null != sub.getFamilyId()) {
-                buffer.append(getColumn(sub.getFamilyId(), COLUMN_TYPE.CONTEXT));
-            }
-
-            // enable masc
-            if (null != sub.isEnableMasc()) {
-                buffer.append(getColumn(new Boolean(sub.isEnableMasc()).toString(), COLUMN_TYPE.CONTEXT));
-            }
-
-            // qualification data
-            for (String qualification : sub.getSubscriberQualificationData()) {
-                buffer.append(getColumn(qualification, COLUMN_TYPE.POLICY));
-            }
-
-            // notification
-            for (String notification : sub.getNotificationData()) {
-                buffer.append(getColumn(notification, COLUMN_TYPE.POLICY));
-            }
-
-            // operator specific
-            for (String operatorSpecificInfo : sub.getOperatorSpecificInfoList()) {
-                buffer.append(getColumn(operatorSpecificInfo, COLUMN_TYPE.POLICY));
-            }
-
+            showSubscriber();
         }
 
-        System.out.println(HEADER + buffer.toString());
     }
 
+
+
+    private void showSubscriber() {
+        for (Map<Integer, String> attributeMap : attributeLineList) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("| ");
+            Set<Entry<Integer, String>> entrySet = attributeMap.entrySet();
+            Set<Entry<Integer, String>> headerSet = headerMap.entrySet();
+
+            int sequence = 0;
+            for (Entry<Integer, String> headerEntry : headerSet) {
+                
+
+                    for (Entry<Integer, String> entry : entrySet) {
+                        if ((sequence == headerEntry.getKey()) && (sequence == entry.getKey())) {
+                            if (null == headerEntry.getValue()) {
+                                break;
+                        }
+                            if (null != entry.getValue()) {
+                                buffer.append(getCell(entry.getValue(), COLUMN_TYPE.CONTEXT));
+                            } else {
+                                buffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
+                            }
+                        }
+                }
+
+                ++sequence;
+            }
+
+            System.out.println(PREFIX + buffer.toString());
+        }
+        showLine();
+
+    }
 
 
     private void showHeader() {
@@ -180,105 +211,109 @@ public class SubscriberHanlder implements ConfigurationHandler {
 
         buffer.append("| ");
 
-        List<String> headers = new ArrayList<String>();
-
-
         for (Subscriber sub : configurationData.getSubscribers()) {
+            int order = 0;
+            int index = 0;
+            index = order++;
             if (null != sub.getSubscriberId()) {
-                headers.add(getColumn("SUBSCRIBER_ID", COLUMN_TYPE.CONTEXT));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
+            index = order++;
             if (sub.getSubscribedServiceIds().size() > 0) {
-                headers.add(getColumn("SUBSCRIBED_SERVICE", COLUMN_TYPE.CONTEXT));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
 
+            index = order++;
             if (sub.getSubscriberGroupIds().size() > 0) {
-                headers.add(getColumn("GROUP_ID", COLUMN_TYPE.CONTEXT));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
+            index = order++;
             if (sub.getTrafficIds().size() > 0) {
-                headers.add(getColumn("TRAFFIC_ID", COLUMN_TYPE.CONTEXT));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
-
+            index = order++;
             if (sub.getBlacklistServiceIds().size() > 0) {
-                headers.add(getColumn("BLACKLIST", COLUMN_TYPE.CONTEXT));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
+            index = order++;
             if (sub.getEventTriggers().size() > 0) {
-                headers.add(getColumn("EVENT_TRIGGER", COLUMN_TYPE.CONTEXT));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
-
+            index = order++;
             if (null != sub.getFamilyId()) {
-                headers.add(getColumn("FAMILY_ID", COLUMN_TYPE.CONTEXT));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
+            index = order++;
             if (null != sub.isEnableMasc()) {
-                headers.add(getColumn("ENABLE_MASC", COLUMN_TYPE.CONTEXT));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
+            index = order++;
             if (sub.getSubscriberQualificationData().size() > 0) {
-                headers.add(getColumn("QUALIFICATION", COLUMN_TYPE.POLICY));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
+            index = order++;
             if (sub.getNotificationData().size() > 0) {
-                headers.add(getColumn("NOTIFICATION", COLUMN_TYPE.POLICY));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
+
+            index = order++;
             if (sub.getOperatorSpecificInfoList().size() > 0) {
-                headers.add(getColumn("OPERATOR_SPECIFIC", COLUMN_TYPE.POLICY));
+                headerMap.put(index, Subscriber.attributeList.get(index));
+            } else {
+                headerMap.put(index, null);
             }
 
         }
         // Get a ordered list without duplicate element
 
-        List<String> tmp = new ArrayList<String>();
-
-        for (String header : headers) {
-            if (!tmp.contains(header)) {
-                tmp.add(header);
-                buffer.append(header);
+        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
+        for (Entry<Integer, String> entry : entrySet) {
+            int sequence = 0;
+            while (!(sequence > entrySet.size())) {
+                if (sequence == entry.getKey().intValue()) {
+                    if (null != entry.getValue()) {
+                        buffer.append(getCell(entry.getValue(), COLUMN_TYPE.CONTEXT));
+                        break;
+                    }
+                }
+                ++sequence;
             }
         }
 
-        System.out.println(HEADER + buffer.toString());
+        System.out.println(PREFIX + buffer.toString());
         showLine();
 
     }
 
-
-    private String getColumn(String resource, COLUMN_TYPE type) {
-
-        int length = 0;
-
-        if (COLUMN_TYPE.CONTEXT == type) {
-            length = COLUMN_LENTH_CONTEXT;
-        } else if (COLUMN_TYPE.POLICY == type) {
-            length = COLUMN_LENTH_POLICY;
-        }
-
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(resource);
-
-        for (int i = resource.length(); i < length; ++i) {
-            buffer.append(" ");
-        }
-
-        buffer.append("| ");
-
-        return buffer.toString();
-    }
-
-    private void showLine() {
-        StringBuffer bf = new StringBuffer();
-        for (int i = 0; i < COLUMN_LENTH_CONTEXT * 3 + COLUMN_LENTH_POLICY * 4 + 15; ++i) {
-            bf.append("-");
-
-        }
-
-        System.out.println(HEADER + bf.toString());
-    }
 
 
     @Override

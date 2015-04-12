@@ -3,8 +3,8 @@ package com.e.s.tool;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.e.s.tool.config.ConfigurationHandler;
-import com.e.s.tool.config.LdapConfigurationHandler;
+import com.e.s.tool.config.handler.ConfigurationHandler;
+import com.e.s.tool.config.handler.LdapConfigurationHandler;
 
 
 public class Generator {
@@ -55,10 +55,12 @@ public class Generator {
 
             for (String file : args) {
                 BufferMgr buffMgr = new BufferMgr();
+                /*
                 buffMgr.readInputFromFile(file + ".ttcn");
 
                 buffMgr.showDiagramFromBuffer();
                 buffMgr.showMessageFromBuffer();
+                */
 
                 ConfigurationHandler configurationHandler = new LdapConfigurationHandler();
                 configurationHandler.getConfiguration(file + ".ldif");

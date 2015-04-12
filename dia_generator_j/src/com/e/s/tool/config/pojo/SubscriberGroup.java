@@ -11,72 +11,87 @@ public class SubscriberGroup {
     public static String PATTERN_EPC_NOTIFICATION_DATA              = "EPC-NotificationData";
     public static String PATTERN_EPC_EVENT_TRIGGERS                 = "EPC-EventTriggers";
 
+
 /*
     EPC-SubscriberGroupId
 */    
+
+    public static List<String> attributeList;
+
+    static {
+        attributeList = new ArrayList<String>();
+        attributeList.add("GROUP");
+        attributeList.add("DESCRIPTION");
+        attributeList.add("SUBSCRIBED");
+        attributeList.add("BLACKLIST");
+        attributeList.add("TRIGGER");
+        attributeList.add("NOTIFICATION");
+    }
 
     private String subscriberGroupId;
     private String description;
     private List<String> subscribedServiceIds;
     private List<String> blacklistServiceIds;
+    private List<String> eventTriggers;
     private List<String> notificationData;
 
-    private List<Integer> eventTriggers;
     
     
     public SubscriberGroup() {
         
         this.subscribedServiceIds = new ArrayList<String>();
         this.blacklistServiceIds = new ArrayList<String>();
+        this.eventTriggers = new ArrayList<String>();
         this.notificationData = new ArrayList<String>();
-        this.eventTriggers = new ArrayList<Integer>();
+
+
     }
 
     public String getSubscriberGroupId() {
         return subscriberGroupId;
     }
 
-    public void setSubscriberGroupId(String subscriberGroupId) {
-        this.subscriberGroupId = subscriberGroupId;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<String> getSubscribedServiceIds() {
         return subscribedServiceIds;
     }
 
-    public void setSubscribedServiceIds(List<String> subscribedServiceIds) {
-        this.subscribedServiceIds = subscribedServiceIds;
-    }
-
     public List<String> getBlacklistServiceIds() {
         return blacklistServiceIds;
     }
 
-    public void setBlacklistServiceIds(List<String> blacklistServiceIds) {
-        this.blacklistServiceIds = blacklistServiceIds;
+    public List<String> getEventTriggers() {
+        return eventTriggers;
     }
 
     public List<String> getNotificationData() {
         return notificationData;
     }
 
+    public void setSubscriberGroupId(String subscriberGroupId) {
+        this.subscriberGroupId = subscriberGroupId;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setSubscribedServiceIds(List<String> subscribedServiceIds) {
+        this.subscribedServiceIds = subscribedServiceIds;
+    }
+
+    public void setBlacklistServiceIds(List<String> blacklistServiceIds) {
+        this.blacklistServiceIds = blacklistServiceIds;
+    }
+
     public void setNotificationData(List<String> notificationData) {
         this.notificationData = notificationData;
     }
 
-    public List<Integer> getEventTriggers() {
-        return eventTriggers;
-    }
-
-    public void setEventTriggers(List<Integer> eventTriggers) {
+    public void setEventTriggers(List<String> eventTriggers) {
         this.eventTriggers = eventTriggers;
     }
 
@@ -110,7 +125,7 @@ public class SubscriberGroup {
         }
 
 
-        for (int eventTrigger : eventTriggers) {
+        for (String eventTrigger : eventTriggers) {
 
             buffer.append(", eventTrigger=");
             buffer.append(eventTrigger);
@@ -123,6 +138,4 @@ public class SubscriberGroup {
         return buffer.toString();
     }
     
-    
-
 }
