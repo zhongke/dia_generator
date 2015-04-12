@@ -78,24 +78,30 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
         for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
             attributeLineList = new ArrayList<Map<Integer, String>>();
             // Iterate every group by the maximum size of its elements.
-            for (int i = 0; i < getMaxSizeOfElement(group); ++i) {
+            for (int i = 0; i <= getMaxSizeOfElement(group); ++i) {
                 int order = 0;
                 attributeMap = new HashMap<Integer, String>();
-               
+
+                if (getMaxSizeOfElement(group) > 0) {
+                    if (i == getMaxSizeOfElement(group)) {
+                        break;
+                    }
+                }
+
                 // group Id
                 if (null != group.getSubscriberGroupId() && (i == 0)) {
                     attributeMap.put(order++, group.getSubscriberGroupId());
                 } else {
                     attributeMap.put(order++, null);
                 }
-                
-                // description 
+
+                // description
                 if (null != group.getDescription() && (i == 0)) {
                     attributeMap.put(order++, group.getDescription());
                 } else {
                     attributeMap.put(order++, null);
                 }
-                
+
                 // subscribed service
                 getAttribute(attributeMap, order++, group.getSubscribedServiceIds(), i);
 
@@ -108,18 +114,18 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
                 // notification
                 getAttribute(attributeMap, order++, group.getNotificationData(), i);
 
-               
+
                 attributeLineList.add(attributeMap);
             }
 
 
 
-            showGroups();
+            showGroup();
 
         }
     }
 
-    private void showGroups() {
+    private void showGroup() {
         for (Map<Integer, String> attributeMap : attributeLineList) {
             StringBuffer buffer = new StringBuffer();
             buffer.append("| ");
@@ -142,7 +148,7 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
                         }
                     }
 
-                            }
+                }
                 ++sequence;
             }
             System.out.println(PREFIX + buffer.toString());
@@ -165,57 +171,68 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
         for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
             int order = 0;
             int index = 0;
-/*
-            Class clazz = Class.forName("com.e.s.tool.config.pojo.SubscriberGroup");
-            Method[] methods = clazz.getDeclaredMethods();
-
-            System.out.println("-----------------------");
-            for (int i = 0; i < methods.length; ++i) {
-                System.out.println(methods[i].getName());
-            }
-            System.out.println("-----------------------");
-*/
+            /*
+             * Class clazz = Class.forName("com.e.s.tool.config.pojo.SubscriberGroup"); Method[]
+             * methods = clazz.getDeclaredMethods();
+             * 
+             * System.out.println("-----------------------"); for (int i = 0; i < methods.length;
+             * ++i) { System.out.println(methods[i].getName()); }
+             * System.out.println("-----------------------");
+             */
 
             index = order++;
             if (null != group.getSubscriberGroupId()) {
                 headerMap.put(index, SubscriberGroup.attributeList.get(index));
             } else {
-                headerMap.put(index, null);
+                if (isNull(headerMap, index)) {
+                    headerMap.put(index, null);
+                }
             }
 
             index = order++;
             if (null != group.getDescription()) {
                 headerMap.put(index, SubscriberGroup.attributeList.get(index));
             } else {
-                headerMap.put(index, null);
+                if (isNull(headerMap, index)) {
+                    headerMap.put(index, null);
+                }
             }
 
             index = order++;
             if (group.getSubscribedServiceIds().size() > 0) {
                 headerMap.put(index, SubscriberGroup.attributeList.get(index));
             } else {
-                headerMap.put(index, null);
+                if (isNull(headerMap, index)) {
+                    headerMap.put(index, null);
+                }
             }
             index = order++;
 
             if (group.getBlacklistServiceIds().size() > 0) {
                 headerMap.put(index, SubscriberGroup.attributeList.get(index));
             } else {
-                headerMap.put(index, null);
+                if (isNull(headerMap, index)) {
+                    headerMap.put(index, null);
+                }
             }
             index = order++;
 
             if (group.getEventTriggers().size() > 0) {
                 headerMap.put(index, SubscriberGroup.attributeList.get(index));
             } else {
-                headerMap.put(index, null);
+                if (isNull(headerMap, index)) {
+                    headerMap.put(index, null);
+                }
             }
 
             index = order++;
             if (group.getNotificationData().size() > 0) {
                 headerMap.put(index, SubscriberGroup.attributeList.get(index));
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (isNull(headerMap, index)) {
+                    headerMap.put(index, null);
+                }
             }
         }
 
@@ -237,7 +254,6 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
         showLine();
 
     }
-
 
 
     @Override

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.e.s.tool.config.pojo.Service;
 import com.e.s.tool.config.pojo.Subscriber;
 import com.e.s.tool.config.pojo.SubscriberGroup;
 
@@ -76,6 +77,33 @@ public class TableFormatter<T> {
         return size;
     }
 
+    public int getMaxSizeOfElement(Service service) {
+
+        int size = service.getFlowDescriptions().size();
+
+        if (size < service.getServiceQulificationData().size()) {
+            size = service.getServiceQulificationData().size();
+        }
+
+        return size;
+    }
+
+    public boolean isNull(Map<Integer, String> headerMap, int index) {
+        boolean isNull = false;
+        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
+        for (Entry<Integer, String> entry : entrySet) {
+            if (index == entry.getKey().intValue()) {
+                if (null == entry.getValue() || entry.getValue().trim().equals("")) {
+                    isNull = true;
+                } else {
+                    isNull = false;
+                }
+            }
+        }
+
+        return isNull;
+
+    }
 
     public void getAttribute(Map<Integer, T> attributeMap, int order, List<T> attributeList, int i) {
         int currrentSize = attributeList.size();

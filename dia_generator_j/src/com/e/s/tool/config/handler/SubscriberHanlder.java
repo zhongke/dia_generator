@@ -110,10 +110,14 @@ public class SubscriberHanlder extends TableFormatter<String> implements Configu
         for (Subscriber sub : configurationData.getSubscribers()) {
             attributeLineList = new ArrayList<Map<Integer, String>>();
             
-            for (int i = 0; i < getMaxSizeOfElement(sub); ++i) {
+            for (int i = 0; i <= getMaxSizeOfElement(sub); ++i) {
                 int order = 0;
                 attributeMap = new HashMap<Integer, String>();
-
+                if (getMaxSizeOfElement(sub) > 0) {
+                    if (i == getMaxSizeOfElement(sub)) {
+                        break;
+                    }
+                }
                 if (null != sub.getSubscriberId() && (i == 0)) {
                     attributeMap.put(order++, sub.getSubscriberId());
                 } else {

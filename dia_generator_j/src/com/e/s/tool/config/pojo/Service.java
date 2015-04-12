@@ -23,17 +23,30 @@ public class Service {
 
     public static String PATTERN_EPC_MASC_PACKAGE_NAMES         = "EPC-MascPackageNames";
     
+    public static List<String> attributeList;
+
+    static {
+        attributeList = new ArrayList<String>();
+        attributeList.add("SERVICE_ID");
+        attributeList.add("DESCRIPTION");
+        attributeList.add("PCC_RULE_ID");
+        attributeList.add("PCC_RULE_IDv6");
+        attributeList.add("PCC_RULE_TYPE");
+        attributeList.add("MASC_SERVICE_ID");
+        attributeList.add("PRECEDENCE");
+        attributeList.add("FLOW_DESCRIPTION");
+        attributeList.add("QUALIFICATION");
+    }
     
     private String serviceId;
     private String description;
     private String mascServiceId;
-
     private String pccRuleId;
     private String pccRuleIdv6;
-    private int pccRuleType;
+    private String pccRuleType;
+    private String precedence;
+
     private List<String> flowDescriptions;
-    private int precedence;
-    
     private List<String> serviceQulificationData;
 
 
@@ -84,11 +97,11 @@ public class Service {
         this.pccRuleIdv6 = pccRuleIdv6;
     }
 
-    public int getPccRuleType() {
+    public String getPccRuleType() {
         return pccRuleType;
     }
 
-    public void setPccRuleType(int pccRuleType) {
+    public void setPccRuleType(String pccRuleType) {
         this.pccRuleType = pccRuleType;
     }
 
@@ -100,11 +113,11 @@ public class Service {
         this.flowDescriptions = flowDescriptions;
     }
 
-    public int getPrecedence() {
+    public String getPrecedence() {
         return precedence;
     }
 
-    public void setPrecedence(int precedence) {
+    public void setPrecedence(String precedence) {
         this.precedence = precedence;
     }
 

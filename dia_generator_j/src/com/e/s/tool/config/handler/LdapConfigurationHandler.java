@@ -77,11 +77,11 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - ServiceQualification
          * 
          */
-//        System.out.print(HEADER);
-//        System.out.print("SERVICE");
-//        System.out.println(" +");
-//        new ServiceHandler(tree, configurationData).getConfiguration();
-//        System.out.println("*");
+        System.out.print(HEADER);
+        System.out.print("SERVICE");
+        System.out.println(" +");
+        new ServiceHandler(tree, configurationData).getConfiguration();
+        System.out.println("*");
         /*
          * getEventTrigger
          */
