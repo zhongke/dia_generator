@@ -105,17 +105,39 @@ public class TableFormatter<T> {
 
     }
 
-    public void getAttribute(Map<Integer, T> attributeMap, int order, List<T> attributeList, int i) {
-        int currrentSize = attributeList.size();
+
+    public void getAttribute(List<T> attributeList, List<T> attributeValues, int i) {
+        int currrentSize = attributeValues.size();
         if (currrentSize > 0) {
             if (i <= currrentSize - 1) {
-                attributeMap.put(order, attributeList.get(i));
+                attributeList.add(attributeValues.get(i));
             } else {
-                attributeMap.put(order, null);
+                attributeList.add(null);
             }
         } else {
-            attributeMap.put(order, null);
+            attributeList.add(null);
         }
+    }
+
+    public void showObject(List<List<String>> attributeLineList, List<String> headerList) {
+        for (List<String> attributeList : attributeLineList) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("| ");
+
+            for (int i = 0; i < attributeList.size(); ++i) {
+                if (null != attributeList.get(i)) {
+                    buffer.append(getCell(attributeList.get(i), COLUMN_TYPE.CONTEXT));
+                } else {
+                    if (null != headerList.get(i)) {
+                        buffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
+                    }
+                }
+            }
+
+            System.out.println(PREFIX + buffer.toString());
+        }
+        showLine();
+
     }
 
     public void addCellPlaceholder(Map<Integer, String> headerMap, int key) {

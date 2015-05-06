@@ -1,11 +1,7 @@
 package com.e.s.tool.config.handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import com.e.s.tool.config.TableFormatter;
 import com.e.s.tool.config.pojo.ConfigurationData;
@@ -19,9 +15,9 @@ public class ServiceHandler extends TableFormatter<String> implements Configurat
     private static String PATTERN_DN_SERVICE_QUALIFY =
             "dn:EPC-ServiceQualificationName=EPC-ServiceQualification,EPC-ServiceId=";
 
-    Map<Integer, String> headerMap = new HashMap<Integer, String>();
+    List<String> headerList = new ArrayList<String>();
 
-    List<Map<Integer, String>> attributeLineList;
+    List<List<String>> attributeLineList;
 
     public LdapTree tree;
     public ConfigurationData configurationData;
@@ -105,130 +101,90 @@ public class ServiceHandler extends TableFormatter<String> implements Configurat
     private void showConfiguration() {
         showHeader();
 
-        Map<Integer, String> attributeMap = null;
+        List<String> attributeList = null;
 
         for (Service service : configurationData.getServices()) {
-            attributeLineList = new ArrayList<Map<Integer, String>>();
+            attributeLineList = new ArrayList<List<String>>();
+
             for (int i = 0; i <= getMaxSizeOfElement(service); ++i) {
-                int order = 0;
-                attributeMap = new HashMap<Integer, String>();
+                attributeList = new ArrayList<String>();
+
                 if (getMaxSizeOfElement(service) > 0) {
                     if (i == getMaxSizeOfElement(service)) {
                         break;
                     }
                 }
+
+
                 if (null != service.getServiceId() && (i == 0)) {
-                    attributeMap.put(order++, service.getServiceId());
+                    attributeList.add(service.getServiceId());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // description
                 if (null != service.getDescription() && (i == 0)) {
-                    attributeMap.put(order++, service.getDescription());
+                    attributeList.add(service.getDescription());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
 
 
                 // pccRuleId
                 if (null != service.getPccRuleId() && (i == 0)) {
-                    attributeMap.put(order++, service.getPccRuleId());
+                    attributeList.add(service.getPccRuleId());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // pccRuleIdv6
                 if (null != service.getPccRuleIdv6() && (i == 0)) {
-                    attributeMap.put(order++, service.getPccRuleIdv6());
+                    attributeList.add(service.getPccRuleIdv6());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // pccRuleType
                 if (null != service.getPccRuleType() && (i == 0)) {
-                    attributeMap.put(order++, service.getPccRuleType());
+                    attributeList.add(service.getPccRuleType());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // mascServiceId
                 if (null != service.getMascServiceId() && (i == 0)) {
-                    attributeMap.put(order++, service.getMascServiceId());
+                    attributeList.add(service.getMascServiceId());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
 
                 // precedence
                 if (null != service.getPrecedence() && (i == 0)) {
-                    attributeMap.put(order++, service.getPrecedence());
-
+                    attributeList.add(service.getPrecedence());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // flow description
-                getAttribute(attributeMap, order++, service.getFlowDescriptions(), i);
+                getAttribute(attributeList, service.getFlowDescriptions(), i);
 
 
                 // qualification data
-                getAttribute(attributeMap, order++, service.getServiceQulificationData(), i);
+                getAttribute(attributeList, service.getServiceQulificationData(), i);
 
+                attributeLineList.add(attributeList);
 
-                attributeLineList.add(attributeMap);
-
-                Set<Entry<Integer, String>> attributeSet = attributeMap.entrySet();
-                for (Entry<Integer, String> attributeEntry : attributeSet) {
-                    // System.out.println(attributeEntry.getKey() + " : " +
-                    // attributeEntry.getValue());
-                }
 
             }
 
-            showService();
+            showObject(attributeLineList, headerList);
         }
 
 
     }
 
-
-
-    private void showService() {
-        for (Map<Integer, String> attributeMap : attributeLineList) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("| ");
-            Set<Entry<Integer, String>> attributeSet = attributeMap.entrySet();
-            Set<Entry<Integer, String>> headerSet = headerMap.entrySet();
-
-            int sequence = 0;
-            for (Entry<Integer, String> headerEntry : headerSet) {
-                for (Entry<Integer, String> attributeEntry : attributeSet) {
-
-                    if ((sequence == headerEntry.getKey()) && (sequence == attributeEntry.getKey())) {
-//                        System.out.println(sequence);
-//                        System.out.println(headerEntry.getKey() + " : " + headerEntry.getValue());
-//                        System.out.println(attributeEntry.getKey() + " : " + attributeEntry.getValue());
-//                        System.out.println();
-                        if (null == headerEntry.getValue()) {
-                            break;
-                        }
-                        if (null != attributeEntry.getValue()) {
-                            buffer.append(getCell(attributeEntry.getValue(), COLUMN_TYPE.CONTEXT));
-                        } else {
-                            buffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
-                        }
-                    }
-
-                }
-                ++sequence;
-            }
-            System.out.println(PREFIX + buffer.toString());
-        }
-        showLine();
-
-    }
 
 
     private void showHeader() {
@@ -239,113 +195,135 @@ public class ServiceHandler extends TableFormatter<String> implements Configurat
         buffer.append("| ");
 
 
-        for (Service service : configurationData.getServices()) {
+        for (int i = 0; i < configurationData.getServices().size(); i++) {
+            Service service = configurationData.getServices().get(i);
             int order = 0;
             int index = 0;
 
             // service Id
             index = order++;
             if (null != service.getServiceId()) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
             // description
             index = order++;
             if (null != service.getDescription()) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
             // PccRuleId
             index = order++;
             if (null != service.getPccRuleId()) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
-                };
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             // PccRuleIdv6
             index = order++;
             if (null != service.getPccRuleIdv6()) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             // PccRuleType
             // How to handle dynamic service who has no Pcc rule type
             index = order++;
             if (null != service.getPccRuleType()) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
             // Masc serviceId
             index = order++;
             if (null != service.getMascServiceId()) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                    headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             // Precedence
             index = order++;
             if (null != service.getPrecedence()) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
             // FlowDescription
             index = order++;
             if (service.getFlowDescriptions().size() > 0) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
             // qualification
             index = order++;
             if (service.getServiceQulificationData().size() > 0) {
-                headerMap.put(index, Service.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Service.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
         }
 
-        // Get a ordered list without duplicate element
 
-        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
-        for (Entry<Integer, String> entry : entrySet) {
-            int sequence = 0;
-            while (!(sequence > entrySet.size())) {
-                if (sequence == entry.getKey().intValue()) {
-                    if (null != entry.getValue()) {
-                        System.out.println(entry.getKey() + " : " + entry.getValue());
-                        buffer.append(getCell(entry.getValue(), COLUMN_TYPE.CONTEXT));
-                        break;
-                    }
-                }
-                ++sequence;
+        for (String header : headerList) {
+            if (null != header) {
+                buffer.append(getCell(header, COLUMN_TYPE.CONTEXT));
             }
         }
 
@@ -353,7 +331,6 @@ public class ServiceHandler extends TableFormatter<String> implements Configurat
         showLine();
 
     }
-
 
 
     @Override

@@ -1,11 +1,7 @@
 package com.e.s.tool.config.handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import com.e.s.tool.config.TableFormatter;
 import com.e.s.tool.config.pojo.ConfigurationData;
@@ -19,9 +15,9 @@ public class SubscriberHanlder extends TableFormatter<String> implements Configu
     private static String PATTERN_DN_SUB_QUALIFY = "dn:EPC-Name=EPC-SubscriberQualification,EPC-SubscriberId=";
 
 
-    Map<Integer, String> headerMap = new HashMap<Integer, String>();
+    List<String> headerList = new ArrayList<String>();
 
-    List<Map<Integer, String>> attributeLineList;
+    List<List<String>> attributeLineList;
 
     private LdapTree tree;
     private ConfigurationData configurationData;
@@ -104,106 +100,72 @@ public class SubscriberHanlder extends TableFormatter<String> implements Configu
 
         showHeader();
 
-        Map<Integer, String> attributeMap = null;
+        List<String> attributeList = null;
 
 
         for (Subscriber sub : configurationData.getSubscribers()) {
-            attributeLineList = new ArrayList<Map<Integer, String>>();
-            
+            attributeLineList = new ArrayList<List<String>>();
+
             for (int i = 0; i <= getMaxSizeOfElement(sub); ++i) {
-                int order = 0;
-                attributeMap = new HashMap<Integer, String>();
+                attributeList = new ArrayList<String>();
                 if (getMaxSizeOfElement(sub) > 0) {
                     if (i == getMaxSizeOfElement(sub)) {
                         break;
                     }
                 }
+
+
                 if (null != sub.getSubscriberId() && (i == 0)) {
-                    attributeMap.put(order++, sub.getSubscriberId());
+                    attributeList.add(sub.getSubscriberId());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // subscribed services
-                getAttribute(attributeMap, order++, sub.getSubscribedServiceIds(), i);
+                getAttribute(attributeList, sub.getSubscribedServiceIds(), i);
 
 
                 // group
-                getAttribute(attributeMap, order++, sub.getSubscriberGroupIds(), i);
+                getAttribute(attributeList, sub.getSubscriberGroupIds(), i);
 
                 // traffic
-                getAttribute(attributeMap, order++, sub.getTrafficIds(), i);
+                getAttribute(attributeList, sub.getTrafficIds(), i);
 
 
                 // black list
-                getAttribute(attributeMap, order++, sub.getBlacklistServiceIds(), i);
+                getAttribute(attributeList, sub.getBlacklistServiceIds(), i);
 
                 // event trigger
-                getAttribute(attributeMap, order++, sub.getEventTriggers(), i);
+                getAttribute(attributeList, sub.getEventTriggers(), i);
 
                 // family
                 if (null != sub.getFamilyId() && (i == 0)) {
-                    attributeMap.put(order++, sub.getFamilyId());
+                    attributeList.add(sub.getFamilyId());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // enable masc
                 if (null != sub.isEnableMasc() && (i == 0)) {
-                    attributeMap.put(order++, sub.isEnableMasc());
+                    attributeList.add(sub.isEnableMasc());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
 
                 // qualification data
-                getAttribute(attributeMap, order++, sub.getSubscriberQualificationData(), i);
+                getAttribute(attributeList, sub.getSubscriberQualificationData(), i);
 
                 // notification
-                getAttribute(attributeMap, order++, sub.getNotificationData(), i);
+                getAttribute(attributeList, sub.getNotificationData(), i);
 
                 // operator specific
-                getAttribute(attributeMap, order++, sub.getOperatorSpecificInfoList(), i);
+                getAttribute(attributeList, sub.getOperatorSpecificInfoList(), i);
 
-                attributeLineList.add(attributeMap);
+                attributeLineList.add(attributeList);
             }
-            showSubscriber();
+            showObject(attributeLineList, headerList);
         }
-
-    }
-
-
-
-    private void showSubscriber() {
-        for (Map<Integer, String> attributeMap : attributeLineList) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("| ");
-            Set<Entry<Integer, String>> entrySet = attributeMap.entrySet();
-            Set<Entry<Integer, String>> headerSet = headerMap.entrySet();
-
-            int sequence = 0;
-            for (Entry<Integer, String> headerEntry : headerSet) {
-                
-
-                    for (Entry<Integer, String> entry : entrySet) {
-                        if ((sequence == headerEntry.getKey()) && (sequence == entry.getKey())) {
-                            if (null == headerEntry.getValue()) {
-                                break;
-                        }
-                            if (null != entry.getValue()) {
-                                buffer.append(getCell(entry.getValue(), COLUMN_TYPE.CONTEXT));
-                            } else {
-                                buffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
-                            }
-                        }
-                }
-
-                ++sequence;
-            }
-
-            System.out.println(PREFIX + buffer.toString());
-        }
-        showLine();
 
     }
 
@@ -215,101 +177,149 @@ public class SubscriberHanlder extends TableFormatter<String> implements Configu
 
         buffer.append("| ");
 
-        for (Subscriber sub : configurationData.getSubscribers()) {
+        for (int i = 0; i < configurationData.getSubscribers().size(); i++) {
+            Subscriber subscriber = configurationData.getSubscribers().get(i);
             int order = 0;
             int index = 0;
             index = order++;
-            if (null != sub.getSubscriberId()) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (null != subscriber.getSubscriberId()) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (sub.getSubscribedServiceIds().size() > 0) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (subscriber.getSubscribedServiceIds().size() > 0) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
 
             index = order++;
-            if (sub.getSubscriberGroupIds().size() > 0) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (subscriber.getSubscriberGroupIds().size() > 0) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (sub.getTrafficIds().size() > 0) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (subscriber.getTrafficIds().size() > 0) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (sub.getBlacklistServiceIds().size() > 0) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (subscriber.getBlacklistServiceIds().size() > 0) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (sub.getEventTriggers().size() > 0) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (subscriber.getEventTriggers().size() > 0) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (null != sub.getFamilyId()) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (null != subscriber.getFamilyId()) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (null != sub.isEnableMasc()) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (null != subscriber.isEnableMasc()) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (sub.getSubscriberQualificationData().size() > 0) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (subscriber.getSubscriberQualificationData().size() > 0) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (sub.getNotificationData().size() > 0) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (subscriber.getNotificationData().size() > 0) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
             index = order++;
-            if (sub.getOperatorSpecificInfoList().size() > 0) {
-                headerMap.put(index, Subscriber.attributeList.get(index));
+            if (subscriber.getOperatorSpecificInfoList().size() > 0) {
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(Subscriber.attributeList.get(index));
+                }
             } else {
-                headerMap.put(index, null);
+                // Don't override the status after previous header already exist
+                if (headerList.size() == index) {
+                    headerList.add(null);
+                }
             }
 
         }
         // Get a ordered list without duplicate element
 
-        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
-        for (Entry<Integer, String> entry : entrySet) {
-            int sequence = 0;
-            while (!(sequence > entrySet.size())) {
-                if (sequence == entry.getKey().intValue()) {
-                    if (null != entry.getValue()) {
-                        buffer.append(getCell(entry.getValue(), COLUMN_TYPE.CONTEXT));
-                        break;
-                    }
-                }
-                ++sequence;
+        for (String header : headerList) {
+            if (null != header) {
+                buffer.append(getCell(header, COLUMN_TYPE.CONTEXT));
             }
         }
 

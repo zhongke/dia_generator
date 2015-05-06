@@ -1,11 +1,7 @@
 package com.e.s.tool.config.handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import com.e.s.tool.config.TableFormatter;
 import com.e.s.tool.config.pojo.ConfigurationData;
@@ -21,9 +17,9 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
     private ConfigurationData configurationData;
 
 
-    Map<Integer, String> headerMap = new HashMap<Integer, String>();
+    List<String> headerList = new ArrayList<String>();
 
-    List<Map<Integer, String>> attributeLineList;
+    List<List<String>> attributeLineList;
 
     public SubscriberGroupHanlder(LdapTree tree, ConfigurationData configurationData) {
         this.tree = tree;
@@ -73,14 +69,13 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
             e.printStackTrace();
         }
 
-        Map<Integer, String> attributeMap = null;
+        List<String> attributeList = null;
 
         for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
-            attributeLineList = new ArrayList<Map<Integer, String>>();
+            attributeLineList = new ArrayList<List<String>>();
             // Iterate every group by the maximum size of its elements.
             for (int i = 0; i <= getMaxSizeOfElement(group); ++i) {
-                int order = 0;
-                attributeMap = new HashMap<Integer, String>();
+                attributeList = new ArrayList<String>();
 
                 if (getMaxSizeOfElement(group) > 0) {
                     if (i == getMaxSizeOfElement(group)) {
@@ -90,72 +85,41 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
 
                 // group Id
                 if (null != group.getSubscriberGroupId() && (i == 0)) {
-                    attributeMap.put(order++, group.getSubscriberGroupId());
+                    attributeList.add(group.getSubscriberGroupId());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // description
                 if (null != group.getDescription() && (i == 0)) {
-                    attributeMap.put(order++, group.getDescription());
+                    attributeList.add(group.getDescription());
                 } else {
-                    attributeMap.put(order++, null);
+                    attributeList.add(null);
                 }
 
                 // subscribed service
-                getAttribute(attributeMap, order++, group.getSubscribedServiceIds(), i);
+                getAttribute(attributeList, group.getSubscribedServiceIds(), i);
 
                 // blacklist service
-                getAttribute(attributeMap, order++, group.getBlacklistServiceIds(), i);
+                getAttribute(attributeList, group.getBlacklistServiceIds(), i);
 
                 // event trigger
-                getAttribute(attributeMap, order++, group.getEventTriggers(), i);
+                getAttribute(attributeList, group.getEventTriggers(), i);
 
                 // notification
-                getAttribute(attributeMap, order++, group.getNotificationData(), i);
+                getAttribute(attributeList, group.getNotificationData(), i);
 
 
-                attributeLineList.add(attributeMap);
+                attributeLineList.add(attributeList);
             }
 
 
 
-            showGroup();
+            showObject(attributeLineList, headerList);
 
         }
     }
 
-    private void showGroup() {
-        for (Map<Integer, String> attributeMap : attributeLineList) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("| ");
-            Set<Entry<Integer, String>> attributeSet = attributeMap.entrySet();
-            Set<Entry<Integer, String>> headerSet = headerMap.entrySet();
-
-            int sequence = 0;
-            for (Entry<Integer, String> headerEntry : headerSet) {
-
-                for (Entry<Integer, String> attributeEntry : attributeSet) {
-                    if ((sequence == headerEntry.getKey()) && (sequence == attributeEntry.getKey())) {
-                        if (null == headerEntry.getValue()) {
-                            break;
-                        }
-
-                        if (null != attributeEntry.getValue()) {
-                            buffer.append(getCell(attributeEntry.getValue(), COLUMN_TYPE.CONTEXT));
-                        } else {
-                            buffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
-                        }
-                    }
-
-                }
-                ++sequence;
-            }
-            System.out.println(PREFIX + buffer.toString());
-        }
-        showLine();
-
-    }
 
     private void showHeader() throws ClassNotFoundException {
         showLine();
@@ -168,7 +132,10 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
          * Think about more than one subscriber with different attributes Define the order for the
          * header list
          */
-        for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
+        // for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
+
+        for (int i = 0; i < configurationData.getSubscriberGroups().size(); i++) {
+            SubscriberGroup group = configurationData.getSubscriberGroups().get(i);
             int order = 0;
             int index = 0;
             /*
@@ -182,71 +149,76 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
 
             index = order++;
             if (null != group.getSubscriberGroupId()) {
-                headerMap.put(index, SubscriberGroup.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(SubscriberGroup.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
             index = order++;
             if (null != group.getDescription()) {
-                headerMap.put(index, SubscriberGroup.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(SubscriberGroup.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
             index = order++;
             if (group.getSubscribedServiceIds().size() > 0) {
-                headerMap.put(index, SubscriberGroup.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(SubscriberGroup.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
             index = order++;
 
             if (group.getBlacklistServiceIds().size() > 0) {
-                headerMap.put(index, SubscriberGroup.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(SubscriberGroup.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
             index = order++;
 
             if (group.getEventTriggers().size() > 0) {
-                headerMap.put(index, SubscriberGroup.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(SubscriberGroup.attributeList.get(index));
+                }
             } else {
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
 
             index = order++;
             if (group.getNotificationData().size() > 0) {
-                headerMap.put(index, SubscriberGroup.attributeList.get(index));
+                if (i == 0 || (i > 0 && null == headerList.get(index))) {
+                    headerList.add(SubscriberGroup.attributeList.get(index));
+                }
             } else {
                 // Don't override the status after previous header already exist
-                if (isNull(headerMap, index)) {
-                    headerMap.put(index, null);
+                if (headerList.size() == index) {
+                    headerList.add(null);
                 }
             }
         }
 
-        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
-        for (Entry<Integer, String> entry : entrySet) {
-            int sequence = 0;
-            while (!(sequence > entrySet.size())) {
-                if (sequence == entry.getKey().intValue()) {
-                    if (null != entry.getValue()) {
-                        buffer.append(getCell(entry.getValue(), COLUMN_TYPE.CONTEXT));
-                        break;
-                    }
-                }
-                ++sequence;
+        for (String header : headerList) {
+            if (null != header) {
+                buffer.append(getCell(header, COLUMN_TYPE.CONTEXT));
             }
         }
 
