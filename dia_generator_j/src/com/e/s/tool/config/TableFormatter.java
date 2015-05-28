@@ -119,6 +119,20 @@ public class TableFormatter<T> {
         }
     }
 
+
+    public void getAttribute(String[] attributeList, int index, List<T> attributeValues, int i) {
+        int currrentSize = attributeValues.size();
+        if (currrentSize > 0) {
+            if (i <= currrentSize - 1) {
+                attributeList[index] = (String) (attributeValues.get(i));
+            } else {
+                attributeList[index] = null;
+            }
+        } else {
+            attributeList[index] = null;
+        }
+    }
+
     public void showObject(List<List<String>> attributeLineList, List<String> headerList) {
         for (List<String> attributeList : attributeLineList) {
             StringBuffer buffer = new StringBuffer();
@@ -140,14 +154,14 @@ public class TableFormatter<T> {
 
     }
 
-    public void showObject(List<List<String>> attributeLineList, String[] headerList) {
-        for (List<String> attributeList : attributeLineList) {
+    public void showObject(List<String[]> attributeLineList, String[] headerList) {
+        for (String[] attributeList : attributeLineList) {
             StringBuffer buffer = new StringBuffer();
             buffer.append("| ");
 
-            for (int i = 0; i < attributeList.size(); ++i) {
-                if (null != attributeList.get(i)) {
-                    buffer.append(getCell(attributeList.get(i), COLUMN_TYPE.CONTEXT));
+            for (int i = 0; i < attributeList.length; ++i) {
+                if (null != attributeList[i]) {
+                    buffer.append(getCell(attributeList[i], COLUMN_TYPE.CONTEXT));
                 } else {
                     if (null != headerList[i]) {
                         buffer.append(getCell(null, COLUMN_TYPE.CONTEXT));

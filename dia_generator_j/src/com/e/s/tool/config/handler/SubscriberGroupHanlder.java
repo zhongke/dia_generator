@@ -19,17 +19,17 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
     private ConfigurationData configurationData;
 
 
-    private static String[] headerList = null;
+    private static String[] headers = null;
 
     static {
-        headerList = new String[SubscriberGroup.attributeList.size()];
+        headers = new String[SubscriberGroup.attributeList.size()];
         for (int i = 0; i < SubscriberGroup.attributeList.size(); ++i) {
-            headerList[i] = null;
+            headers[i] = null;
         }
 
     }
 
-    List<List<String>> attributeLineList;
+    List<String[]> attributeLineList;
 
     public SubscriberGroupHanlder(LdapTree tree, ConfigurationData configurationData) {
         this.tree = tree;
@@ -75,61 +75,69 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
     private void showConfiguration() {
         try {
             showHeader();
+
+
+            String[] attributeList = null;
+
+            for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
+                attributeLineList = new ArrayList<String[]>();
+                // Iterate every group by the maximum size of its elements.
+                for (int i = 0; i <= getMaxSizeOfElement(group); ++i) {
+                    attributeList = new String[SubscriberGroup.attributeList.size()];
+                    for (int k = 0; k < SubscriberGroup.attributeList.size(); ++k) {
+                        attributeList[k] = null;
+                    }
+
+                    if (getMaxSizeOfElement(group) > 0) {
+                        if (i == getMaxSizeOfElement(group)) {
+                            break;
+                        }
+                    }
+
+                    Class<?> clazz = Class.forName("com.e.s.tool.config.pojo.SubscriberGroup");
+                    Method[] methods = clazz.getDeclaredMethods();
+                    String methodName = null;
+
+                    for (int j = 0; j < methods.length; ++j) {
+                        methodName = methods[j].getName();
+
+                        if (methodName.startsWith("get")) {
+                            Class<?> returnClass = methods[j].getReturnType();
+                            for (int k = 0; k < SubscriberGroup.attributeList.size(); k++) {
+                                String attr = SubscriberGroup.attributeList.get(k).split(":")[0].toLowerCase();
+                                String attrName = methodName.toLowerCase().substring(3, methodName.length());
+
+                                if (attr.equals(attrName)) {
+
+                                    Object result = methods[j].invoke(group, (Object[]) null);
+                                    if (returnClass.equals(List.class)) {
+                                        getAttribute(attributeList, k, (List<String>) result, i);
+                                    } else {
+                                        if (returnClass.equals(String.class) && (result != null) && (i == 0)) {
+                                            attributeList[k] = result.toString();
+                                        } else {
+                                            attributeList[k] = null;
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
+                    }
+
+                    attributeLineList.add(attributeList);
+                }
+
+
+                showObject(attributeLineList, headers);
+
+            }
         } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
-
-        List<String> attributeList = null;
-
-        for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
-            attributeLineList = new ArrayList<List<String>>();
-            // Iterate every group by the maximum size of its elements.
-            for (int i = 0; i <= getMaxSizeOfElement(group); ++i) {
-                attributeList = new ArrayList<String>();
-
-                if (getMaxSizeOfElement(group) > 0) {
-                    if (i == getMaxSizeOfElement(group)) {
-                        break;
-                    }
-                }
-
-                // group Id
-                if (null != group.getSubscriberGroupId() && (i == 0)) {
-                    attributeList.add(group.getSubscriberGroupId());
-                } else {
-                    attributeList.add(null);
-                }
-
-                // description
-                if (null != group.getDescription() && (i == 0)) {
-                    attributeList.add(group.getDescription());
-                } else {
-                    attributeList.add(null);
-                }
-
-                // subscribed service
-                getAttribute(attributeList, group.getSubscribedServiceIds(), i);
-
-                // blacklist service
-                getAttribute(attributeList, group.getBlacklistServiceIds(), i);
-
-                // event trigger
-                getAttribute(attributeList, group.getEventTriggers(), i);
-
-                // notification
-                getAttribute(attributeList, group.getNotificationData(), i);
-
-
-                attributeLineList.add(attributeList);
-            }
-
-
-
-            showObject(attributeLineList, headerList);
-
-        }
     }
-
 
     private void showHeader() throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException {
@@ -156,8 +164,9 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
                 methodName = methods[j].getName();
 
                 if (methodName.startsWith("get")) {
-                    for (int k = 0; k < SubscriberGroup.attributeList.size(); k++) {
-                        String attr = SubscriberGroup.attributeList.get(k).split(":")[0].toLowerCase();
+                    List<String> attributeList = SubscriberGroup.attributeList;
+                    for (int k = 0; k < attributeList.size(); k++) {
+                        String attr = attributeList.get(k).split(":")[0].toLowerCase();
                         String attrName = methodName.toLowerCase().substring(3, methodName.length());
 
                         if (attr.equals(attrName)) {
@@ -171,7 +180,7 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
                             }
 
                             if (headerExisted) {
-                                headerList[k] = SubscriberGroup.attributeList.get(k).split(":")[1];
+                                headers[k] = attributeList.get(k).split(":")[1];
                             }
                         }
                     }
@@ -179,7 +188,7 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
             }
         }
 
-        for (String header : headerList) {
+        for (String header : headers) {
             if (null != header) {
                 buffer.append(getCell(header, COLUMN_TYPE.CONTEXT));
             }
@@ -189,7 +198,6 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
         showLine();
 
     }
-
 
     @Override
     public void getConfiguration(String fileName) {
