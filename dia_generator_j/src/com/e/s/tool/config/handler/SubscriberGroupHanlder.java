@@ -1,5 +1,7 @@
 package com.e.s.tool.config.handler;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,15 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
     private ConfigurationData configurationData;
 
 
-    List<String> headerList = new ArrayList<String>();
+    private static String[] headerList = null;
+
+    static {
+        headerList = new String[SubscriberGroup.attributeList.size()];
+        for (int i = 0; i < SubscriberGroup.attributeList.size(); ++i) {
+            headerList[i] = null;
+        }
+
+    }
 
     List<List<String>> attributeLineList;
 
@@ -65,7 +75,7 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
     private void showConfiguration() {
         try {
             showHeader();
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -121,7 +131,8 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
     }
 
 
-    private void showHeader() throws ClassNotFoundException {
+    private void showHeader() throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException {
         showLine();
 
         StringBuffer buffer = new StringBuffer();
@@ -132,86 +143,38 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
          * Think about more than one subscriber with different attributes Define the order for the
          * header list
          */
-        // for (SubscriberGroup group : configurationData.getSubscriberGroups()) {
+
 
         for (int i = 0; i < configurationData.getSubscriberGroups().size(); i++) {
             SubscriberGroup group = configurationData.getSubscriberGroups().get(i);
-            int order = 0;
-            int index = 0;
-            /*
-             * Class clazz = Class.forName("com.e.s.tool.config.pojo.SubscriberGroup"); Method[]
-             * methods = clazz.getDeclaredMethods();
-             * 
-             * System.out.println("-----------------------"); for (int i = 0; i < methods.length;
-             * ++i) { System.out.println(methods[i].getName()); }
-             * System.out.println("-----------------------");
-             */
 
-            index = order++;
-            if (null != group.getSubscriberGroupId()) {
-                if (i == 0 || (i > 0 && null == headerList.get(index))) {
-                    headerList.add(SubscriberGroup.attributeList.get(index));
-                }
-            } else {
+            Class<?> clazz = Class.forName("com.e.s.tool.config.pojo.SubscriberGroup");
+            Method[] methods = clazz.getDeclaredMethods();
+            String methodName = null;
 
-                if (headerList.size() == index) {
-                    headerList.add(null);
-                }
-            }
+            for (int j = 0; j < methods.length; ++j) {
+                methodName = methods[j].getName();
 
-            index = order++;
-            if (null != group.getDescription()) {
-                if (i == 0 || (i > 0 && null == headerList.get(index))) {
-                    headerList.add(SubscriberGroup.attributeList.get(index));
-                }
-            } else {
-                if (headerList.size() == index) {
-                    headerList.add(null);
-                }
-            }
+                if (methodName.startsWith("get")) {
+                    for (int k = 0; k < SubscriberGroup.attributeList.size(); k++) {
+                        String attr = SubscriberGroup.attributeList.get(k).split(":")[0].toLowerCase();
+                        String attrName = methodName.toLowerCase().substring(3, methodName.length());
 
-            index = order++;
-            if (group.getSubscribedServiceIds().size() > 0) {
-                if (i == 0 || (i > 0 && null == headerList.get(index))) {
-                    headerList.add(SubscriberGroup.attributeList.get(index));
-                }
-            } else {
-                if (headerList.size() == index) {
-                    headerList.add(null);
-                }
-            }
-            index = order++;
+                        if (attr.equals(attrName)) {
+                            Object result = methods[j].invoke(group, (Object[]) null);
+                            Class<?> returnClass = methods[j].getReturnType();
+                            boolean headerExisted = false;
+                            if (returnClass.equals(List.class) && (((List<?>) result).size() > 0)) {
+                                headerExisted = true;
+                            } else if (returnClass.equals(String.class) && (result != null)) {
+                                headerExisted = true;
+                            }
 
-            if (group.getBlacklistServiceIds().size() > 0) {
-                if (i == 0 || (i > 0 && null == headerList.get(index))) {
-                    headerList.add(SubscriberGroup.attributeList.get(index));
-                }
-            } else {
-                if (headerList.size() == index) {
-                    headerList.add(null);
-                }
-            }
-            index = order++;
-
-            if (group.getEventTriggers().size() > 0) {
-                if (i == 0 || (i > 0 && null == headerList.get(index))) {
-                    headerList.add(SubscriberGroup.attributeList.get(index));
-                }
-            } else {
-                if (headerList.size() == index) {
-                    headerList.add(null);
-                }
-            }
-
-            index = order++;
-            if (group.getNotificationData().size() > 0) {
-                if (i == 0 || (i > 0 && null == headerList.get(index))) {
-                    headerList.add(SubscriberGroup.attributeList.get(index));
-                }
-            } else {
-                // Don't override the status after previous header already exist
-                if (headerList.size() == index) {
-                    headerList.add(null);
+                            if (headerExisted) {
+                                headerList[k] = SubscriberGroup.attributeList.get(k).split(":")[1];
+                            }
+                        }
+                    }
                 }
             }
         }

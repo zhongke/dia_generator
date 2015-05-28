@@ -5,27 +5,27 @@ import java.util.List;
 
 public class SubscriberGroup {
 
-    public static String PATTERN_EPC_SUBSCRIBER_GROUP_DESCRIPTION   = "EPC-SubscriberGroupDescription";
-    public static String PATTERN_EPC_SUBSCRIBED_SERVICES            = "EPC-SubscribedServices";
-    public static String PATTERN_EPC_BLACKLIST_SERVICES             = "EPC-BlacklistServices";
-    public static String PATTERN_EPC_NOTIFICATION_DATA              = "EPC-NotificationData";
-    public static String PATTERN_EPC_EVENT_TRIGGERS                 = "EPC-EventTriggers";
+    public static String PATTERN_EPC_SUBSCRIBER_GROUP_DESCRIPTION = "EPC-SubscriberGroupDescription";
+    public static String PATTERN_EPC_SUBSCRIBED_SERVICES = "EPC-SubscribedServices";
+    public static String PATTERN_EPC_BLACKLIST_SERVICES = "EPC-BlacklistServices";
+    public static String PATTERN_EPC_NOTIFICATION_DATA = "EPC-NotificationData";
+    public static String PATTERN_EPC_EVENT_TRIGGERS = "EPC-EventTriggers";
 
 
-/*
-    EPC-SubscriberGroupId
-*/    
+    /*
+     * EPC-SubscriberGroupId
+     */
 
     public static List<String> attributeList;
 
     static {
         attributeList = new ArrayList<String>();
-        attributeList.add("GROUP");
-        attributeList.add("DESCRIPTION");
-        attributeList.add("SUBSCRIBED");
-        attributeList.add("BLACKLIST");
-        attributeList.add("TRIGGER");
-        attributeList.add("NOTIFICATION");
+        attributeList.add("subscriberGroupId:GROUP");
+        attributeList.add("description:DESCRIPTION");
+        attributeList.add("subscribedServiceIds:SUBSCRIBED");
+        attributeList.add("blacklistServiceIds:BLACKLIST");
+        attributeList.add("eventTriggers:TRIGGER");
+        attributeList.add("notificationData:NOTIFICATION");
     }
 
     private String subscriberGroupId;
@@ -35,10 +35,10 @@ public class SubscriberGroup {
     private List<String> eventTriggers;
     private List<String> notificationData;
 
-    
-    
+
+
     public SubscriberGroup() {
-        
+
         this.subscribedServiceIds = new ArrayList<String>();
         this.blacklistServiceIds = new ArrayList<String>();
         this.eventTriggers = new ArrayList<String>();
@@ -137,5 +137,5 @@ public class SubscriberGroup {
 
         return buffer.toString();
     }
-    
+
 }
