@@ -20,26 +20,6 @@ public class TableFormatter<T> {
 
     public static String PREFIX = "*       ";
 
-    public int getMaxSizeOfElement(T object) {
-        return 0;
-
-    }
-
-    /*
-     * public int getMaxSizeOfElement(SubscriberGroup group) {
-     * 
-     * int size = group.getSubscribedServiceIds().size();
-     * 
-     * if (size < group.getBlacklistServiceIds().size()) { size =
-     * group.getBlacklistServiceIds().size(); }
-     * 
-     * if (size < group.getEventTriggers().size()) { size = group.getEventTriggers().size(); }
-     * 
-     * if (size < group.getNotificationData().size()) { size = group.getNotificationData().size(); }
-     * 
-     * return size; }
-     */
-
 
     public int getMaxSizeOfElement(Subscriber sub) {
 
