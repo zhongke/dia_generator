@@ -1,17 +1,13 @@
 package com.e.s.tool.config.handler;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.e.s.tool.config.TableFormatter;
 import com.e.s.tool.config.pojo.ConfigurationData;
 import com.e.s.tool.config.pojo.LdapTree;
 import com.e.s.tool.config.pojo.Node;
 import com.e.s.tool.config.pojo.SubscriberGroup;
 
-public class SubscriberGroupHanlder extends TableFormatter<String> implements ConfigurationHandler {
+public class SubscriberGroupHanlder extends AbstractConfigurationHandler<SubscriberGroup> {
 
     private static String PATTERN_DN_SUB_GROUP = "dn:EPC-SubscriberGroupId=";
 
@@ -19,21 +15,11 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
     private ConfigurationData configurationData;
 
 
-    private static String[] headers = null;
-
-    static {
-        headers = new String[SubscriberGroup.attributeList.size()];
-        for (int i = 0; i < SubscriberGroup.attributeList.size(); ++i) {
-            headers[i] = null;
-        }
-
-    }
-
     List<String[]> attributeLineList;
 
     public SubscriberGroupHanlder(LdapTree tree, ConfigurationData configurationData) {
-        this.tree = tree;
-        this.configurationData = configurationData;
+      this.tree = tree;
+      this.configurationData = configurationData;
     }
 
     @Override
@@ -65,17 +51,17 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
 
         }
 
-        showConfiguration();
+        showConfiguration(subscriberGroup, configurationData);
 
     }
 
     /*
      * Show all the elements following the order of headers
      */
+    /*
     private void showConfiguration() {
         try {
             showHeader();
-
 
             String[] attributeList = null;
 
@@ -103,6 +89,9 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
 
                         if (methodName.startsWith("get")) {
                             Class<?> returnClass = methods[j].getReturnType();
+                            Type genericType = methods[j].getGenericReturnType();
+
+                            System.out.println("genericType : " + genericType.toString());
                             for (int k = 0; k < SubscriberGroup.attributeList.size(); k++) {
                                 String attr = SubscriberGroup.attributeList.get(k).split(":")[0].toLowerCase();
                                 String attrName = methodName.toLowerCase().substring(3, methodName.length());
@@ -138,7 +127,9 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
             e.printStackTrace();
         }
     }
+     */
 
+    /*
     private void showHeader() throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException {
         showLine();
@@ -146,11 +137,6 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("| ");
-
-        /*
-         * Think about more than one subscriber with different attributes Define the order for the
-         * header list
-         */
 
 
         for (int i = 0; i < configurationData.getSubscriberGroups().size(); i++) {
@@ -198,7 +184,8 @@ public class SubscriberGroupHanlder extends TableFormatter<String> implements Co
         showLine();
 
     }
-
+ */
+    
     @Override
     public void getConfiguration(String fileName) {
         // TODO Auto-generated method stub

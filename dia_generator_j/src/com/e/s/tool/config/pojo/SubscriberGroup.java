@@ -3,7 +3,7 @@ package com.e.s.tool.config.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubscriberGroup {
+public class SubscriberGroup extends DataObject {
 
     public static String PATTERN_EPC_SUBSCRIBER_GROUP_DESCRIPTION = "EPC-SubscriberGroupDescription";
     public static String PATTERN_EPC_SUBSCRIBED_SERVICES = "EPC-SubscribedServices";
@@ -16,17 +16,7 @@ public class SubscriberGroup {
      * EPC-SubscriberGroupId
      */
 
-    public static List<String> attributeList;
-
-    static {
-        attributeList = new ArrayList<String>();
-        attributeList.add("subscriberGroupId:GROUP");
-        attributeList.add("description:DESCRIPTION");
-        attributeList.add("subscribedServiceIds:SUBSCRIBED");
-        attributeList.add("blacklistServiceIds:BLACKLIST");
-        attributeList.add("eventTriggers:TRIGGER");
-        attributeList.add("notificationData:NOTIFICATION");
-    }
+    public  List<String> attributeList;
 
     private String subscriberGroupId;
     private String description;
@@ -38,6 +28,13 @@ public class SubscriberGroup {
 
 
     public SubscriberGroup() {
+        attributeList = new ArrayList<String>();
+        attributeList.add("subscriberGroupId:GROUP");
+        attributeList.add("description:DESCRIPTION");
+        attributeList.add("subscribedServiceIds:SUBSCRIBED");
+        attributeList.add("blacklistServiceIds:BLACKLIST");
+        attributeList.add("eventTriggers:TRIGGER");
+        attributeList.add("notificationData:NOTIFICATION");
 
         this.subscribedServiceIds = new ArrayList<String>();
         this.blacklistServiceIds = new ArrayList<String>();
@@ -136,6 +133,11 @@ public class SubscriberGroup {
         buffer.append("]");
 
         return buffer.toString();
+    }
+
+    @Override
+    public List<String> getAttributeList() {
+        return attributeList;
     }
 
 }

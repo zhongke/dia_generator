@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.e.s.tool.config.pojo.Service;
 import com.e.s.tool.config.pojo.Subscriber;
-import com.e.s.tool.config.pojo.SubscriberGroup;
 
 
 public class TableFormatter<T> {
@@ -21,25 +20,25 @@ public class TableFormatter<T> {
 
     public static String PREFIX = "*       ";
 
-    public int getMaxSizeOfElement(SubscriberGroup group) {
+    public int getMaxSizeOfElement(T object) {
+        return 0;
 
-        int size = group.getSubscribedServiceIds().size();
-
-        if (size < group.getBlacklistServiceIds().size()) {
-            size = group.getBlacklistServiceIds().size();
-        }
-
-        if (size < group.getEventTriggers().size()) {
-            size = group.getEventTriggers().size();
-        }
-
-        if (size < group.getNotificationData().size()) {
-            size = group.getNotificationData().size();
-        }
-
-        return size;
     }
 
+    /*
+     * public int getMaxSizeOfElement(SubscriberGroup group) {
+     * 
+     * int size = group.getSubscribedServiceIds().size();
+     * 
+     * if (size < group.getBlacklistServiceIds().size()) { size =
+     * group.getBlacklistServiceIds().size(); }
+     * 
+     * if (size < group.getEventTriggers().size()) { size = group.getEventTriggers().size(); }
+     * 
+     * if (size < group.getNotificationData().size()) { size = group.getNotificationData().size(); }
+     * 
+     * return size; }
+     */
 
 
     public int getMaxSizeOfElement(Subscriber sub) {
@@ -88,22 +87,6 @@ public class TableFormatter<T> {
         return size;
     }
 
-    public boolean isNull(Map<Integer, String> headerMap, int index) {
-        boolean isNull = false;
-        Set<Entry<Integer, String>> entrySet = headerMap.entrySet();
-        for (Entry<Integer, String> entry : entrySet) {
-            if (index == entry.getKey().intValue()) {
-                if (null == entry.getValue() || entry.getValue().trim().equals("")) {
-                    isNull = true;
-                } else {
-                    isNull = false;
-                }
-            }
-        }
-
-        return isNull;
-
-    }
 
 
     public void getAttribute(List<T> attributeList, List<T> attributeValues, int i) {
@@ -120,7 +103,7 @@ public class TableFormatter<T> {
     }
 
 
-    public void getAttribute(String[] attributeList, int index, List<T> attributeValues, int i) {
+    public void getAttribute(String[] attributeList, int index, List<?> attributeValues, int i) {
         int currrentSize = attributeValues.size();
         if (currrentSize > 0) {
             if (i <= currrentSize - 1) {
