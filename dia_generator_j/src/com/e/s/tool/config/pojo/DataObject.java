@@ -3,8 +3,8 @@ package com.e.s.tool.config.pojo;
 import java.util.List;
 
 
-public  interface DataObject {
+public  abstract class DataObject {
 
 
-    public  List<String> getAttributeList();
+    public abstract  List<String> getAttributeList();
 }

@@ -3,7 +3,7 @@ package com.e.s.tool.config.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Service implements DataObject {
+public class Service extends DataObject {
 /*    
     EPC-ServiceId
     EPC-ServiceQualificationName
@@ -23,7 +23,20 @@ public class Service implements DataObject {
 
     public static String PATTERN_EPC_MASC_PACKAGE_NAMES         = "EPC-MascPackageNames";
     
-    public List<String> attributeList;
+    private static List<String> attributeList;
+    
+    static {
+        attributeList = new ArrayList<String>();
+        attributeList.add("serviceId:SERVICE_ID");
+        attributeList.add("description:DESCRIPTION");
+        attributeList.add("pccRuleId:PCC_RULE_ID");
+        attributeList.add("pccRuleIdv6:PCC_RULE_IDv6");
+        attributeList.add("pccRuleType:PCC_RULE_TYPE");
+        attributeList.add("mascServiceId:MASC_SERVICE_ID");
+        attributeList.add("precedence:PRECEDENCE");
+        attributeList.add("flowDescriptions:FLOW_DESCRIPTION");
+        attributeList.add("serviceQulificationData:QUALIFICATION");
+    }
     
     private String serviceId;
     private String description;
@@ -39,16 +52,7 @@ public class Service implements DataObject {
 
 
     public Service() {
-        attributeList = new ArrayList<String>();
-        attributeList.add("serviceId:SERVICE_ID");
-        attributeList.add("description:DESCRIPTION");
-        attributeList.add("pccRuleId:PCC_RULE_ID");
-        attributeList.add("pccRuleIdv6:PCC_RULE_IDv6");
-        attributeList.add("pccRuleType:PCC_RULE_TYPE");
-        attributeList.add("mascServiceId:MASC_SERVICE_ID");
-        attributeList.add("precedence:PRECEDENCE");
-        attributeList.add("flowDescriptions:FLOW_DESCRIPTION");
-        attributeList.add("serviceQulificationData:QUALIFICATION");
+
         
         this.flowDescriptions = new ArrayList<String>();
         this.serviceQulificationData = new ArrayList<String>();
@@ -163,8 +167,7 @@ public class Service implements DataObject {
         return buffer.toString();
     }
 
-    @Override
-    public List<String> getAttributeList() {
+    public  List<String> getAttributeList() {
         return attributeList;
     }
 

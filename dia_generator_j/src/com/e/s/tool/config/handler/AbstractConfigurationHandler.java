@@ -13,8 +13,6 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
     private String[] headers = null;
 
 
-
-
     /*
      * Show all the elements following the order of headers
      */
@@ -28,19 +26,19 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
             for (T group : objectList) {
                 attributeLineList = new ArrayList<String[]>(); // Iterate every group by the maximum
                                                                // size of its elements.
-                for (int i = 0; i <= getMaxSizeOfElement(object); ++i) {
-                    attributeList = new String[object.getAttributeList().size()];
-                    for (int k = 0; k < object.getAttributeList().size(); ++k) {
+                for (int i = 0; i <= getMaxSizeOfElement(group); ++i) {
+                    attributeList = new String[group.getAttributeList().size()];
+                    for (int k = 0; k < group.getAttributeList().size(); ++k) {
                         attributeList[k] = null;
                     }
 
-                    if (getMaxSizeOfElement(object) > 0) {
-                        if (i == getMaxSizeOfElement(object)) {
+                    if (getMaxSizeOfElement(group) > 0) {
+                        if (i == (getMaxSizeOfElement(group))) {
                             break;
                         }
                     }
 
-                    Class<?> clazz = Class.forName(object.getClass().getName());
+                    Class<?> clazz = Class.forName(group.getClass().getName());
                     Method[] methods = clazz.getDeclaredMethods();
                     String methodName = null;
 
@@ -49,8 +47,8 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
 
                         if (methodName.startsWith("get")) {
                             Class<?> returnClass = methods[j].getReturnType();
-                            for (int k = 0; k < object.getAttributeList().size(); k++) {
-                                String attr = object.getAttributeList().get(k).split(":")[0].toLowerCase();
+                            for (int k = 0; k < group.getAttributeList().size(); k++) {
+                                String attr = group.getAttributeList().get(k).split(":")[0].toLowerCase();
                                 String attrName = methodName.toLowerCase().substring(3, methodName.length());
 
                                 if (attr.equals(attrName)) {
@@ -105,9 +103,9 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
          * header list
          */
         for (int i = 0; i < objectList.size(); i++) {
-            T group = objectList.get(i);
+            T dataObject = objectList.get(i);
 
-            Class<?> clazz = Class.forName(object.getClass().getName());
+            Class<?> clazz = Class.forName(dataObject.getClass().getName());
             Method[] methods = clazz.getDeclaredMethods();
             String methodName = null;
 
@@ -115,7 +113,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
                 methodName = methods[j].getName();
 
                 if (methodName.startsWith("get")) {
-                    List<String> attributeList = object.getAttributeList();
+                    List<String> attributeList = dataObject.getAttributeList();
                     
                     
                     for (int k = 0; k < attributeList.size(); k++) {
@@ -123,7 +121,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
                         String attrName = methodName.toLowerCase().substring(3, methodName.length());
 
                         if (attr.equals(attrName)) {
-                            Object result = methods[j].invoke(group, (Object[]) null);
+                            Object result = methods[j].invoke(dataObject, (Object[]) null);
                             Class<?> returnClass = methods[j].getReturnType();
                             boolean headerExisted = false;
                             if (returnClass.equals(List.class) && (((List<?>) result).size() > 0)) {
@@ -152,11 +150,11 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
 
     }
     
-    private int getMaxSizeOfElement(T object) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private int getMaxSizeOfElement(T dataObject) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         
         int size = 0;
         
-        Class<?> clazz = Class.forName(object.getClass().getName());
+        Class<?> clazz = Class.forName(dataObject.getClass().getName());
         Method[] methods = clazz.getDeclaredMethods();
         String methodName = null;
         
@@ -164,15 +162,14 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
             methodName = methods[j].getName();
 
             if (methodName.startsWith("get")) {
-                List<String> attributeList = object.getAttributeList();
-                
+                List<String> attributeList = dataObject.getAttributeList();
                 
                 for (int k = 0; k < attributeList.size(); k++) {
                     String attr = attributeList.get(k).split(":")[0].toLowerCase();
                     String attrName = methodName.toLowerCase().substring(3, methodName.length());
 
                     if (attr.equals(attrName)) {
-                        Object result = methods[j].invoke(object, (Object[]) null);
+                        Object result = methods[j].invoke(dataObject, (Object[]) null);
                         Class<?> returnClass = methods[j].getReturnType();
                         if (returnClass.equals(List.class) && (((List<?>) result).size() > size )) {
                            size = ((List<?>) result).size();
@@ -182,6 +179,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
                 }
             }
         }
+        
         return size;
 
     }
