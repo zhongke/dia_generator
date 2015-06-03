@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.e.s.tool.config.pojo.Service;
-import com.e.s.tool.config.pojo.Subscriber;
-
 
 public class TableFormatter<T> {
 
@@ -21,68 +18,6 @@ public class TableFormatter<T> {
     public static String PREFIX = "*       ";
 
 
-    public int getMaxSizeOfElement(Subscriber sub) {
-
-        int size = sub.getBlacklistServiceIds().size();
-
-        if (size < sub.getEventTriggers().size()) {
-            size = sub.getEventTriggers().size();
-        }
-
-        if (size < sub.getNotificationData().size()) {
-            size = sub.getNotificationData().size();
-        }
-
-        if (size < sub.getOperatorSpecificInfoList().size()) {
-            size = sub.getOperatorSpecificInfoList().size();
-        }
-
-        if (size < sub.getSubscribedServiceIds().size()) {
-            size = sub.getSubscribedServiceIds().size();
-        }
-
-        if (size < sub.getSubscriberGroupIds().size()) {
-            size = sub.getSubscriberGroupIds().size();
-        }
-
-        if (size < sub.getSubscriberQualificationData().size()) {
-            size = sub.getSubscriberQualificationData().size();
-        }
-
-        if (size < sub.getTrafficIds().size()) {
-            size = sub.getTrafficIds().size();
-        }
-
-        return size;
-    }
-
-    public int getMaxSizeOfElement(Service service) {
-
-        int size = service.getFlowDescriptions().size();
-
-        if (size < service.getServiceQulificationData().size()) {
-            size = service.getServiceQulificationData().size();
-        }
-
-        return size;
-    }
-
-
-
-    public void getAttribute(List<T> attributeList, List<T> attributeValues, int i) {
-        int currrentSize = attributeValues.size();
-        if (currrentSize > 0) {
-            if (i <= currrentSize - 1) {
-                attributeList.add(attributeValues.get(i));
-            } else {
-                attributeList.add(null);
-            }
-        } else {
-            attributeList.add(null);
-        }
-    }
-
-
     public void getAttribute(String[] attributeList, int index, List<?> attributeValues, int i) {
         int currrentSize = attributeValues.size();
         if (currrentSize > 0) {
@@ -94,27 +29,6 @@ public class TableFormatter<T> {
         } else {
             attributeList[index] = null;
         }
-    }
-
-    public void showObject(List<List<String>> attributeLineList, List<String> headerList) {
-        for (List<String> attributeList : attributeLineList) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("| ");
-
-            for (int i = 0; i < attributeList.size(); ++i) {
-                if (null != attributeList.get(i)) {
-                    buffer.append(getCell(attributeList.get(i), COLUMN_TYPE.CONTEXT));
-                } else {
-                    if (null != headerList.get(i)) {
-                        buffer.append(getCell(null, COLUMN_TYPE.CONTEXT));
-                    }
-                }
-            }
-
-            System.out.println(PREFIX + buffer.toString());
-        }
-        showLine();
-
     }
 
     public void showObject(List<String[]> attributeLineList, String[] headerList) {

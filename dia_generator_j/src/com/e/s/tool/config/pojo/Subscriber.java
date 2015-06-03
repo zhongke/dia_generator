@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Subscriber {
+public class Subscriber implements DataObject {
     public static String PATTERN_EPC_SUBSCRIBED_SERVICES       = "EPC-SubscribedServices";
     public static String PATTERN_EPC_GROUP_IDS                 = "EPC-GroupIds";
     public static String PATTERN_EPC_TRAFFIC_IDS               = "EPC-TrafficIds";
@@ -21,25 +21,12 @@ public class Subscriber {
 */
 
 
-    public static List<String> attributeList;
+    public List<String> attributeList;
 
-    static {
-        attributeList = new ArrayList<String>();
-        attributeList.add("SUBSCRIBER");
-        attributeList.add("SUBSCRIBED");
-        attributeList.add("GROUP");
-        attributeList.add("TRAFFIC");
-        attributeList.add("BLACKLIST");
-        attributeList.add("TRIGGER");
-        attributeList.add("FAMILY");
-        attributeList.add("MASC");
-        attributeList.add("QUALIFICATION");
-        attributeList.add("NOTIFICATION");
-        attributeList.add("OPERATOR");
-    }
 
     private String subscriberId;
     private String familyId;
+    private String enableMasc;
     private List<String> trafficIds;
     private List<String> subscribedServiceIds;
     private List<String> blacklistServiceIds;
@@ -50,13 +37,20 @@ public class Subscriber {
     private List<String> subscriberQualificationData;
 
 
-    private String enableMasc;
-
-
-
-
-
     public Subscriber() {
+        attributeList = new ArrayList<String>();
+        attributeList.add("subscriberId:SUBSCRIBER");
+        attributeList.add("subscribedServiceIds:SUBSCRIBED");
+        attributeList.add("subscriberGroupIds:GROUP");
+        attributeList.add("trafficIds:TRAFFIC");
+        attributeList.add("blacklistServiceIds:BLACKLIST");
+        attributeList.add("eventTriggers:TRIGGER");
+        attributeList.add("familyId:FAMILY");
+        attributeList.add("enableMasc:MASC");
+        attributeList.add("subscriberQualificationData:QUALIFICATION");
+        attributeList.add("notificationData:NOTIFICATION");
+        attributeList.add("operatorSpecificInfoList:OPERATOR");
+        
         this.trafficIds = new ArrayList<String>();
         this.subscribedServiceIds = new ArrayList<String>();
         this.blacklistServiceIds = new ArrayList<String>();
@@ -228,6 +222,9 @@ public class Subscriber {
         return buffer.toString();
     }
 
-
+    @Override
+    public List<String> getAttributeList() {
+        return attributeList;
+    }
 
 }

@@ -3,7 +3,7 @@ package com.e.s.tool.config.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubscriberGroup extends DataObject {
+public class SubscriberGroup implements DataObject {
 
     public static String PATTERN_EPC_SUBSCRIBER_GROUP_DESCRIPTION = "EPC-SubscriberGroupDescription";
     public static String PATTERN_EPC_SUBSCRIBED_SERVICES = "EPC-SubscribedServices";
