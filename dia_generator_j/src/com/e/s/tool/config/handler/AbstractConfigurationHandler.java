@@ -21,7 +21,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
             showHeader(object, objectList);
             List<String[]> attributeLineList;
             
-            String[] attributeList = null;
+            String[] attributeList;
 
             for (T group : objectList) {
                 attributeLineList = new ArrayList<String[]>(); // Iterate every group by the maximum
@@ -40,7 +40,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
 
                     Class<?> clazz = Class.forName(group.getClass().getName());
                     Method[] methods = clazz.getDeclaredMethods();
-                    String methodName = null;
+                    String methodName;
 
                     for (int j = 0; j < methods.length; ++j) {
                         methodName = methods[j].getName();
@@ -79,7 +79,11 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
 
             }
 
-        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -107,7 +111,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
 
             Class<?> clazz = Class.forName(dataObject.getClass().getName());
             Method[] methods = clazz.getDeclaredMethods();
-            String methodName = null;
+            String methodName;
 
             for (int j = 0; j < methods.length; ++j) {
                 methodName = methods[j].getName();
@@ -156,7 +160,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
         
         Class<?> clazz = Class.forName(dataObject.getClass().getName());
         Method[] methods = clazz.getDeclaredMethods();
-        String methodName = null;
+        String methodName;
         
         for (int j = 0; j < methods.length; ++j) {
             methodName = methods[j].getName();

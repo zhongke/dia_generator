@@ -19,9 +19,9 @@ public class TableFormatter<T> {
 
 
     public void getAttribute(String[] attributeList, int index, List<?> attributeValues, int i) {
-        int currrentSize = attributeValues.size();
-        if (currrentSize > 0) {
-            if (i <= currrentSize - 1) {
+        int currentSize = attributeValues.size();
+        if (currentSize > 0) {
+            if (i <= currentSize - 1) {
                 attributeList[index] = (String) (attributeValues.get(i));
             } else {
                 attributeList[index] = null;

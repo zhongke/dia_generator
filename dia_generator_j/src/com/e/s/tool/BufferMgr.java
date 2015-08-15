@@ -13,16 +13,18 @@ import com.e.s.tool.ConstantType.EVENT_FLOW;
 import com.e.s.tool.ConstantType.EVENT_TYPE;
 
 public class BufferMgr {
-    private static String PATTERN_EVENT = "t_[3,a-z,/_]*_event";
-    private static String PATTERN_FUNCTION = "f_runEvent(";
-    private static String PATTERN_EVENT_FLOW = "eventFlow";
 
     // Initiate list to store all the events in the test case,
     // Include one direction (REQUEST/ANSWER) or Bi-direction (REQUEST and ANSWER)
-    private List<Event> events = new LinkedList<Event>();
+    private List<Event> events;
 
     // Get the all the distinguished nodes with correct order in the test case
-    private List<String> nodeList = new LinkedList<String>();
+    private List<String> nodeList;
+
+    public BufferMgr() {
+        events = new LinkedList<Event>();
+        nodeList = new LinkedList<String>();
+    }
 
     public void readInputFromFile(String fileName) {
 
@@ -30,11 +32,15 @@ public class BufferMgr {
 
         try {
 
+            String PATTERN_EVENT = "t_[3,a-z,/_]*_event";
+            String PATTERN_FUNCTION = "f_runEvent(";
+            String PATTERN_EVENT_FLOW = "eventFlow";
+
             bufferedReader = new BufferedReader(new FileReader(fileName));
-            Matcher matcher_event = null;
+            Matcher matcher_event;
             Pattern pattern_event = Pattern.compile(PATTERN_EVENT);
 
-            String line = "";
+            String line;
             Event event = new Event();
 
             // Default value is 1 for the first message
@@ -61,7 +67,7 @@ public class BufferMgr {
                             event.setEventType(str_event.toUpperCase().substring(2, str_event.length()));
 
                             event.setSameFlow(true);
-                            setCcrEventSpeicialInfo(line, event);
+                            setCcrEventSpecialInfo(line, event);
                             getSapcInitilazed(event);
                         }
 
@@ -176,7 +182,7 @@ public class BufferMgr {
 
     }
 
-    private void setCcrEventSpeicialInfo(String line, Event event) {
+    private void setCcrEventSpecialInfo(String line, Event event) {
 
         String release;
         String requestType;
@@ -234,12 +240,12 @@ public class BufferMgr {
 
     public void showDiagramFromBuffer() {
 
-        DiagramHanlder.showHeaderLine(nodeList);
-        DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.FIRST, nodeList);
-        DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.MIDDLE, nodeList);
+        DiagramHandler.showHeaderLine(nodeList);
+        DiagramHandler.showCommonLine(DiagramHandler.COMMON.FIRST, nodeList);
+        DiagramHandler.showCommonLine(DiagramHandler.COMMON.MIDDLE, nodeList);
 
         Iterator<Event> iter = events.iterator();
-        Event event = null;
+        Event event;
 
         while (iter.hasNext()) {
 
@@ -249,33 +255,33 @@ public class BufferMgr {
             if (EVENT_FLOW.BOTH == eventFlow) {
 
                 event.setEventFlow(EVENT_FLOW.REQUEST);
-                DiagramHanlder.showMessageLine(event, nodeList);
+                DiagramHandler.showMessageLine(event, nodeList);
                 event.setEventFlow(EVENT_FLOW.ANSWER);
-                DiagramHanlder.showMessageLine(event, nodeList);
+                DiagramHandler.showMessageLine(event, nodeList);
 
             } else {
 
-                DiagramHanlder.showMessageLine(event, nodeList);
+                DiagramHandler.showMessageLine(event, nodeList);
 
             }
 
-            DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.MIDDLE, nodeList);
+            DiagramHandler.showCommonLine(DiagramHandler.COMMON.MIDDLE, nodeList);
 
         }
 
-        DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.MIDDLE, nodeList);
-        DiagramHanlder.showCommonLine(DiagramHanlder.COMMON.LAST, nodeList);
+        DiagramHandler.showCommonLine(DiagramHandler.COMMON.MIDDLE, nodeList);
+        DiagramHandler.showCommonLine(DiagramHandler.COMMON.LAST, nodeList);
 
     }
 
     public void showMessageFromBuffer() {
 
         Iterator<Event> iter = events.iterator();
-        Event event = null;
+        Event event;
 
         while (iter.hasNext()) {
 
-            event = (Event) iter.next();
+            event = iter.next();
 
             MessageHandler messageHandler = new MessageHandler();
             messageHandler.showMessageLine(event);

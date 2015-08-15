@@ -8,7 +8,7 @@ import com.e.s.tool.config.pojo.LdapTree;
 import com.e.s.tool.config.pojo.Node;
 import com.e.s.tool.config.pojo.Subscriber;
 
-public class SubscriberHanlder extends AbstractConfigurationHandler<Subscriber> {
+public class SubscriberHandler extends AbstractConfigurationHandler<Subscriber> {
 
     private static String PATTERN_DN_SUB = "dn:EPC-SubscriberId=";
     private static String PATTERN_DN_SUB_QUALIFY = "dn:EPC-Name=EPC-SubscriberQualification,EPC-SubscriberId=";
@@ -21,7 +21,7 @@ public class SubscriberHanlder extends AbstractConfigurationHandler<Subscriber> 
     private LdapTree tree;
     private ConfigurationData configurationData;
 
-    public SubscriberHanlder(LdapTree tree, ConfigurationData configurationData) {
+    public SubscriberHandler(LdapTree tree, ConfigurationData configurationData) {
         this.tree = tree;
         this.configurationData = configurationData;
     }
@@ -33,9 +33,9 @@ public class SubscriberHanlder extends AbstractConfigurationHandler<Subscriber> 
     @Override
     public void getConfiguration() {
         Subscriber subscriber = null;
-        String attributeName = "";
-        String subscriberId = "";
-        Node node = null;
+        String attributeName;
+        String subscriberId;
+        Node node;
 
 
         for (int i = 0; i < tree.getNodes().size(); ++i) {

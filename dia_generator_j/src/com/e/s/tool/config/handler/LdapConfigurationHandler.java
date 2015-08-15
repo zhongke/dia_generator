@@ -13,7 +13,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
     private static String PATTERN_DN_FAMILY         = "dn:EPC-FamilyId=";
 
     private static String PATTERN_DN_TRIGGER        = "dn:EPC-BearerEventsNotificationName=EPC-BearerEventConfig,EPC-AccessPolicyChargingControlName=EPC-AccessPolicyChargingControl,EPC-ConfigContainerName=EPC-EpcConfigCont,applicationName=EPC-EpcNode,nodeName=jambala";
-    
+
     private static String PATTERN_TRIGGER           = "EPC-EventTriggers";
 
     private static String HEADER = "*       + ";
@@ -41,41 +41,41 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * - Subject
          * - Policy
          * - Rule
-         * 
+         *
          */
-//        System.out.print(HEADER);
-//        System.out.print("POLICY");
-//        System.out.println(" +");
-//        new PolicyHandler(tree, configurationData).getConfiguration();
-//        System.out.println("*");
+        System.out.print(HEADER);
+        System.out.print("POLICY");
+        System.out.println(" +");
+        new PolicyHandler(tree, configurationData).getConfiguration();
+        System.out.println("*");
 
         /*
          * getSubscriberConfiguration
          * - Subscriber
          * - SubscriberQualification
-         * 
+         *
          */
         System.out.print(HEADER);
         System.out.print("SUBSCRIBER");
         System.out.println(" +");
-        new SubscriberHanlder(tree, configurationData).getConfiguration();
+        new SubscriberHandler(tree, configurationData).getConfiguration();
         System.out.println("*");
         /*
-         * getSubscriberGroupConfiguration 
+         * getSubscriberGroupConfiguration
          * - SubscriberGroup
-         * 
+         *
          */
         System.out.print(HEADER);
         System.out.print("GROUP");
         System.out.println(" +");
-        new SubscriberGroupHanlder(tree, configurationData).getConfiguration();
+        new SubscriberGroupHandler(tree, configurationData).getConfiguration();
         System.out.println("*");
         /*
          * getServiceConfiguration
          * - Service
          * - PccRule
          * - ServiceQualification
-         * 
+         *
          */
         System.out.print(HEADER);
         System.out.print("SERVICE");

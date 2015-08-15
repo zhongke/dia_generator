@@ -8,7 +8,7 @@ import com.e.s.tool.ConstantType.MSG_TYPE;
 import com.e.s.tool.ConstantType.REQUEST_TYPE;
 
 
-public class DiagramHanlder {
+public class DiagramHandler {
     public static String BEGIN          = "*       ";
     public static String BLANK          = "                  ";
     public static String HEADER         = " ________ ";

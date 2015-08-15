@@ -166,13 +166,13 @@ public class PolicyHandler implements ConfigurationHandler {
     private void showPolicyConfiguration() {
 
         showHeader();
-        StringBuffer buffer = null;
-        StringBuffer policyBuffer = null;
-        StringBuffer ruleBuffer = null;
-        StringBuffer tempBuffer = null;
+        StringBuffer buffer;
+        StringBuffer policyBuffer;
+        StringBuffer ruleBuffer;
+        StringBuffer tempBuffer;
 
-        Policy policy = null;
-        Rule rule = null;
+        Policy policy;
+        Rule rule;
 
         for (PolicyLocator policyLocator : configurationData.getPolicyLocators()) {
             buffer = new StringBuffer();

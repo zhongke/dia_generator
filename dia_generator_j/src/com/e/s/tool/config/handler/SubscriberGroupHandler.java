@@ -7,7 +7,7 @@ import com.e.s.tool.config.pojo.LdapTree;
 import com.e.s.tool.config.pojo.Node;
 import com.e.s.tool.config.pojo.SubscriberGroup;
 
-public class SubscriberGroupHanlder extends AbstractConfigurationHandler<SubscriberGroup> {
+public class SubscriberGroupHandler extends AbstractConfigurationHandler<SubscriberGroup> {
 
     private static String PATTERN_DN_SUB_GROUP = "dn:EPC-SubscriberGroupId=";
 
@@ -17,7 +17,7 @@ public class SubscriberGroupHanlder extends AbstractConfigurationHandler<Subscri
 
     List<String[]> attributeLineList;
 
-    public SubscriberGroupHanlder(LdapTree tree, ConfigurationData configurationData) {
+    public SubscriberGroupHandler(LdapTree tree, ConfigurationData configurationData) {
       this.tree = tree;
       this.configurationData = configurationData;
     }

@@ -55,12 +55,10 @@ public class Generator {
 
             for (String file : args) {
                 BufferMgr buffMgr = new BufferMgr();
-                /*
                 buffMgr.readInputFromFile(file + ".ttcn");
 
                 buffMgr.showDiagramFromBuffer();
                 buffMgr.showMessageFromBuffer();
-                */
 
                 ConfigurationHandler configurationHandler = new LdapConfigurationHandler();
                 configurationHandler.getConfiguration(file + ".ldif");

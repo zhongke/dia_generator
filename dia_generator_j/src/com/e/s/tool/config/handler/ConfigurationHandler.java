@@ -10,8 +10,8 @@ package com.e.s.tool.config.handler;
  */
 public interface ConfigurationHandler {
 
-    public void getConfiguration(String fileName);
+    void getConfiguration(String fileName);
 
-    public void getConfiguration();
+    void getConfiguration();
 
 }
