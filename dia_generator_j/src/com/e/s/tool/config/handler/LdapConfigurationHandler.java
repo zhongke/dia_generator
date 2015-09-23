@@ -101,28 +101,95 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
             lineNumberReader = new LineNumberReader(new FileReader(fileName));
 
-            String line = "";
+            String line;
+            String cleanLine;
+            StringBuffer sbDn = new StringBuffer();
+            StringBuffer sbAttr = new StringBuffer();
+            int newAttrCounter = 0;
+            
+            boolean isSameDn = false;
+            boolean isSameAttribute = false;
 
             Node node = new Node();
+// dn:EPC-ContextName=QoS,
+//    EPC-SubjectResourceId=_Bearer_, 
+//    EPC-SubjectId=34602021501,
+//    EPC-SubjectPolicyName=EPC-SubjectPolicyLocators,
+//    applicationName=EPC-PolicyRepository,nodeName=jambala
+
+// dn:EPC-RuleId=r_denyInternet,EPC-RulesName=EPC-Rules,applicationName=EPC-PolicyRepository,nodeName=jambala
+// changetype:add
+// EPC-RuleId:r_denyInternet
+// EPC-ConditionFormula: (AccessData.subscriber.locationInfo.serviceAreaCode != 12579)
+//                    && (AccessData.subscriber.locationInfo.locationAreaCode!=52)
+//                    && (AccessData.subscriber.locationInfo.cellIdentity!=4660)
+// objectClass:EPC-Rule
 
             while (lineNumberReader.ready()) {
                 line = lineNumberReader.readLine();
 
                 if (checkLine(line)) {
-                    line = cleanWhiteSpace(line);
+                    // 
+                    cleanLine = cleanWhiteSpace(line);
 
-                    if (line.startsWith("dn:")) {
+                    if (cleanWhiteSpace(line).startsWith("dn:")) {
+                        sbDn = new StringBuffer();
+                        sbDn.append(cleanLine);
+                        isSameDn = true;
+                        isSameAttribute = false;
+                        
+                    } else if (line.startsWith(" ")) {
+                        if (isSameDn) {
+                            sbDn.append(cleanLine);
+                            isSameAttribute = false;
+                        } else if (isSameAttribute) {
+                            sbAttr.append(cleanLine);
+                            if (newAttrCounter >= 1) {
+                                
+                                //System.out.println(cleanLine);
+                            }
+                            isSameAttribute = true;
+                            newAttrCounter++;
+                        }
+                        
+                    } else {
+                            System.out.println("----------------------------" + newAttrCounter);
+                        if (0 == newAttrCounter) {
+                            sbAttr = new StringBuffer();
+                            sbAttr.append(cleanLine);
+                            
+                                //System.out.println(cleanLine);
+                            isSameAttribute = true;
+                            
+                        } else if (1 == newAttrCounter || 1 == newAttrCounter % 2) {
+                            node.getAttributes().add(sbAttr.toString());
+                            System.out.println(sbAttr.toString());
+                            
+                            newAttrCounter = -1;
+                            isSameAttribute = false;
+                        } else {
+                        }
 
-                        node.setNodeDn(line);
+
+                        isSameDn = false;
+                        isSameAttribute = true;
+                        
+                        
+                        newAttrCounter++;
+                    }
+                    
+                } else if (null == line || line.trim().equals("")) {
+                        node.setNodeDn(sbDn.toString());
                         tree.setParent(tree.getNodes());
 
                         tree.getNodes().add(node);
-                    } else {
-                        node.getAttributes().add(line);
-                    }
+                        
 
-                } else if (null == line || line.trim().equals("")) {
+
                     node = new Node();
+                    isSameDn = false;
+                    isSameAttribute = false;
+                    newAttrCounter = 0;
                     continue;
                 }
 

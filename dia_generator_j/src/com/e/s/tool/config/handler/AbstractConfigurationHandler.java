@@ -20,7 +20,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
         try {
             showHeader(object, objectList);
             List<String[]> attributeLineList;
-            
+
             String[] attributeList;
 
             for (T group : objectList) {
@@ -91,7 +91,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
     private void showHeader(T object,  List<T> objectList) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException {
         showLine();
-        
+
 
         headers = new String[object.getAttributeList().size()];
         for (int i = 0; i < object.getAttributeList().size(); ++i) {
@@ -118,8 +118,8 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
 
                 if (methodName.startsWith("get")) {
                     List<String> attributeList = dataObject.getAttributeList();
-                    
-                    
+
+
                     for (int k = 0; k < attributeList.size(); k++) {
                         String attr = attributeList.get(k).split(":")[0].toLowerCase();
                         String attrName = methodName.toLowerCase().substring(3, methodName.length());
@@ -153,21 +153,21 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
         showLine();
 
     }
-    
+
     private int getMaxSizeOfElement(T dataObject) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
+
         int size = 0;
-        
+
         Class<?> clazz = Class.forName(dataObject.getClass().getName());
         Method[] methods = clazz.getDeclaredMethods();
         String methodName;
-        
+
         for (int j = 0; j < methods.length; ++j) {
             methodName = methods[j].getName();
 
             if (methodName.startsWith("get")) {
                 List<String> attributeList = dataObject.getAttributeList();
-                
+
                 for (int k = 0; k < attributeList.size(); k++) {
                     String attr = attributeList.get(k).split(":")[0].toLowerCase();
                     String attrName = methodName.toLowerCase().substring(3, methodName.length());
@@ -183,7 +183,7 @@ public abstract class AbstractConfigurationHandler< T extends DataObject> extend
                 }
             }
         }
-        
+
         return size;
 
     }

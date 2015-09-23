@@ -48,10 +48,10 @@ public class RequestDataHandler {
                 avps.put(entry.getValue().toString(), (value.substring(0, value.length() - 1)));
             }
 
-            for (Entry<String, String> avp : avps.entrySet()) {
+            //for (Entry<String, String> avp : avps.entrySet()) {
 
-                System.out.println(avp.getKey() + " : " + avp.getValue());
-            }
+            //    System.out.println(avp.getKey() + " : " + avp.getValue());
+            //}
         }
 
     }

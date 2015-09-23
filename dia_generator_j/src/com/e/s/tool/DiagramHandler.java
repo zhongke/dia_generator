@@ -1,5 +1,4 @@
 package com.e.s.tool;
-
 import java.util.List;
 
 import com.e.s.tool.ConstantType.EVENT_FLOW;
