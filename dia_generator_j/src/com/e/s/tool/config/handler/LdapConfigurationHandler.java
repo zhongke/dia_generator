@@ -109,6 +109,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
             
             boolean isSameDn = false;
             boolean isSameAttribute = false;
+            String currentLine = null;
 
             Node node = new Node();
 // dn:EPC-ContextName=QoS,
@@ -153,24 +154,29 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                         }
                         
                     } else {
-                            System.out.println("----------------------------" + newAttrCounter);
+                        System.out.println(line);
+                            //System.out.println("--------------------------------------------" + newAttrCounter);
                         if (0 == newAttrCounter) {
                             sbAttr = new StringBuffer();
                             sbAttr.append(cleanLine);
+                            if (null != currentLine) {
+                                node.getAttributes().add(currentLine);
+                                currentLine = null;
+                                
+                            }
                             
                                 //System.out.println(cleanLine);
                             isSameAttribute = true;
                             
-                        } else if (1 == newAttrCounter || 1 == newAttrCounter % 2) {
+                        } else if ((1 == newAttrCounter) || (1 == newAttrCounter % 2)) {
                             node.getAttributes().add(sbAttr.toString());
-                            System.out.println(sbAttr.toString());
+                            //System.out.println(sbAttr.toString());
                             
                             newAttrCounter = -1;
                             isSameAttribute = false;
-                        } else {
+                            currentLine = cleanLine;
                         }
-
-
+                        
                         isSameDn = false;
                         isSameAttribute = true;
                         
