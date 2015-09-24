@@ -34,7 +34,7 @@ public class LdapTree {
             for (int j = 0; j < nodes.size(); ++j) {
 
                 Node parent = nodes.get(j);
-                if (parent.getDn().split(":")[1].equals(parentDn)) {
+                if (!"".equals(parent.getDn()) && parent.getDn().split(":")[1].equals(parentDn)) {
                     child.setParent(parent);
                     break;
 

@@ -10,11 +10,12 @@ import com.e.s.tool.config.pojo.Node;
 
 public class LdapConfigurationHandler implements ConfigurationHandler {
 
-    private static String PATTERN_DN_FAMILY         = "dn:EPC-FamilyId=";
+    private static String PATTERN_DN_FAMILY = "dn:EPC-FamilyId=";
 
-    private static String PATTERN_DN_TRIGGER        = "dn:EPC-BearerEventsNotificationName=EPC-BearerEventConfig,EPC-AccessPolicyChargingControlName=EPC-AccessPolicyChargingControl,EPC-ConfigContainerName=EPC-EpcConfigCont,applicationName=EPC-EpcNode,nodeName=jambala";
+    private static String PATTERN_DN_TRIGGER =
+            "dn:EPC-BearerEventsNotificationName=EPC-BearerEventConfig,EPC-AccessPolicyChargingControlName=EPC-AccessPolicyChargingControl,EPC-ConfigContainerName=EPC-EpcConfigCont,applicationName=EPC-EpcNode,nodeName=jambala";
 
-    private static String PATTERN_TRIGGER           = "EPC-EventTriggers";
+    private static String PATTERN_TRIGGER = "EPC-EventTriggers";
 
     private static String HEADER = "*       + ";
     private LdapTree tree;
@@ -22,6 +23,8 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
     public LdapConfigurationHandler() {
         tree = new LdapTree();
+
+
         configurationData = new ConfigurationData();
 
     }
@@ -33,14 +36,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * Construct LdapTree model from ldif file
          */
         constructLdapTree(fileName);
-
+        // showLdapTree();
         /*
-         * getPolicyConfiguration
-         * - Context
-         * - Resource
-         * - Subject
-         * - Policy
-         * - Rule
+         * getPolicyConfiguration - Context - Resource - Subject - Policy - Rule
          *
          */
         System.out.print(HEADER);
@@ -50,44 +48,56 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
         System.out.println("*");
 
         /*
-         * getSubscriberConfiguration
-         * - Subscriber
-         * - SubscriberQualification
+         * getSubscriberConfiguration - Subscriber - SubscriberQualification
          *
          */
-        System.out.print(HEADER);
-        System.out.print("SUBSCRIBER");
-        System.out.println(" +");
-        new SubscriberHandler(tree, configurationData).getConfiguration();
-        System.out.println("*");
+        if (configurationData.getSubscribers().size() > 0) {
+
+            System.out.print(HEADER);
+            System.out.print("SUBSCRIBER");
+            System.out.println(" +");
+            new SubscriberHandler(tree, configurationData).getConfiguration();
+            System.out.println("*");
+        }
         /*
-         * getSubscriberGroupConfiguration
-         * - SubscriberGroup
+         * getSubscriberGroupConfiguration - SubscriberGroup
          *
          */
-        System.out.print(HEADER);
-        System.out.print("GROUP");
-        System.out.println(" +");
-        new SubscriberGroupHandler(tree, configurationData).getConfiguration();
-        System.out.println("*");
+        if (configurationData.getSubscriberGroups().size() > 0) {
+            System.out.print(HEADER);
+            System.out.print("GROUP");
+            System.out.println(" +");
+            new SubscriberGroupHandler(tree, configurationData).getConfiguration();
+            System.out.println("*");
+        }
         /*
-         * getServiceConfiguration
-         * - Service
-         * - PccRule
-         * - ServiceQualification
+         * getServiceConfiguration - Service - PccRule - ServiceQualification
          *
          */
-        System.out.print(HEADER);
-        System.out.print("SERVICE");
-        System.out.println(" +");
-        new ServiceHandler(tree, configurationData).getConfiguration();
-        System.out.println("*");
+        if (configurationData.getServices().size() > 0) {
+            System.out.print(HEADER);
+            System.out.print("SERVICE");
+            System.out.println(" +");
+            new ServiceHandler(tree, configurationData).getConfiguration();
+            System.out.println("*");
+        }
         /*
          * getEventTrigger
          */
 
 
 
+    }
+
+    private void showLdapTree() {
+        for (Node node : tree.getNodes()) {
+            System.out.println("------------------------------------");
+            System.out.println(node.getDn());
+            for (String attr : node.getAttributes()) {
+                System.out.println(attr);
+            }
+            System.out.println("------------------------------------");
+        }
     }
 
 
@@ -106,31 +116,19 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
             StringBuffer sbDn = new StringBuffer();
             StringBuffer sbAttr = new StringBuffer();
             int newAttrCounter = 0;
-            
+
             boolean isSameDn = false;
             boolean isSameAttribute = false;
             String currentLine = null;
 
             Node node = new Node();
-// dn:EPC-ContextName=QoS,
-//    EPC-SubjectResourceId=_Bearer_, 
-//    EPC-SubjectId=34602021501,
-//    EPC-SubjectPolicyName=EPC-SubjectPolicyLocators,
-//    applicationName=EPC-PolicyRepository,nodeName=jambala
-
-// dn:EPC-RuleId=r_denyInternet,EPC-RulesName=EPC-Rules,applicationName=EPC-PolicyRepository,nodeName=jambala
-// changetype:add
-// EPC-RuleId:r_denyInternet
-// EPC-ConditionFormula: (AccessData.subscriber.locationInfo.serviceAreaCode != 12579)
-//                    && (AccessData.subscriber.locationInfo.locationAreaCode!=52)
-//                    && (AccessData.subscriber.locationInfo.cellIdentity!=4660)
-// objectClass:EPC-Rule
 
             while (lineNumberReader.ready()) {
                 line = lineNumberReader.readLine();
+                System.out.println(line);
 
                 if (checkLine(line)) {
-                    // 
+                    //
                     cleanLine = cleanWhiteSpace(line);
 
                     if (cleanWhiteSpace(line).startsWith("dn:")) {
@@ -138,64 +136,64 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                         sbDn.append(cleanLine);
                         isSameDn = true;
                         isSameAttribute = false;
-                        
+
                     } else if (line.startsWith(" ")) {
                         if (isSameDn) {
                             sbDn.append(cleanLine);
                             isSameAttribute = false;
                         } else if (isSameAttribute) {
                             sbAttr.append(cleanLine);
-                            if (newAttrCounter >= 1) {
-                                
-                                //System.out.println(cleanLine);
-                            }
                             isSameAttribute = true;
                             newAttrCounter++;
                         }
-                        
+
                     } else {
-                        System.out.println(line);
-                            //System.out.println("--------------------------------------------" + newAttrCounter);
                         if (0 == newAttrCounter) {
                             sbAttr = new StringBuffer();
                             sbAttr.append(cleanLine);
                             if (null != currentLine) {
                                 node.getAttributes().add(currentLine);
                                 currentLine = null;
-                                
+
                             }
-                            
-                                //System.out.println(cleanLine);
+
+                            // System.out.println(cleanLine);
                             isSameAttribute = true;
-                            
+
                         } else if ((1 == newAttrCounter) || (1 == newAttrCounter % 2)) {
                             node.getAttributes().add(sbAttr.toString());
-                            //System.out.println(sbAttr.toString());
-                            
+                            // System.out.println(sbAttr.toString());
+
                             newAttrCounter = -1;
-                            isSameAttribute = false;
+                            isSameAttribute = true;
                             currentLine = cleanLine;
+                            sbAttr = new StringBuffer();
+                            sbAttr.append(currentLine);
                         }
-                        
+
                         isSameDn = false;
                         isSameAttribute = true;
-                        
-                        
+
+
                         newAttrCounter++;
                     }
-                    
+
                 } else if (null == line || line.trim().equals("")) {
+                    if (null != sbDn) {
+
                         node.setNodeDn(sbDn.toString());
                         tree.setParent(tree.getNodes());
-
                         tree.getNodes().add(node);
-                        
-
+                    }
+                    if (null != currentLine) {
+                        node.getAttributes().add(sbAttr.toString());
+                    }
 
                     node = new Node();
                     isSameDn = false;
                     isSameAttribute = false;
                     newAttrCounter = 0;
+                    currentLine = null;
                     continue;
                 }
 

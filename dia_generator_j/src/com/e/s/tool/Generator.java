@@ -25,6 +25,7 @@ public class Generator {
     private static String file_11 = DIR + "tc_14_04_DynamicFlowDirection_Ipv4.ttcn";
     private static String file_12 = DIR + "tc_14_simpleGx_r8.ttcn";
     private static String file_13 = DIR + "tc_authenticationAuthorization_07.ttcn";
+
     static {
         files.add(file_01);
         files.add(file_02);
