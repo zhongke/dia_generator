@@ -4,31 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Service extends DataObject {
-/*    
-    EPC-ServiceId
-    EPC-ServiceQualificationName
-    EPC-PccRuleName
-*/    
+    /*
+     * EPC-ServiceId EPC-ServiceQualificationName EPC-PccRuleName
+     */
 
-    public static String PATTERN_EPC_SERVICE_DESCRIPTION        = "EPC-ServiceDescription";
-    public static String PATTERN_EPC_MASC_SERVICE_ID            = "EPC-MascServiceId";
+    public static String PATTERN_EPC_SERVICE_DESCRIPTION = "EPC-ServiceDescription";
+    public static String PATTERN_EPC_MASC_SERVICE_ID = "EPC-MascServiceId";
 
-    public static String PATTERN_EPC_PCC_RULE_ID                = "EPC-PccRuleId";
-    public static String PATTERN_EPC_PCC_RULE_ID_V6             = "EPC-PccRuleIdv6";
-    public static String PATTERN_EPC_RULE_TYPE                  = "EPC-RuleType";
-    public static String PATTERN_EPC_FLOW_DESCRIPTIONS          = "EPC-FlowDescriptions";
-    public static String PATTERN_EPC_PRECEDENCE                 = "EPC-Precedence";
+    public static String PATTERN_EPC_PCC_RULE_ID = "EPC-PccRuleId";
+    public static String PATTERN_EPC_PCC_RULE_ID_V6 = "EPC-PccRuleIdv6";
+    public static String PATTERN_EPC_RULE_TYPE = "EPC-RuleType";
+    public static String PATTERN_EPC_FLOW_DESCRIPTIONS = "EPC-FlowDescriptions";
+    public static String PATTERN_EPC_PRECEDENCE = "EPC-Precedence";
 
     public static String PATTERN_EPC_SERVICE_QUALIFICATION_DATA = "EPC-ServiceQualificationData";
 
-    public static String PATTERN_EPC_MASC_PACKAGE_NAMES         = "EPC-MascPackageNames";
-    
+    public static String PATTERN_EPC_MASC_PACKAGE_NAMES = "EPC-MascPackageNames";
+
     private static List<String> attributeList;
-    
+
     static {
         attributeList = new ArrayList<String>();
         attributeList.add("serviceId:SERVICE_ID");
-        attributeList.add("description:DESCRIPTION");
+        // attributeList.add("description:DESCRIPTION");
         attributeList.add("pccRuleId:PCC_RULE_ID");
         attributeList.add("pccRuleIdv6:PCC_RULE_IDv6");
         attributeList.add("pccRuleType:PCC_RULE_TYPE");
@@ -37,7 +35,7 @@ public class Service extends DataObject {
         attributeList.add("flowDescriptions:FLOW_DESCRIPTION");
         attributeList.add("serviceQulificationData:QUALIFICATION");
     }
-    
+
     private String serviceId;
     private String description;
     private String pccRuleId;
@@ -53,7 +51,7 @@ public class Service extends DataObject {
 
     public Service() {
 
-        
+
         this.flowDescriptions = new ArrayList<String>();
         this.serviceQulificationData = new ArrayList<String>();
     }
@@ -167,7 +165,7 @@ public class Service extends DataObject {
         return buffer.toString();
     }
 
-    public  List<String> getAttributeList() {
+    public List<String> getAttributeList() {
         return attributeList;
     }
 

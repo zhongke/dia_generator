@@ -43,9 +43,10 @@ public class ServiceHandler extends AbstractConfigurationHandler<Service> {
 
                 for (String attribute : node.getAttributes()) {
                     attributeName = attribute.split(":")[0];
-                    if (attributeName.equals(Service.PATTERN_EPC_SERVICE_DESCRIPTION)) {
-                        service.setDescription(attribute.split(":")[1]);
-                    } else if (attributeName.equals(Service.PATTERN_EPC_MASC_SERVICE_ID)) {
+                    // if (attributeName.equals(Service.PATTERN_EPC_SERVICE_DESCRIPTION)) {
+                    // service.setDescription(attribute.split(":")[1]);
+                    // }
+                    if (attributeName.equals(Service.PATTERN_EPC_MASC_SERVICE_ID)) {
                         service.setMascServiceId(attribute.split(":")[1]);
                     }
                 }

@@ -299,7 +299,7 @@ public class PolicyHandler implements ConfigurationHandler {
         StringBuffer buffer = new StringBuffer();
         buffer.append(resource);
 
-        for (int i = resource.length(); i < length; ++i) {
+        for (int i = ((null == resource) ? 0 : resource.length()); i < length; ++i) {
             buffer.append(" ");
         }
 

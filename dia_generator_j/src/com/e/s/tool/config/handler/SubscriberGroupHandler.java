@@ -35,9 +35,12 @@ public class SubscriberGroupHandler extends AbstractConfigurationHandler<Subscri
                 subscriberGroup.setSubscriberGroupId(node.getDn().split(",")[0].split("=")[1]);
                 for (String attribute : node.getAttributes()) {
                     attributeName = attribute.split(":")[0];
-                    if (attributeName.equals(SubscriberGroup.PATTERN_EPC_SUBSCRIBER_GROUP_DESCRIPTION)) {
-                        subscriberGroup.setDescription(attribute.split(":")[1]);
-                    } else if (attributeName.equals(SubscriberGroup.PATTERN_EPC_SUBSCRIBED_SERVICES)) {
+                    // if
+                    // (attributeName.equals(SubscriberGroup.PATTERN_EPC_SUBSCRIBER_GROUP_DESCRIPTION))
+                    // {
+                    // subscriberGroup.setDescription(attribute.split(":")[1]);
+                    // } else
+                    if (attributeName.equals(SubscriberGroup.PATTERN_EPC_SUBSCRIBED_SERVICES)) {
                         subscriberGroup.getSubscribedServiceIds().add(attribute.split(":")[1]);
                     } else if (attributeName.equals(SubscriberGroup.PATTERN_EPC_BLACKLIST_SERVICES)) {
                         subscriberGroup.getBlacklistServiceIds().add(attribute.split(":")[1]);

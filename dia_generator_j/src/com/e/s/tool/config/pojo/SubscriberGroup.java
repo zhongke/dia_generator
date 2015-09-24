@@ -17,11 +17,11 @@ public class SubscriberGroup extends DataObject {
      */
 
     private static List<String> attributeList;
-    
+
     static {
         attributeList = new ArrayList<String>();
         attributeList.add("subscriberGroupId:GROUP");
-        attributeList.add("description:DESCRIPTION");
+        // attributeList.add("description:DESCRIPTION");
         attributeList.add("subscribedServiceIds:SUBSCRIBED");
         attributeList.add("blacklistServiceIds:BLACKLIST");
         attributeList.add("eventTriggers:TRIGGER");
@@ -138,7 +138,7 @@ public class SubscriberGroup extends DataObject {
         return buffer.toString();
     }
 
-    public  List<String> getAttributeList() {
+    public List<String> getAttributeList() {
         return attributeList;
     }
 

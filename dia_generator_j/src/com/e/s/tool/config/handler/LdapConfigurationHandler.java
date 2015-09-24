@@ -36,39 +36,28 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * Construct LdapTree model from ldif file
          */
         constructLdapTree(fileName);
-        // showLdapTree();
+        showLdapTree();
 
         /*
-         * getPolicyConfiguration
-         *  - Context
-         *  - Resource
-         *  - Subject
-         *  - Policy
-         *  - Rule
+         * getPolicyConfiguration - Context - Resource - Subject - Policy - Rule
          *
          */
         new PolicyHandler(tree, configurationData).getConfiguration();
 
         /*
-         * getSubscriberConfiguration
-         *  - Subscriber
-         *  - SubscriberQualification
+         * getSubscriberConfiguration - Subscriber - SubscriberQualification
          *
          */
         new SubscriberHandler(tree, configurationData).getConfiguration();
-        
+
         /*
-         * getSubscriberGroupConfiguration
-         *  - SubscriberGroup
+         * getSubscriberGroupConfiguration - SubscriberGroup
          *
          */
         new SubscriberGroupHandler(tree, configurationData).getConfiguration();
 
         /*
-         * getServiceConfiguration
-         *  - Service
-         *  - PccRule
-         *  - ServiceQualification
+         * getServiceConfiguration - Service - PccRule - ServiceQualification
          *
          */
         new ServiceHandler(tree, configurationData).getConfiguration();
@@ -151,7 +140,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                             // System.out.println(cleanLine);
                             isSameAttribute = true;
 
-                        } else if ((1 == newAttrCounter) || (1 == newAttrCounter % 2)) {
+                        } else if (1 <= newAttrCounter) {
                             node.getAttributes().add(sbAttr.toString());
                             // System.out.println(sbAttr.toString());
 
