@@ -41,11 +41,13 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * getPolicyConfiguration - Context - Resource - Subject - Policy - Rule
          *
          */
-        System.out.print(HEADER);
-        System.out.print("POLICY");
-        System.out.println(" +");
-        new PolicyHandler(tree, configurationData).getConfiguration();
-        System.out.println("*");
+        if (configurationData.getPolicyLocators().size() > 0) {
+            System.out.print(HEADER);
+            System.out.print("POLICY");
+            System.out.println(" +");
+            new PolicyHandler(tree, configurationData).getConfiguration();
+            System.out.println("*");
+        }
 
         /*
          * getSubscriberConfiguration - Subscriber - SubscriberQualification
@@ -125,10 +127,9 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
 
             while (lineNumberReader.ready()) {
                 line = lineNumberReader.readLine();
-                System.out.println(line);
+                // System.out.println(line);
 
                 if (checkLine(line)) {
-                    //
                     cleanLine = cleanWhiteSpace(line);
 
                     if (cleanWhiteSpace(line).startsWith("dn:")) {
