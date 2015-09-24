@@ -33,6 +33,7 @@ public class SubscriberHandler extends AbstractConfigurationHandler<Subscriber> 
     @Override
     public void getConfiguration() {
         Subscriber subscriber = null;
+        boolean existed = false;
         String attributeName;
         String subscriberId;
         Node node;
@@ -41,6 +42,7 @@ public class SubscriberHandler extends AbstractConfigurationHandler<Subscriber> 
         for (int i = 0; i < tree.getNodes().size(); ++i) {
             node = tree.getNodes().get(i);
             if (node.getDn().startsWith(PATTERN_DN_SUB)) {
+                existed = true;
                 subscriber = new Subscriber();
 
                 subscriberId = node.getDn().split(",")[0].split("=")[1];
@@ -76,8 +78,8 @@ public class SubscriberHandler extends AbstractConfigurationHandler<Subscriber> 
                         for (String attribute : node.getAttributes()) {
                             attributeName = attribute.split(":")[0];
                             if (attributeName.equals(Subscriber.PATTERN_EPC_SUBSCRIBER_QUALIFY_DATA)) {
-                                subscriber.getSubscriberQualificationData().add(
-                                        attribute.substring(attribute.indexOf(':') + 1, attribute.length()));
+                                subscriber.getSubscriberQualificationData()
+                                        .add(attribute.substring(attribute.indexOf(':') + 1, attribute.length()));
                             }
                         }
                     }
@@ -87,7 +89,15 @@ public class SubscriberHandler extends AbstractConfigurationHandler<Subscriber> 
 
         }
 
-        showConfiguration(subscriber, configurationData.getSubscribers());
+        if (existed) {
+            System.out.print("*       + ");
+            System.out.print("SUBSCRIBER");
+            System.out.println(" +");
+
+            showConfiguration(subscriber, configurationData.getSubscribers());
+
+            System.out.println("*");
+        }
 
 
     }

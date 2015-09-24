@@ -18,17 +18,19 @@ public class SubscriberGroupHandler extends AbstractConfigurationHandler<Subscri
     List<String[]> attributeLineList;
 
     public SubscriberGroupHandler(LdapTree tree, ConfigurationData configurationData) {
-      this.tree = tree;
-      this.configurationData = configurationData;
+        this.tree = tree;
+        this.configurationData = configurationData;
     }
 
     @Override
     public void getConfiguration() {
         SubscriberGroup subscriberGroup = null;
         String attributeName = "";
+        boolean existed = false;
 
         for (Node node : tree.getNodes()) {
             if (node.getDn().startsWith(PATTERN_DN_SUB_GROUP)) {
+                existed = true;
                 subscriberGroup = new SubscriberGroup();
                 subscriberGroup.setSubscriberGroupId(node.getDn().split(",")[0].split("=")[1]);
                 for (String attribute : node.getAttributes()) {
@@ -51,11 +53,19 @@ public class SubscriberGroupHandler extends AbstractConfigurationHandler<Subscri
 
         }
 
-        showConfiguration(subscriberGroup, configurationData.getSubscriberGroups());
+        if (existed) {
+            System.out.print("*       + ");
+            System.out.print("GROUP");
+            System.out.println(" +");
+
+            showConfiguration(subscriberGroup, configurationData.getSubscriberGroups());
+
+            System.out.println("*");
+        }
 
     }
 
-    
+
     @Override
     public void getConfiguration(String fileName) {
         // TODO Auto-generated method stub

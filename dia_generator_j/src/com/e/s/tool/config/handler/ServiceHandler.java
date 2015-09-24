@@ -25,6 +25,7 @@ public class ServiceHandler extends AbstractConfigurationHandler<Service> {
 
     @Override
     public void getConfiguration() {
+        boolean existed = false;
         Service service = null;
         String attributeName = "";
         String serviceId = "";
@@ -34,6 +35,7 @@ public class ServiceHandler extends AbstractConfigurationHandler<Service> {
         for (int i = 0; i < tree.getNodes().size(); ++i) {
             node = tree.getNodes().get(i);
             if (node.getDn().startsWith(PATTERN_DN_SERVICE)) {
+                existed = true;
                 service = new Service();
 
                 serviceId = node.getDn().split(",")[0].split("=")[1];
@@ -55,8 +57,8 @@ public class ServiceHandler extends AbstractConfigurationHandler<Service> {
                         for (String attribute : node.getAttributes()) {
                             attributeName = attribute.split(":")[0];
                             if (attributeName.equals(Service.PATTERN_EPC_SERVICE_QUALIFICATION_DATA)) {
-                                service.getServiceQulificationData().add(
-                                        attribute.substring(attribute.indexOf(':') + 1, attribute.length()));
+                                service.getServiceQulificationData()
+                                        .add(attribute.substring(attribute.indexOf(':') + 1, attribute.length()));
                             }
                         }
                     } else if (node.getDn().startsWith(PATTERN_DN_PCC_RULE + serviceId)) {
@@ -70,8 +72,8 @@ public class ServiceHandler extends AbstractConfigurationHandler<Service> {
                             } else if (attributeName.equals(Service.PATTERN_EPC_RULE_TYPE)) {
                                 service.setPccRuleType(attribute.split(":")[1]);
                             } else if (attributeName.equals(Service.PATTERN_EPC_FLOW_DESCRIPTIONS)) {
-                                service.getFlowDescriptions().add(
-                                        attribute.substring(attribute.indexOf(':') + 1, attribute.length()));
+                                service.getFlowDescriptions()
+                                        .add(attribute.substring(attribute.indexOf(':') + 1, attribute.length()));
                             } else if (attributeName.equals(Service.PATTERN_EPC_PRECEDENCE)) {
                                 service.setPrecedence(attribute.split(":")[1]);
                             }
@@ -79,14 +81,25 @@ public class ServiceHandler extends AbstractConfigurationHandler<Service> {
                         }
                     }
                 }
+
+
                 configurationData.getServices().add(service);
+
 
             }
 
 
         }
 
-        showConfiguration(service, configurationData.getServices());
+        if (existed) {
+            System.out.print("*       + ");
+            System.out.print("SERVICE");
+            System.out.println(" +");
+
+            showConfiguration(service, configurationData.getServices());
+
+            System.out.println("*");
+        }
 
     }
 

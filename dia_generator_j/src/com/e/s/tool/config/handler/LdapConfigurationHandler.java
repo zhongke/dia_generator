@@ -37,52 +37,42 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          */
         constructLdapTree(fileName);
         // showLdapTree();
-        /*
-         * getPolicyConfiguration - Context - Resource - Subject - Policy - Rule
-         *
-         */
-        if (configurationData.getPolicyLocators().size() > 0) {
-            System.out.print(HEADER);
-            System.out.print("POLICY");
-            System.out.println(" +");
-            new PolicyHandler(tree, configurationData).getConfiguration();
-            System.out.println("*");
-        }
 
         /*
-         * getSubscriberConfiguration - Subscriber - SubscriberQualification
+         * getPolicyConfiguration
+         *  - Context
+         *  - Resource
+         *  - Subject
+         *  - Policy
+         *  - Rule
          *
          */
-        if (configurationData.getSubscribers().size() > 0) {
+        new PolicyHandler(tree, configurationData).getConfiguration();
 
-            System.out.print(HEADER);
-            System.out.print("SUBSCRIBER");
-            System.out.println(" +");
-            new SubscriberHandler(tree, configurationData).getConfiguration();
-            System.out.println("*");
-        }
         /*
-         * getSubscriberGroupConfiguration - SubscriberGroup
+         * getSubscriberConfiguration
+         *  - Subscriber
+         *  - SubscriberQualification
          *
          */
-        if (configurationData.getSubscriberGroups().size() > 0) {
-            System.out.print(HEADER);
-            System.out.print("GROUP");
-            System.out.println(" +");
-            new SubscriberGroupHandler(tree, configurationData).getConfiguration();
-            System.out.println("*");
-        }
+        new SubscriberHandler(tree, configurationData).getConfiguration();
+        
         /*
-         * getServiceConfiguration - Service - PccRule - ServiceQualification
+         * getSubscriberGroupConfiguration
+         *  - SubscriberGroup
          *
          */
-        if (configurationData.getServices().size() > 0) {
-            System.out.print(HEADER);
-            System.out.print("SERVICE");
-            System.out.println(" +");
-            new ServiceHandler(tree, configurationData).getConfiguration();
-            System.out.println("*");
-        }
+        new SubscriberGroupHandler(tree, configurationData).getConfiguration();
+
+        /*
+         * getServiceConfiguration
+         *  - Service
+         *  - PccRule
+         *  - ServiceQualification
+         *
+         */
+        new ServiceHandler(tree, configurationData).getConfiguration();
+
         /*
          * getEventTrigger
          */

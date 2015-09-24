@@ -8,19 +8,19 @@ import com.e.s.tool.config.pojo.PolicyLocator;
 import com.e.s.tool.config.pojo.Rule;
 
 public class PolicyHandler implements ConfigurationHandler {
-    private static String PATTERN_DN_CONTEXT        = "dn:EPC-ContextName";
-    private static String PATTERN_DN_POLICY         = "dn:EPC-PolicyId=";
-    private static String PATTERN_DN_RULE           = "dn:EPC-RuleId=";
+    private static String PATTERN_DN_CONTEXT = "dn:EPC-ContextName";
+    private static String PATTERN_DN_POLICY = "dn:EPC-PolicyId=";
+    private static String PATTERN_DN_RULE = "dn:EPC-RuleId=";
 
-    private static String PATTERN_EPC_GLOBAL        = "EPC-GlobalPolicyLocators";
-    private static String PATTERN_EPC_POLICY_IDS    = "EPC-PolicyIds";
-    private static String PATTERN_EPC_RULES         = "EPC-Rules";
+    private static String PATTERN_EPC_GLOBAL = "EPC-GlobalPolicyLocators";
+    private static String PATTERN_EPC_POLICY_IDS = "EPC-PolicyIds";
+    private static String PATTERN_EPC_RULES = "EPC-Rules";
 
-    private static String PATTERN_COMBINING_ALG     = "EPC-RuleCombiningAlgorithm";
-    private static String PATTERN_CONDITION         = "EPC-ConditionFormula";
-    private static String PATTERN_OUTPUT            = "EPC-OutputAttributes";
-    private static String PATTERN_PERMIT            = ":Permit:";
- 
+    private static String PATTERN_COMBINING_ALG = "EPC-RuleCombiningAlgorithm";
+    private static String PATTERN_CONDITION = "EPC-ConditionFormula";
+    private static String PATTERN_OUTPUT = "EPC-OutputAttributes";
+    private static String PATTERN_PERMIT = ":Permit:";
+
     private static String HEADER = "*       ";
 
     private enum COLUMN_TYPE {
@@ -40,18 +40,15 @@ public class PolicyHandler implements ConfigurationHandler {
     }
 
 
-    /*
-     * TODO: How to handle the dn in the several lines 
-     * TODO: How to handle the conditionFormula in the several lines
-     */
     @Override
     public void getConfiguration() {
         PolicyLocator policyLocator = null;
+        boolean existed = false;
 
         for (Node node : tree.getNodes()) {
 
             if (PATTERN_DN_CONTEXT.equals(node.getDn().split(",")[0].split("=")[0])) {
-
+                existed = true;
                 policyLocator = new PolicyLocator();
 
                 getContextInfo(node, policyLocator);
@@ -64,7 +61,15 @@ public class PolicyHandler implements ConfigurationHandler {
             }
 
         }
-        showPolicyConfiguration();
+        if (existed) {
+            System.out.print("*       + ");
+            System.out.print("POLICY");
+            System.out.println(" +");
+
+            showPolicyConfiguration();
+
+            System.out.println("*");
+        }
 
     }
 
@@ -152,9 +157,8 @@ public class PolicyHandler implements ConfigurationHandler {
                         rule.setCondition(attribute.split(":")[1].trim());
 
                     } else if (attributeName.equals(PATTERN_OUTPUT)) {
-                        rule.getOutputs().add(
-                                attribute.substring(PATTERN_OUTPUT.length() + PATTERN_PERMIT.length(),
-                                        attribute.length()));
+                        rule.getOutputs().add(attribute.substring(PATTERN_OUTPUT.length() + PATTERN_PERMIT.length(),
+                                attribute.length()));
                     }
                 }
             }
@@ -256,7 +260,6 @@ public class PolicyHandler implements ConfigurationHandler {
             }
         }
     }
-
 
 
 
