@@ -36,7 +36,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
          * Construct LdapTree model from ldif file
          */
         constructLdapTree(fileName);
-        showLdapTree();
+//        showLdapTree();
 
         /*
          * getPolicyConfiguration - Context - Resource - Subject - Policy - Rule
@@ -117,7 +117,7 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                         isSameDn = true;
                         isSameAttribute = false;
 
-                    } else if (line.startsWith(" ")) {
+                    } else if (line.startsWith(" ")) {  // handle some dn or attribute in a multiple lines
                         if (isSameDn) {
                             sbDn.append(cleanLine);
                             isSameAttribute = false;
@@ -128,23 +128,20 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                         }
 
                     } else {
+                         if (null != sbDn) {
+                             node.setNodeDn(sbDn.toString());
+                             sbDn = null;
+                         }
                         if (0 == newAttrCounter) {
                             sbAttr = new StringBuffer();
                             sbAttr.append(cleanLine);
-                            if (null != currentLine) {
-                                node.getAttributes().add(currentLine);
-                                currentLine = null;
 
-                            }
-
-                            // System.out.println(cleanLine);
                             isSameAttribute = true;
 
                         } else if (1 <= newAttrCounter) {
                             node.getAttributes().add(sbAttr.toString());
-                            // System.out.println(sbAttr.toString());
 
-                            newAttrCounter = -1;
+                            newAttrCounter = 0;
                             isSameAttribute = true;
                             currentLine = cleanLine;
                             sbAttr = new StringBuffer();
@@ -154,19 +151,17 @@ public class LdapConfigurationHandler implements ConfigurationHandler {
                         isSameDn = false;
                         isSameAttribute = true;
 
-
                         newAttrCounter++;
                     }
 
                 } else if (null == line || line.trim().equals("")) {
-                    if (null != sbDn) {
-
-                        node.setNodeDn(sbDn.toString());
+                    if (null != node.getDn() && 0 < node.getAttributes().size()) {
+                        // Add last attribute in the previous Dn
+                        if (isSameAttribute && null != sbAttr) {
+                            node.getAttributes().add(sbAttr.toString());
+                        }
                         tree.setParent(tree.getNodes());
                         tree.getNodes().add(node);
-                    }
-                    if (null != currentLine) {
-                        node.getAttributes().add(sbAttr.toString());
                     }
 
                     node = new Node();
