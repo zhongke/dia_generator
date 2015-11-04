@@ -92,7 +92,7 @@ public class BufferMgr {
                     } else if (line.contains("requestData")) {
 
                        // System.out.println(line);
-                        getRequestData(event, line);
+                       // getRequestData(event, line);
 
                     } else if (line.contains(PATTERN_FUNCTION)) {
 
