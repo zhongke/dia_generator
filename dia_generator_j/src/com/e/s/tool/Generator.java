@@ -56,13 +56,14 @@ public class Generator {
 
             for (String file : args) {
                  BufferMgr buffMgr = new BufferMgr();
-                 buffMgr.readInputFromFile(file + ".ttcn");
+                 String fullFileName = getFullFileName(file);
+				buffMgr.readInputFromFile(fullFileName + ".ttcn");
                 
                  buffMgr.showDiagramFromBuffer();
                  buffMgr.showMessageFromBuffer();
 
                 ConfigurationHandler configurationHandler = new LdapConfigurationHandler();
-                configurationHandler.getConfiguration(file + ".ldif");
+                configurationHandler.getConfiguration(fullFileName + ".ldif");
 
             }
 
@@ -71,6 +72,11 @@ public class Generator {
         }
 
 
+    }
+    
+    private static String getFullFileName (String path) {
+    	String simpleFileName = path.substring(path.lastIndexOf('/'), path.length());
+    	return path + simpleFileName;
     }
 
 }
