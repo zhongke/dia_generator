@@ -1,12 +1,22 @@
 #!/bin/bash
 # set -x
 
+# ..............................................................................
 # This script is going to generate a common command to create a trace profile
 # based on domain_file
+# ..............................................................................
 
 # -------------------------------------------------------------
 # 1) Check the input parameter with porfile specific name
 # -------------------------------------------------------------
+
+if [ $# != 1 ]
+then
+    echo "ONLY ONE profile name is required"
+    echo "USAGE: $0 <profile name>"
+    echo " e.g.: $0 ezhonke"
+    exit 1;
+fi
 
 PROFILE_NAME=$1
 
@@ -23,13 +33,17 @@ CMD_SUFFIX='" -n 128 -s 256'
 
 CMD_DOMAIN=""
 
-# Clear the profile firstly if exist
+# -------------------------------------------------------------
+# 2) Clear the profile firstly if exist
+# -------------------------------------------------------------
 if [[ `tracecc-profile-list` == "${PROFILE_NAME}"  ]]
 then
     tracecc-profile-delete ${PROFILE_NAME}
 fi
 
-# Concatenate all the available domains with DOMAIN_SUFFIX
+# -------------------------------------------------------------
+# 3) Concatenate all the available domains with DOMAIN_SUFFIX
+# -------------------------------------------------------------
 for (( i = 0; i < ${DOMAIN_LIST_SIZE}; i++ ))
 do
     # Be careful the regexpression
@@ -50,5 +64,20 @@ echo "-------------- Domain Command --------------------"
 echo ${CMD_DOMAIN}
 echo "--------------------------------------------------"
 
+# -------------------------------------------------------------
+# 4) Run the generated command to create a trace profile
+# -------------------------------------------------------------
 # Be careful that the command cannot be executed directly
 eval ${CMD_DOMAIN}
+
+if [[ $? -eq 0 ]]
+then
+    echo "--------------------------------------------------"
+    echo "trace profile:[${PROFILE_NAME}] created successfully!"
+    echo "--------------------------------------------------"
+else
+    echo "--------------------------------------------------"
+    echo "trace profile:[${PROFILE_NAME}] created failed!"
+    echo "--------------------------------------------------"
+fi
+
