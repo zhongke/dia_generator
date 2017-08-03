@@ -14,38 +14,20 @@
 #        - Highlight the DIAMETER-MESSSAGE line and folded related log in the default mode
 #          - Keep the task selection info folded in a seperate format for reference
 #          - Keep the diaMsg info folded in a seperate format for reference
-#      - Add predifined action based on javascript for EASY of USE purpose (TBD)
+#      - Add predifined action based on javascript for EASY of USE purpose by filter(TBD)
 #        - Hide the filtered logs that you don't want to see.
 #        - ONLY show the keyword related logs and scoped by "DIAMETER-MESSSAGE" logs
 #        - ONLY show the keyword related logs and 10 or more PREVIOUS and NEXT related context
 #          and scoped by "DIAMETER-MESSSAGE" logs
-#        - ONLY show the domain your cared about
+#        - ONLY show the domain, proc your cared about
 #        - ONLY show the column your cared about
-
-# [EXAMPLE]
-# ...............................................................................
-# [03:22:10.644005909] [PL-4] [3540] com_ericsson_sapc_traffic_pcc_helpers:InfoSubscriberEvent: { cpu_id = 3 }, { procname = "pcrf-proc", vpid = 7037, vtid = 7129 }, { file = "PcrfIncomingHandler.cc", function = "handleGxCcr", line = 250, msg = "DIAMETER-MESSAGE: CCR received. SessionId: tc_04_01_handover_not_affect_all_service;ggsnNodeHostname.nodeHostRealm.com;2;602175, IpAddr: , Protocol: Gx, RequestType: Modify, APN: .", adminId = "346000000001", trafficId = "" }
-# ...............................................................................
-#     [03:22:10.644005909]
-#     [PL-4]
-#     [3540]
-#     com_ericsson_sapc_traffic_pcc_helpers:InfoSubscriberEvent:
-#     { cpu_id = 3 },
-#     { procname = "pcrf-proc", vpid = 7037, vtid = 7129 },
-#     {file = "PcrfIncomingHandler.cc", function = "handleGxCcr", line = 250, msg = "DIAMETER-MESSAGE: CCR received. SessionId: tc_04_01_handover_not_affect_all_service;ggsnNodeHostname.nodeHostRealm.com;2;602175, IpAddr: , Protocol: Gx, RequestType: Modify, APN: .", adminId = "346000000001", trafficId = " }
 #
-#
-# ...............................................................................
-# [03:22:10.649808844] [PL-4] [4490] com_ericsson_sapc_util_dbn:DebugEvent: { cpu_id = 2 }, { procname = "pcrf-proc", vpid = 7037, vtid = 7164 }, { file = "DbnCache.cc", function = "findDoa", line = 36, msg = "DoaHolder with key:'133.138.47.210@defaultApnId@346000000001' is not empty" }
-# ...............................................................................
-#     [03:22:10.649808844]
-#     [PL-4]
-#     [4490]
-#     com_ericsson_sapc_util_dbn:DebugEvent:
-#     { cpu_id = 2 },
-#     { procname = "pcrf-proc", vpid = 7037, vtid = 7164 },
-#     { file = "DbnCache.cc", function = "findDoa", line = 36, msg = "DoaHolder with key:'133.138.47.210@defaultApnId@346000000001' is not empty" }
+# TODO:
 # ------------------------------------------------------------------------------
+# 1) Add filter contorller
+#    - domain
+# 2) Fix table header
+# 3) Drag the header to adjust the width
 #
 #!/bin/python
 #
@@ -57,15 +39,23 @@
 #      a. split line by regexp "{}"
 #      b. get first 4 parts as common information
 #      c. get last 3 parts as detailed info
+# 3) Set <tr> CSS class as domain
+# 4) Set <td> CSS class as header
+# 5) Add click event on function 'traceExecutionSummary' show or hide related info
+# 6) Add click event on function 'otpdiaHandleRequest' + 'Diameter dump' show or hide related info
+# 7) Add click event on function 'otpdiaHandleRequest' + 'Received incoming request' show or hide related info
+# 8) Add click event on function 'handleMessage' + 'Decoded' show or hide related info
 # ------------------------------------------------------------------------------
 
-import os, sys
+import os, sys, shutil, os.path
 import re
 import LogDetail
 
 
 # Get info from input
 #.......................................................................'
+# TODO: Ignore the unicode error before read the log file in diaMsg <Frame-IP-Address>
+# Solution: Process the info in shell firstly with sed or awk
 def read_from_log_file(log_file) -> list:
     contents = []
     with open(log_file) as log:
@@ -78,12 +68,13 @@ def read_from_log_file(log_file) -> list:
 #.......................................................................'
 def get_first_4_parts(log_common: str, logDetail: LogDetail) -> None:
     contents = log_common.split(' ')
-    print('Trying to iterate the log file and get related info... ')
 
     logDetail.timestamp = contents[0].strip('[]')
     logDetail.nodeName  = contents[1].strip('[]')
     logDetail.logLine   = contents[2].strip('[]')
-    logDetail.domain    = contents[3]
+
+    # Ignore the prefix 'com_ericsson_sapc_'
+    logDetail.domain    = (contents[3].split(':')[0])[18:]
 
 
 # The entry function to parse log list
@@ -101,9 +92,7 @@ def parse_log(file_info: list, logDetailList: list) -> None:
                 # Ignore the elements like ', '
                 if (', ' != item):
                     contents.append(item)
-                    print(item)
 
-            print('#.......................................................................')
             # Set first 4 object members
             get_first_4_parts(contents[0], logDetail)
 
@@ -115,7 +104,6 @@ def parse_log(file_info: list, logDetailList: list) -> None:
             # Handle the remaining part if there is no domain info included like dia
             # message and task selection info
             for item in re.split('\[|\]', line):
-                # TODO: Handle the remaining parts as a common message in this status
                 if (' ' != item):
                     contents.append(item)
 
@@ -124,20 +112,19 @@ def parse_log(file_info: list, logDetailList: list) -> None:
             logDetail.logLine   = contents[3].strip('[]')
 
             # Get the remaining info by the substr start from index 34 to the end of the line
-            logDetail.domain    = line[34:]
+            # TODO: Keep the 'space' for the diaMsg in the original format
+            logDetail.detail['message'] = str(line[34:])
 
         logDetailList.append(logDetail)
 
 
 #.......................................................................'
 def get_cpu(log_cpu: str, logDetail: LogDetail) -> None:
-    print("handle log_cpu: ", log_cpu)
     logDetail.cpu = log_cpu.split('=')[1].strip(' ')
 
 
 #.......................................................................'
 def get_proc(log_proc: str, logDetail: LogDetail) -> None:
-    print("handle log_proc: ", log_proc)
 
     procInfo = re.split(',|=', log_proc)
     logDetail.procInfo['procName'] = procInfo[1].strip(' "')
@@ -147,19 +134,123 @@ def get_proc(log_proc: str, logDetail: LogDetail) -> None:
 
 #.......................................................................'
 def get_detail(detail: str, logDetail: LogDetail) -> None:
-    print("handle log_detail: ", detail)
 
-    codeInfo = re.split(',|=', detail)
+    codeInfo = detail.split('=')
 
-    logDetail.detail['codeFileName'] = codeInfo[1].strip(' "')
-    logDetail.detail['function']     = codeInfo[3].strip(' "')
-    logDetail.detail['codeLine']     = codeInfo[5].strip(' ')
-    logDetail.detail['message']      = codeInfo[7].strip(' "')
+    logDetail.detail['codeFileName'] = codeInfo[1].split('"')[1]
+    logDetail.detail['function']     = codeInfo[2].split('"')[1]
+    logDetail.detail['codeLine']     = (codeInfo[3].split(',')[0]).strip(' ')
 
 
+    # get the index of substr('msg') + ('msg = "')
+    logDetail.detail['message']      = detail[(detail.find('msg') + 7):]
+
+
+# Copy the template html file and append all the logs info in it
 #.......................................................................'
 def render_html(logDetailList: list):
-    pass
+    # Copy template file
+    # Check the tmplate file exist or not
+    template_file = 'log_template.html'
+    new_file      = 'log.html'
+
+    if (not os.path.isfile(template_file)):
+        print('[ERROR]: Template file does NOT exist, return!!!')
+        return
+
+    if (os.path.isfile(new_file)):
+        print('[INFO]: Log file exist, remove it')
+        os.remove(new_file)
+
+    shutil.copyfile(template_file, new_file)
+
+    message_index = 0
+    index = 1
+    msg = []
+    for log in logDetailList:
+        # Set mutliple class tag: <tr> in order to filter logs by request
+        # Such as nodeName, domain, cpu, procName, vpid, vtid, codeFileName
+        # if the diaMsg and task selection log don't have domain, set domain 'NA'
+        domain = 'NA'
+        if (log.domain != ''):
+            domain = log.domain
+
+        row_class = log.nodeName + ' '                \
+                    + domain + ' '                    \
+                    + log.cpu + ' '                   \
+                    + log.procInfo['procName']+ ' '   \
+                    + log.procInfo['vpid']+ ' '       \
+                    + log.procInfo['vtid']+ ' '       \
+                    + log.detail['codeFileName']+ ' ' \
+                    + log.detail['function']
+
+        # Highlight the row with keyword 'DIAMETER-MESSAGE' as another class
+        # Add one more class [message_#] to track the 'non_traffic' logs related with
+        # current 'traffic' logs then add click event
+        if 'DIAMETER-MESSAGE' in log.detail['message']:
+            row_class += ' traffic'
+            message_index += 1
+            row_class += ' message_' + str(message_index)
+        else:
+            row_class += ' non_traffic'
+            row_class += ' message_' + str(message_index) + '_context'
+
+        record =  str('<tr class = "' + row_class  + '">') \
+                + str('<td class = "index">')              \
+                + str(index)                               \
+                + str('</td>')                             \
+                + str('<td class = "timestamp">')          \
+                + str(log.timestamp)                       \
+                + str('</td>')                             \
+                + str('<td class = "nodeName">')           \
+                + str(log.nodeName)                        \
+                + str('</td>')                             \
+                + str('<td class = "logLine">')            \
+                + str(log.logLine)                         \
+                + str('</td>')                             \
+                + str('<td class = "domain">')             \
+                + str(log.domain)                          \
+                + str('</td>')                             \
+                + str('<td class = "cpu">')                \
+                + str(log.cpu)                             \
+                + str('</td>')                             \
+                + str('<td class = "procName">')           \
+                + str(log.procInfo['procName'])            \
+                + str('</td>')                             \
+                + str('<td class = "vpid">')               \
+                + str(log.procInfo['vpid'])                \
+                + str('</td>')                             \
+                + str('<td class = "vtid">')               \
+                + str(log.procInfo['vtid'])                \
+                + str('</td>')                             \
+                + str('<td class = "codeFileName">')       \
+                + str(log.detail['codeFileName'])          \
+                + str('</td>')                             \
+                + str('<td class = "function">')           \
+                + str(log.detail['function'])              \
+                + str('</td>')                             \
+                + str('<td class = "codeLine">')           \
+                + str(log.detail['codeLine'])              \
+                + str('</td>')                             \
+                + str('<td class = "message">')            \
+                + str('<div>')                             \
+                + str(log.detail['message'])               \
+                + str('</div>')                            \
+                + str('</td>')                             \
+                + str('</tr>')
+
+        index += 1
+        msg.append(record)
+
+
+    msg.append('</table> </div> </body> </html>')
+
+    # Append record into the new file
+    with open(new_file, 'a') as new_log:
+        for line in msg:
+            new_log.write(line)
+
+
 
 
 # PART 1 : Parse log file
@@ -171,16 +262,13 @@ logDetailList = list()
 
 file_info = read_from_log_file(sys.argv[1])
 
-print('........................................................................')
-#print(file_info)
-#print('........................................................................')
 parse_log(file_info, logDetailList)
 print()
 print()
 
 print('------------------------------------------------------------------------')
-for log in logDetailList:
-    print(log)
+# for log in logDetailList:
+#     print(log)
 print('------------------------------------------------------------------------')
 
 # PART 2 : Generate log.html

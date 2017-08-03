@@ -22,9 +22,9 @@ class LogDetail:
     def __init__(self) -> None:
         self.timestamp = ''
         self.nodeName  = ''
-        self.logLine   = 0
+        self.logLine   = ''
         self.domain    = ''
-        self.cpu       = 0
+        self.cpu       = ''
 
         self.procInfo = {}
         self.procInfo['procName'] = ''
@@ -34,7 +34,7 @@ class LogDetail:
         self.detail = {}
         self.detail['codeFileName'] = ''
         self.detail['function']     = ''
-        self.detail['codeLine']     = 0
+        self.detail['codeLine']     = ''
         self.detail['message']      = ''
 
 
