@@ -20,6 +20,7 @@ class LogDetail:
 
 
     def __init__(self) -> None:
+        self.index     = 0
         self.timestamp = ''
         self.nodeName  = ''
         self.logLine   = ''
@@ -40,7 +41,8 @@ class LogDetail:
 
 
     def __repr__(self) -> str:
-        return 'timestamp     : ['+ self.timestamp                   \
+        return 'index            : ['+ self.index                    \
+             + ']\ntimestamp     : ['+ self.timestamp                \
              + ']\nnodeName      : ['+ self.nodeName                 \
              + ']\nlogLine       : ['+ str(self.logLine)             \
              + ']\ndomain        : ['+ self.domain                   \
@@ -50,6 +52,6 @@ class LogDetail:
              + ']\nvtid          : ['+ self.procInfo['vtid']         \
              + ']\ncodeFileName  : ['+ self.detail['codeFileName']   \
              + ']\nfunction      : ['+ self.detail['function']       \
-             + ']\ncodeLine      : ['+ str(self.detail['codeLine'])  \
+             + ']\ncodeLine      : ['+ self.detail['codeLine']       \
              + ']\nmessage       : ['+ self.detail['message']        \
              + ']'

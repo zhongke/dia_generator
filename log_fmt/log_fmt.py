@@ -22,6 +22,11 @@
 #        - ONLY show the domain, proc your cared about
 #        - ONLY show the column your cared about
 #
+# Another solution:
+# 1) Parse all the log into Python object data model
+# 2) Convert Python object into JSON format as a log.json file
+# 3) Load the JSON file from browser and redering the data as any format as you want
+#
 # TODO:
 # ------------------------------------------------------------------------------
 # 1) Add filter contorller
@@ -47,7 +52,7 @@
 # 8) Add click event on function 'handleMessage' + 'Decoded' show or hide related info
 # ------------------------------------------------------------------------------
 
-import os, sys, shutil, os.path
+import os, sys, shutil, os.path, json
 import re
 import LogDetail
 
@@ -80,10 +85,13 @@ def get_first_4_parts(log_common: str, logDetail: LogDetail) -> None:
 # The entry function to parse log list
 #.......................................................................'
 def parse_log(file_info: list, logDetailList: list) -> None:
+    index = 0
     for line in file_info:
         contents = []
         # initialize a LogDetail object
         logDetail = LogDetail.LogDetail()
+        logDetail.index = index
+        index += 1
 
         # Handle normal log line with domain info
         if 'com_ericsson_sapc' in line:
@@ -267,13 +275,28 @@ print()
 print()
 
 print('------------------------------------------------------------------------')
+print()
+
+
+# Convert python object data into JSON
+# print(json.dumps(logDetailList, default=lambda o: o.__dict__, sort_keys=True, indent=4))
+json_file = 'log.json'
+if (os.path.isfile(json_file)):
+    print('[INFO]: json file exist, remove it')
+    os.remove(json_file)
+
+with open('log.json', 'a') as log_json:
+    # add prefix to define a variable as JSON object
+    log_json.write('var data =')
+    # log_json.write(json.dumps(logDetailList, default=lambda o: o.__dict__, sort_keys=True, indent=4))
+    log_json.write(json.dumps(logDetailList, default=lambda o: o.__dict__))
 # for log in logDetailList:
 #     print(log)
 print('------------------------------------------------------------------------')
 
 # PART 2 : Generate log.html
-print('........................................................................')
-print('#-######################################################################')
-print('# PART 2 : Generate log.html')
-print('#-######################################################################')
-render_html(logDetailList)
+# print('........................................................................')
+# print('#-######################################################################')
+# print('# PART 2 : Generate log.html')
+# print('#-######################################################################')
+# render_html(logDetailList)
