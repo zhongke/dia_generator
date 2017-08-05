@@ -21,6 +21,12 @@
 #          and scoped by "DIAMETER-MESSSAGE" logs
 #        - ONLY show the domain, proc your cared about
 #        - ONLY show the column your cared about
+# 3) Generate a sequence diagram.
+# 4) Do some anlysis for every request handling, time consuming compared with design base.
+#    So that the risk can be detected as early as possible
+# 5) Display every function time consuming from 'Enter' to 'Exit'
+#    - Such as max time consuming process, thread, etc.
+#    - Which task consume most part of TPS
 #
 # Another solution:
 # 1) Parse all the log into Python object data model
@@ -145,8 +151,8 @@ def get_detail(detail: str, logDetail: LogDetail) -> None:
 
     codeInfo = detail.split('=')
 
-    logDetail.detail['codeFileName'] = codeInfo[1].split('"')[1]
-    logDetail.detail['function']     = codeInfo[2].split('"')[1]
+    logDetail.detail['fileName']     = codeInfo[1].split('"')[1]
+    logDetail.detail['funct']        = codeInfo[2].split('"')[1]
     logDetail.detail['codeLine']     = (codeInfo[3].split(',')[0]).strip(' ')
 
 
@@ -154,6 +160,7 @@ def get_detail(detail: str, logDetail: LogDetail) -> None:
     logDetail.detail['message']      = detail[(detail.find('msg') + 7):]
 
 
+# NOTE: Deprecated function insead of using json data model redering
 # Copy the template html file and append all the logs info in it
 #.......................................................................'
 def render_html(logDetailList: list):
@@ -177,20 +184,20 @@ def render_html(logDetailList: list):
     msg = []
     for log in logDetailList:
         # Set mutliple class tag: <tr> in order to filter logs by request
-        # Such as nodeName, domain, cpu, procName, vpid, vtid, codeFileName
+        # Such as nodeName, domain, cpu, procName, vpid, vtid, fileName
         # if the diaMsg and task selection log don't have domain, set domain 'NA'
         domain = 'NA'
         if (log.domain != ''):
             domain = log.domain
 
-        row_class = log.nodeName + ' '                \
-                    + domain + ' '                    \
-                    + log.cpu + ' '                   \
-                    + log.procInfo['procName']+ ' '   \
-                    + log.procInfo['vpid']+ ' '       \
-                    + log.procInfo['vtid']+ ' '       \
-                    + log.detail['codeFileName']+ ' ' \
-                    + log.detail['function']
+        row_class = log.nodeName               + ' ' \
+                    + domain                   + ' ' \
+                    + log.cpu                  + ' ' \
+                    + log.procInfo['procName'] + ' ' \
+                    + log.procInfo['vpid']     + ' ' \
+                    + log.procInfo['vtid']     + ' ' \
+                    + log.detail['fileName']   + ' ' \
+                    + log.detail['funct']
 
         # Highlight the row with keyword 'DIAMETER-MESSAGE' as another class
         # Add one more class [message_#] to track the 'non_traffic' logs related with
@@ -231,11 +238,11 @@ def render_html(logDetailList: list):
                 + str('<td class = "vtid">')               \
                 + str(log.procInfo['vtid'])                \
                 + str('</td>')                             \
-                + str('<td class = "codeFileName">')       \
-                + str(log.detail['codeFileName'])          \
+                + str('<td class = "fileName">')           \
+                + str(log.detail['fileName'])              \
                 + str('</td>')                             \
-                + str('<td class = "function">')           \
-                + str(log.detail['function'])              \
+                + str('<td class = "funct">')              \
+                + str(log.detail['funct'])                 \
                 + str('</td>')                             \
                 + str('<td class = "codeLine">')           \
                 + str(log.detail['codeLine'])              \
