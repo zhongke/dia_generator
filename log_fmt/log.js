@@ -1,6 +1,7 @@
 // TODO:
 
 v_index = 'index';
+v_timestamp = 'timestamp';
 // Add a filter for doamin
 // Load all the domain in the set for later filtering in a list
 // .............................................................................
@@ -54,8 +55,8 @@ function initTable() {
     // 1) load traffic message
     var items = [];
     var header = "<tr id='header'>"
-        +      "<th id='" + v_index +"'     class='" + v_index + "'>       NUM</th>"
-               +      "<th id='timestamp' class='timestamp'>  TIME</th>"
+        +      "<th id='" + v_index     +"' class='" + v_index     + "'> NUM </th>"
+        +      "<th id='" + v_timestamp +"' class='" + v_timestamp +"'>  TIME</th>"
                +      "<th id='nodeName'  class='nodeName'>   NODE</th>"
                +      "<th id='logLine'   class='logLine'>    LINE</th>"
                +      "<th id='domain'    class='domain'>   DOMAIN</th>"
@@ -78,7 +79,7 @@ function initTable() {
         if (log_info.detail.message.includes('DIAMETER-MESSAGE')) {
             log = "<tr id=" + log_info.index + " class='traffic'>";
             log += buildTd(log_info, v_index);
-            log += buildTd(log_info, 'timestamp');
+            log += buildTd(log_info, v_timestamp);
             log += buildTd(log_info, 'nodeName');
             log += buildTd(log_info, 'logLine');
             log += buildTd(log_info, 'domain');
@@ -125,7 +126,7 @@ function hideColumn()
 
         switch(tr_class) {
             case v_index    : g_column_status.index     = false; break;
-            case 'timestamp': g_column_status.timestamp = false; break;
+            case v_timestamp: g_column_status.timestamp = false; break;
             case 'nodeName' : g_column_status.nodeName  = false; break;
             case 'logLine'  : g_column_status.logLine   = false; break;
             case 'domain'   : g_column_status.domain    = false; break;
@@ -373,7 +374,7 @@ function buildRow(log_info)
     if (g_column_status.index)
         log += buildTd(log_info, v_index);
     if (g_column_status.timestamp)
-        log += buildTd(log_info, 'timestamp');
+        log += buildTd(log_info, v_timestamp);
     if (g_column_status.nodeName)
         log += buildTd(log_info, 'nodeName');
     if (g_column_status.logLine)
@@ -408,10 +409,10 @@ function buildTd(log_info, fieldName)
     var log = '';
     switch(fieldName) {
     case v_index:
-        log = "<td class='" + v_index +"'>"     + log_info.index             + "</td>";
+        log = "<td class='" + v_index     + "'>" + log_info.index             + "</td>";
         break;
-    case 'timestamp':
-        log = "<td class='timestamp'>" + log_info.timestamp         + "</td>";
+    case v_timestamp:
+        log = "<td class='" + v_timestamp + "'>" + log_info.timestamp         + "</td>";
         break;
     case 'nodeName':
         log = "<td class='nodeName'>"  + log_info.nodeName          + "</td>";
