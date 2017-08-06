@@ -125,6 +125,9 @@ def parse_log(file_info: list, logDetailList: list) -> None:
             logDetail.nodeName  = contents[2].strip('[]')
             logDetail.logLine   = contents[3].strip('[]')
 
+            # TODO: differentiate the dia message and task selection info with
+            #       2 special domain for later filtering
+
             # Get the remaining info by the substr start from index 34 to the end of the line
             # TODO: Keep the 'space' for the diaMsg in the original format
             logDetail.detail['message'] = str(line[34:])
@@ -160,114 +163,6 @@ def get_detail(detail: str, logDetail: LogDetail) -> None:
     logDetail.detail['message']      = detail[(detail.find('msg') + 7):]
 
 
-# NOTE: Deprecated function insead of using json data model redering
-# Copy the template html file and append all the logs info in it
-#.......................................................................'
-def render_html(logDetailList: list):
-    # Copy template file
-    # Check the tmplate file exist or not
-    template_file = 'log_template.html'
-    new_file      = 'log.html'
-
-    if (not os.path.isfile(template_file)):
-        print('[ERROR]: Template file does NOT exist, return!!!')
-        return
-
-    if (os.path.isfile(new_file)):
-        print('[INFO]: Log file exist, remove it')
-        os.remove(new_file)
-
-    shutil.copyfile(template_file, new_file)
-
-    message_index = 0
-    index = 1
-    msg = []
-    for log in logDetailList:
-        # Set mutliple class tag: <tr> in order to filter logs by request
-        # Such as nodeName, domain, cpu, procName, vpid, vtid, fileName
-        # if the diaMsg and task selection log don't have domain, set domain 'NA'
-        domain = 'NA'
-        if (log.domain != ''):
-            domain = log.domain
-
-        row_class = log.nodeName               + ' ' \
-                    + domain                   + ' ' \
-                    + log.cpu                  + ' ' \
-                    + log.procInfo['procName'] + ' ' \
-                    + log.procInfo['vpid']     + ' ' \
-                    + log.procInfo['vtid']     + ' ' \
-                    + log.detail['fileName']   + ' ' \
-                    + log.detail['funct']
-
-        # Highlight the row with keyword 'DIAMETER-MESSAGE' as another class
-        # Add one more class [message_#] to track the 'non_traffic' logs related with
-        # current 'traffic' logs then add click event
-        if 'DIAMETER-MESSAGE' in log.detail['message']:
-            row_class += ' traffic'
-            message_index += 1
-            row_class += ' message_' + str(message_index)
-        else:
-            row_class += ' non_traffic'
-            row_class += ' message_' + str(message_index) + '_context'
-
-        record =  str('<tr class = "' + row_class  + '">') \
-                + str('<td class = "index">')              \
-                + str(index)                               \
-                + str('</td>')                             \
-                + str('<td class = "timestamp">')          \
-                + str(log.timestamp)                       \
-                + str('</td>')                             \
-                + str('<td class = "nodeName">')           \
-                + str(log.nodeName)                        \
-                + str('</td>')                             \
-                + str('<td class = "logLine">')            \
-                + str(log.logLine)                         \
-                + str('</td>')                             \
-                + str('<td class = "domain">')             \
-                + str(log.domain)                          \
-                + str('</td>')                             \
-                + str('<td class = "cpu">')                \
-                + str(log.cpu)                             \
-                + str('</td>')                             \
-                + str('<td class = "procName">')           \
-                + str(log.procInfo['procName'])            \
-                + str('</td>')                             \
-                + str('<td class = "vpid">')               \
-                + str(log.procInfo['vpid'])                \
-                + str('</td>')                             \
-                + str('<td class = "vtid">')               \
-                + str(log.procInfo['vtid'])                \
-                + str('</td>')                             \
-                + str('<td class = "fileName">')           \
-                + str(log.detail['fileName'])              \
-                + str('</td>')                             \
-                + str('<td class = "funct">')              \
-                + str(log.detail['funct'])                 \
-                + str('</td>')                             \
-                + str('<td class = "codeLine">')           \
-                + str(log.detail['codeLine'])              \
-                + str('</td>')                             \
-                + str('<td class = "message">')            \
-                + str('<div>')                             \
-                + str(log.detail['message'])               \
-                + str('</div>')                            \
-                + str('</td>')                             \
-                + str('</tr>')
-
-        index += 1
-        msg.append(record)
-
-
-    msg.append('</table> </div> </body> </html>')
-
-    # Append record into the new file
-    with open(new_file, 'a') as new_log:
-        for line in msg:
-            new_log.write(line)
-
-
-
-
 # PART 1 : Parse log file
 print('#-######################################################################')
 print('# PART 1 : Parse log file')
@@ -278,13 +173,8 @@ logDetailList = list()
 file_info = read_from_log_file(sys.argv[1])
 
 parse_log(file_info, logDetailList)
-print()
-print()
-
 print('------------------------------------------------------------------------')
 print()
-
-
 # Convert python object data into JSON
 # print(json.dumps(logDetailList, default=lambda o: o.__dict__, sort_keys=True, indent=4))
 json_file = 'log.json'
@@ -292,7 +182,7 @@ if (os.path.isfile(json_file)):
     print('[INFO]: json file exist, remove it')
     os.remove(json_file)
 
-with open('log.json', 'a') as log_json:
+with open(json_file, 'a') as log_json:
     # add prefix to define a variable as JSON object
     log_json.write('var data =')
     # log_json.write(json.dumps(logDetailList, default=lambda o: o.__dict__, sort_keys=True, indent=4))
@@ -300,10 +190,3 @@ with open('log.json', 'a') as log_json:
 # for log in logDetailList:
 #     print(log)
 print('------------------------------------------------------------------------')
-
-# PART 2 : Generate log.html
-# print('........................................................................')
-# print('#-######################################################################')
-# print('# PART 2 : Generate log.html')
-# print('#-######################################################################')
-# render_html(logDetailList)

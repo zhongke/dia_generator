@@ -18,22 +18,32 @@
     <body>
 
         <p><h1>SAPC LOG TERMINATOR</h1></p>
-        <form>
-            <select name="cars">
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="fiat">Fiat</option>
-                <option value="audi">Audi</option>
-            </select>
-        </form>
+        <!-- <form> -->
+        <!-- <select name="cars"> -->
+        <!-- <option value="volvo">Volvo</option> -->
+        <!-- <option value="saab">Saab</option> -->
+        <!-- <option value="fiat">Fiat</option> -->
+        <!-- <option value="audi">Audi</option> -->
+        <!-- </select> -->
+        <!-- </form> -->
 
         <div>
             <div><span>FILTER</span></div>
             <ul>
                 <li>
-                    <checkbox>domain</checkbox>
+                    Domain   : <input id="f_domain" type="text" />
+                </li>
+                <li>
+                    File     : <input id="f_fileName" type="text" />
+                </li>
+                <li>
+                    Function : <input id="f_funct" type="text" />
+                </li>
+                <li>
+                    Message  : <input id="f_message" type="text" />
                 </li>
             </ul>
+            <button id="filter">Search</button>
         </div>
 
         <!-- Insert the log table here -->

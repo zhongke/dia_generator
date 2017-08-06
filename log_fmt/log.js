@@ -63,6 +63,9 @@ var g_column_status = {
 // .............................................................................
 var g_context_exist = {};
 
+// Global varialbe to store all index of traffic log
+var g_traffic_list = [];
+
 // Global variable to store matched field status for filtering
 // .............................................................................
 var g_matched_field = {};
@@ -89,7 +92,6 @@ function initTable() {
 
 
     items.push(header);
-    var traffic_list  = [];
     for (var i = 0; i < data.length; ++i) {
         var log_info = data[i];
         // Add the traffic line into the table
@@ -111,13 +113,13 @@ function initTable() {
             log += "</tr>";
 
             items.push(log);
-            traffic_list.push(i);
+            g_traffic_list.push(i);
         }
     }
 
-    for (var i = 0; i < traffic_list.length; ++i) {
+    for (var i = 0; i < g_traffic_list.length; ++i) {
         // Use a key value pair to store the current element status sperately
-        g_context_exist[traffic_list[i]] = false;
+        g_context_exist[g_traffic_list[i]] = false;
     }
 
     $( "<table/>", {
@@ -126,10 +128,12 @@ function initTable() {
 
     // Load the function here
     hideColumn();
-    showContext(traffic_list);
+    showContext(g_traffic_list);
+
+    search();
 
     // Test doFiltering
-    doFiltering();
+    //doFiltering();
 
 }
 
@@ -161,12 +165,11 @@ function hideColumn()
 
 
 // .............................................................................
-function showContext(traffic_list)
+function showContext(g_traffic_list)
 {
-    for (var i = 0; i < traffic_list.length; ++i) {
+    for (var i = 0; i < g_traffic_list.length; ++i) {
         // Use a key value pair to store the current element status sperately
-        // g_context_exist[traffic_list[i]] = false;
-        $('#' + traffic_list[i]).click(function(){
+        $('#' + g_traffic_list[i]).click(function(){
             var id = $(this).attr('id');
 
             if (g_context_exist[id]) {
@@ -212,6 +215,51 @@ function insertContext(id, trafficObject)
 }
 
 
+
+// .............................................................................
+function search()
+{
+    // Get all the fields value that you want to filter and put them into
+    // global filter object
+    $('#filter').click(function(){
+
+        // RESET filter status and set page status to default only traffic message
+        // was shwn
+
+        // domain
+        var i_domain = $('#f_domain').val();
+        // split value by space
+        if (i_domain != '')
+        g_filter.domain.push(i_domain);
+
+
+        // fileName
+        var i_fileName = $('#f_fileName').val();
+        // split value by space
+        if (i_fileName != '')
+        g_filter.fileName.push(i_fileName);
+
+        // funct
+        var i_funct = $('#f_funct').val();
+        alert(i_funct);
+        // split value by space
+        if (i_funct != '')
+        g_filter.funct.push(i_funct);
+
+        // message
+        var i_message = $('#f_message').val();
+        // split value by space
+        if (i_message != '')
+        g_filter.message.push(i_message);
+
+
+        doFiltering();
+    });
+
+
+}
+
+
 // TODO: Get the result with the combined conditions 'or' or 'and'
 // Set a list to record which field is matched
 // Then choose the final result by the 'or' or 'and'
@@ -227,50 +275,69 @@ function insertContext(id, trafficObject)
 function doFiltering()
 {
     var context = [];
+    var i = data.length - 1;
+    for (var traffic_idx = g_traffic_list.length- 1 ; traffic_idx >= 0; traffic_idx--) {
 
-    for (var i = 0; i < data.length; ++i) {
-        // Add the traffic line into the table
-        var log_info = data[i];
+        var traffic_id = g_traffic_list[traffic_idx];
+        for (; i >= 0; i--) {
+            // Add the traffic line into the table
+            var log_info = data[i];
 
-        if (! log_info.detail.message.includes('DIAMETER-MESSAGE')) {
-            filterAllFileds(log_info);
-            if (  g_matched_field.index
-               && g_matched_field.timestamp
-               && g_matched_field.nodeName
-               && g_matched_field.logLine
-               && g_matched_field.domain
-               && g_matched_field.cpu
-               && g_matched_field.procName
-               && g_matched_field.vpid
-               && g_matched_field.vtid
-               && g_matched_field.fileName
-               && g_matched_field.funct
-               && g_matched_field.codeLine
-               && g_matched_field.message
-            ) {
-                // Push to the list based on which traffic conext is shown or not
-                // If more than one traffic conext is opened?
-                // Handle it one by one
-                // 1. Compare the index with first elements which is greater than it.
-                // 2. Check this traffic status is shown add it into list, if not, ignore it.
-                // 3. util the elements is less than the next elements.
-
-                $.each(g_context_exist, function(key, value){
-                    if (log_info.index > key && value == true) {
-                        context.push(buildRow(log_info));
-                        // break;
+            // Iterate in a reverse order
+            // If current index is greater than the traffic index
+            // which means this line of log belong to the current traffic context
+            // current traffic context is shown
+            if (log_info.index >= traffic_id) {
+                if (log_info.index == traffic_id) {
+                    // Before insert the matched context, remove all the context firstly
+                    if (g_context_exist[traffic_id] == true) {
+                        removeContext(traffic_idx);
+                    } else {
+                        // TODO: Set the current traffic context status is shown
+                        // if one more click, all the context will be removed.
+                        // if click again, the context should like before filtered.
+                        // So, it's better keep the filtered context in the global
+                        // status.
+                        // If no filtered history the status should be empty or false
+                        // that could introduce more complex feature to store the
+                        // filter HISTORY
+                        g_context_exist[traffic_idx] = true;
                     }
-                });
 
-                // context.push(buildRow(log_info));
-                // console.log(buildRow(log_info));
+                    // Put all the info in the context into html
+                    for (var ctx_idx = 0; ctx_idx < context.length; ctx_idx++) {
+                        $(context[ctx_idx])
+                            .insertAfter($("#"+ traffic_id).closest('tr'));
+                    }
+
+                    i = traffic_id - 1;
+                    // Reset the list for next traffic context handling
+                    context = [];
+                    break;
+                } else {
+                    filterAllFileds(log_info);
+
+                    if(g_matched_field.index    && g_matched_field.timestamp
+                    && g_matched_field.nodeName && g_matched_field.logLine
+                    && g_matched_field.domain   && g_matched_field.cpu
+                    && g_matched_field.procName && g_matched_field.vpid
+                    && g_matched_field.vtid     && g_matched_field.fileName
+                    && g_matched_field.funct    && g_matched_field.codeLine
+                    && g_matched_field.message
+                    ) {
+                        context.push(buildRow(log_info));
+                        // console.log(buildRow(log_info));
+                    }
+                }
             }
         }
     }
     // Add the matched row into html
+    /*
     $.each(g_context_exist, function(key, value){
         console.log('key :[', key, '] value: [', value, ']');
     });
+    */
 }
 
 function filterAllFileds(log_info)
