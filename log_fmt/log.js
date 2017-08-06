@@ -1,7 +1,21 @@
 // TODO:
 
-v_index = 'index';
+// Defintion of all the field strings
+// .............................................................................
+v_index     = 'index';
 v_timestamp = 'timestamp';
+v_nodeName  = 'nodeName';
+v_logLine   = 'logLine';
+v_domain    = 'domain';
+v_cpu       = 'cpu';
+v_procName  = 'procName';
+v_vpid      = 'pid';
+v_vtid      = 'tid';
+v_fileName  = 'fileName';
+v_funct     = 'funct';
+v_codeLine  = 'codeLine';
+v_message   = 'message';
+
 // Add a filter for doamin
 // Load all the domain in the set for later filtering in a list
 // .............................................................................
@@ -55,20 +69,20 @@ function initTable() {
     // 1) load traffic message
     var items = [];
     var header = "<tr id='header'>"
-        +      "<th id='" + v_index     +"' class='" + v_index     + "'> NUM </th>"
-        +      "<th id='" + v_timestamp +"' class='" + v_timestamp +"'>  TIME</th>"
-               +      "<th id='nodeName'  class='nodeName'>   NODE</th>"
-               +      "<th id='logLine'   class='logLine'>    LINE</th>"
-               +      "<th id='domain'    class='domain'>   DOMAIN</th>"
-               +      "<th id='cpu'       class='cpu'>         CPU</th>"
-               +      "<th id='procName'  class='procName'> _PROC_</th>"
-               +      "<th id='vpid'      class='vpid'>       vPID</th>"
-               +      "<th id='vtid'      class='vtid'>       vTID</th>"
-               +      "<th id='fileName'  class='fileName'>   FILE</th>"
-               +      "<th id='funct'     class='funct'>      FUNC</th>"
-               +      "<th id='codeLine'  class='codeLine'>   LINE</th>"
-               +      "<th id='message'   class='message'>    MSG</th>"
-               + "</tr>";
+        + "<th id='" + v_index     + "' class='" + v_index     + "'> NUM   </th>"
+        + "<th id='" + v_timestamp + "' class='" + v_timestamp + "'> TIME  </th>"
+        + "<th id='" + v_nodeName  + "' class='" + v_nodeName  + "'> NODE  </th>"
+        + "<th id='" + v_logLine   + "' class='" + v_logLine   + "'> LINE  </th>"
+        + "<th id='" + v_domain    + "' class='" + v_domain    + "'> DOMAIN</th>"
+        + "<th id='" + v_cpu       + "' class='" + v_cpu       + "'>  CPU  </th>"
+        + "<th id='" + v_procName  + "' class='" + v_procName  + "'> _PROC_</th>"
+        + "<th id='" + v_vpid      + "' class='" + v_vpid      + "'> vPID  </th>"
+        + "<th id='" + v_vtid      + "' class='" + v_vtid      + "'> vTID  </th>"
+        + "<th id='" + v_fileName  + "' class='" + v_fileName  + "'> FILE  </th>"
+        + "<th id='" + v_funct     + "' class='" + v_funct     + "'> FUNC  </th>"
+        + "<th id='" + v_codeLine  + "' class='" + v_codeLine  + "'> LINE  </th>"
+        + "<th id='" + v_message   + "' class='" + v_message   + "'>  MSG  </th>"
+        + "</tr>";
 
 
     items.push(header);
@@ -80,17 +94,17 @@ function initTable() {
             log = "<tr id=" + log_info.index + " class='traffic'>";
             log += buildTd(log_info, v_index);
             log += buildTd(log_info, v_timestamp);
-            log += buildTd(log_info, 'nodeName');
-            log += buildTd(log_info, 'logLine');
-            log += buildTd(log_info, 'domain');
-            log += buildTd(log_info, 'cpu');
-            log += buildTd(log_info, 'procName');
-            log += buildTd(log_info, 'vpid');
-            log += buildTd(log_info, 'vtid');
-            log += buildTd(log_info, 'fileName');
-            log += buildTd(log_info, 'funct');
-            log += buildTd(log_info, 'codeLine');
-            log += buildTd(log_info, 'message');
+            log += buildTd(log_info, v_nodeName);
+            log += buildTd(log_info, v_logLine);
+            log += buildTd(log_info, v_domain);
+            log += buildTd(log_info, v_cpu);
+            log += buildTd(log_info, v_procName);
+            log += buildTd(log_info, v_vpid);
+            log += buildTd(log_info, v_vtid);
+            log += buildTd(log_info, v_fileName);
+            log += buildTd(log_info, v_funct);
+            log += buildTd(log_info, v_codeLine);
+            log += buildTd(log_info, v_message);
             log += "</tr>";
 
             items.push(log);
@@ -127,17 +141,17 @@ function hideColumn()
         switch(tr_class) {
             case v_index    : g_column_status.index     = false; break;
             case v_timestamp: g_column_status.timestamp = false; break;
-            case 'nodeName' : g_column_status.nodeName  = false; break;
-            case 'logLine'  : g_column_status.logLine   = false; break;
-            case 'domain'   : g_column_status.domain    = false; break;
-            case 'cpu'      : g_column_status.cpu       = false; break;
-            case 'procName' : g_column_status.procName  = false; break;
-            case 'vpid'     : g_column_status.vpid      = false; break;
-            case 'vtid'     : g_column_status.vtid      = false; break;
-            case 'fileName' : g_column_status.fileName  = false; break;
-            case 'funct'    : g_column_status.funct     = false; break;
-            case 'codeLine' : g_column_status.codeLine  = false; break;
-            case 'message'  : g_column_status.message   = false; break;
+            case v_nodeName : g_column_status.nodeName  = false; break;
+            case v_logLine  : g_column_status.logLine   = false; break;
+            case v_domain   : g_column_status.domain    = false; break;
+            case v_cpu      : g_column_status.cpu       = false; break;
+            case v_procName : g_column_status.procName  = false; break;
+            case v_vpid     : g_column_status.vpid      = false; break;
+            case v_vtid     : g_column_status.vtid      = false; break;
+            case v_fileName : g_column_status.fileName  = false; break;
+            case v_funct    : g_column_status.funct     = false; break;
+            case v_codeLine : g_column_status.codeLine  = false; break;
+            case v_message  : g_column_status.message   = false; break;
         }
     });
 }
@@ -274,19 +288,19 @@ function filterAllFileds(log_info)
     g_matched_field.timestamp = true;
 
     // Check nodeName
-    filterField(g_filter.nodeName, log_info.nodeName, 'nodeName');
+    filterField(g_filter.nodeName, log_info.nodeName, v_nodeName);
 
     // TODO: Check logLine
     g_matched_field.logLine = true;
 
     // Check domain
-    filterField(g_filter.domain, log_info.domain, 'domain');
+    filterField(g_filter.domain, log_info.domain, v_domain);
 
     // Check cpu
-    filterField(g_filter.cpu, log_info.cpu, 'cpu');
+    filterField(g_filter.cpu, log_info.cpu, v_cpu);
 
     // TODO: Check procName
-    // filterField(g_filter.procName, log_info.procInfo.procName, 'procName');
+    // filterField(g_filter.procName, log_info.procInfo.procName, v_procName);
 
     if (g_filter.procName.length == 0) {
         g_matched_field.procName = true;
@@ -300,13 +314,13 @@ function filterAllFileds(log_info)
         }
     }
     // Check vpid
-    filterField(g_filter.vpid, log_info.procInfo.vpid, 'vpid');
+    filterField(g_filter.vpid, log_info.procInfo.vpid, v_vpid);
 
     // Check vtid
-    filterField(g_filter.vtid, log_info.procInfo.vtid, 'vtid');
+    filterField(g_filter.vtid, log_info.procInfo.vtid, v_vtid);
 
     // TODO: Check fileName
-    // filterField(g_filter.fileName, log_info.procInfo.fileName, 'fileName');
+    // filterField(g_filter.fileName, log_info.procInfo.fileName, v_fileName);
 
     if (g_filter.fileName.length == 0) {
         g_matched_field.fileName = true;
@@ -321,7 +335,7 @@ function filterAllFileds(log_info)
     }
 
     // Check funct
-    filterField(g_filter.funct, log_info.detail.funct, 'funct');
+    filterField(g_filter.funct, log_info.detail.funct, v_funct);
 
     // TODO: Check codeLine
     g_matched_field.codeLine = true;
@@ -353,15 +367,15 @@ function setMatched(fieldName)
 {
     // alert(fieldName);
     switch(fieldName) {
-    case 'nodeName' : g_matched_field.nodeName = true; break;
-    case 'domain'   : g_matched_field.domain   = true; break;
-    case 'cpu'      : g_matched_field.cpu      = true; break;
-    case 'procName' : g_matched_field.porcName = true; break;
-    case 'vpid'     : g_matched_field.vpid     = true; break;
-    case 'vtid'     : g_matched_field.vtid     = true; break;
-    case 'fileName' : g_matched_field.fileName = true; break;
-    case 'funct'    : g_matched_field.funct    = true; break;
-    //case 'message'  : g_matched_field.message  = true; break;
+    case v_nodeName : g_matched_field.nodeName = true; break;
+    case v_domain   : g_matched_field.domain   = true; break;
+    case v_cpu      : g_matched_field.cpu      = true; break;
+    case v_procName : g_matched_field.porcName = true; break;
+    case v_vpid     : g_matched_field.vpid     = true; break;
+    case v_vtid     : g_matched_field.vtid     = true; break;
+    case v_fileName : g_matched_field.fileName = true; break;
+    case v_funct    : g_matched_field.funct    = true; break;
+    //case v_message  : g_matched_field.message  = true; break;
     }
 }
 
@@ -376,27 +390,27 @@ function buildRow(log_info)
     if (g_column_status.timestamp)
         log += buildTd(log_info, v_timestamp);
     if (g_column_status.nodeName)
-        log += buildTd(log_info, 'nodeName');
+        log += buildTd(log_info, v_nodeName);
     if (g_column_status.logLine)
-        log += buildTd(log_info, 'logLine');
+        log += buildTd(log_info, v_logLine);
     if (g_column_status.domain)
-        log += buildTd(log_info, 'domain');
+        log += buildTd(log_info, v_domain);
     if (g_column_status.cpu)
-        log += buildTd(log_info, 'cpu');
+        log += buildTd(log_info, v_cpu);
     if (g_column_status.procName)
-        log += buildTd(log_info, 'procName');
+        log += buildTd(log_info, v_procName);
     if (g_column_status.vpid)
-        log += buildTd(log_info, 'vpid');
+        log += buildTd(log_info, v_vpid);
     if (g_column_status.vtid)
-        log += buildTd(log_info, 'vtid');
+        log += buildTd(log_info, v_vtid);
     if (g_column_status.fileName)
-        log += buildTd(log_info, 'fileName');
+        log += buildTd(log_info, v_fileName);
     if (g_column_status.funct)
-        log += buildTd(log_info, 'funct');
+        log += buildTd(log_info, v_funct);
     if (g_column_status.codeLine)
-        log += buildTd(log_info, 'codeLine');
+        log += buildTd(log_info, v_codeLine);
     if (g_column_status.message)
-        log += buildTd(log_info, 'message');
+        log += buildTd(log_info, v_message);
 
     log += "</tr>";
 
@@ -414,38 +428,38 @@ function buildTd(log_info, fieldName)
     case v_timestamp:
         log = "<td class='" + v_timestamp + "'>" + log_info.timestamp         + "</td>";
         break;
-    case 'nodeName':
-        log = "<td class='nodeName'>"  + log_info.nodeName          + "</td>";
+    case v_nodeName:
+        log = "<td class='" + v_nodeName  + "'>"  + log_info.nodeName          + "</td>";
         break;
-    case 'logLine':
-        log = "<td class='logLine'>"   + log_info.logLine           + "</td>";
+    case v_logLine:
+        log = "<td class='" + v_logLine   + "'>"   + log_info.logLine           + "</td>";
         break;
-    case 'domain':
-        log = "<td class='domain'>"    + log_info.domain            + "</td>";
+    case v_domain:
+        log = "<td class='" + v_domain    + "'>"    + log_info.domain            + "</td>";
         break;
-    case 'cpu':
-        log = "<td class='cpu'>"       + log_info.cpu               + "</td>";
+    case v_cpu:
+        log = "<td class='" + v_cpu       + "'>"       + log_info.cpu               + "</td>";
         break;
-    case 'procName':
-        log = "<td class='procName'>"  + log_info.procInfo.procName + "</td>";
+    case v_procName:
+        log = "<td class='" + v_procName  + "'>"  + log_info.procInfo.procName + "</td>";
         break;
-    case 'vpid':
-        log = "<td class='vpid'>"      + log_info.procInfo.vpid     + "</td>";
+    case v_vpid:
+        log = "<td class='" + v_vpid      + "'>"      + log_info.procInfo.vpid     + "</td>";
         break;
-    case 'vtid':
-        log = "<td class='vtid'>"      + log_info.procInfo.vtid     + "</td>";
+    case v_vtid:
+        log = "<td class='" + v_vtid      + "'>"      + log_info.procInfo.vtid     + "</td>";
         break;
-    case 'fileName':
-        log = "<td class='fileName'>"  + log_info.detail.fileName   + "</td>";
+    case v_fileName:
+        log = "<td class='" + v_fileName  + "'>"  + log_info.detail.fileName   + "</td>";
         break;
-    case 'funct':
-        log = "<td class='funct'>"     + log_info.detail.funct      + "</td>";
+    case v_funct:
+        log = "<td class='" + v_funct     + "'>"     + log_info.detail.funct      + "</td>";
         break;
-    case 'codeLine':
-        log = "<td class='codeLine'>"  + log_info.detail.codeLine   + "</td>";
+    case v_codeLine:
+        log = "<td class='" + v_codeLine  + "'>"  + log_info.detail.codeLine   + "</td>";
         break;
-    case 'message':
-        log = "<td class='message'>"   + log_info.detail.message    + "</td>";
+    case v_message:
+        log = "<td class='" + v_message   + "'>"   + log_info.detail.message    + "</td>";
         break;
     }
         return log;
