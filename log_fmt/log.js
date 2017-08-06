@@ -241,7 +241,6 @@ function search()
 
         // funct
         var i_funct = $('#f_funct').val();
-        alert(i_funct);
         // split value by space
         if (i_funct != '')
         g_filter.funct.push(i_funct);
