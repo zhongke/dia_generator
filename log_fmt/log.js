@@ -139,19 +139,19 @@ function hideColumn()
         $('.'+ tr_class).css('display', 'none');
 
         switch(tr_class) {
-            case v_index    : g_column_status.index     = false; break;
-            case v_timestamp: g_column_status.timestamp = false; break;
-            case v_nodeName : g_column_status.nodeName  = false; break;
-            case v_logLine  : g_column_status.logLine   = false; break;
-            case v_domain   : g_column_status.domain    = false; break;
-            case v_cpu      : g_column_status.cpu       = false; break;
-            case v_procName : g_column_status.procName  = false; break;
-            case v_vpid     : g_column_status.vpid      = false; break;
-            case v_vtid     : g_column_status.vtid      = false; break;
-            case v_fileName : g_column_status.fileName  = false; break;
-            case v_funct    : g_column_status.funct     = false; break;
-            case v_codeLine : g_column_status.codeLine  = false; break;
-            case v_message  : g_column_status.message   = false; break;
+            case v_index     : g_column_status.index     = false; break;
+            case v_timestamp : g_column_status.timestamp = false; break;
+            case v_nodeName  : g_column_status.nodeName  = false; break;
+            case v_logLine   : g_column_status.logLine   = false; break;
+            case v_domain    : g_column_status.domain    = false; break;
+            case v_cpu       : g_column_status.cpu       = false; break;
+            case v_procName  : g_column_status.procName  = false; break;
+            case v_vpid      : g_column_status.vpid      = false; break;
+            case v_vtid      : g_column_status.vtid      = false; break;
+            case v_fileName  : g_column_status.fileName  = false; break;
+            case v_funct     : g_column_status.funct     = false; break;
+            case v_codeLine  : g_column_status.codeLine  = false; break;
+            case v_message   : g_column_status.message   = false; break;
         }
     });
 }
@@ -273,11 +273,11 @@ function doFiltering()
 function filterAllFileds(log_info)
 {
     g_matched_field = {
-        index     : false, timestamp : false, nodeName  : false,
-        logLine   : false, domain    : false, cpu       : false,
-        procName  : false, vpid      : false, vtid      : false,
-        fileName  : false, funct     : false, codeLine  : false,
-        message   : false
+        index    : false, timestamp : false, nodeName : false,
+        logLine  : false, domain    : false, cpu      : false,
+        procName : false, vpid      : false, vtid     : false,
+        fileName : false, funct     : false, codeLine : false,
+        message  : false
 
     };
 
@@ -429,37 +429,37 @@ function buildTd(log_info, fieldName)
         log = "<td class='" + v_timestamp + "'>" + log_info.timestamp         + "</td>";
         break;
     case v_nodeName:
-        log = "<td class='" + v_nodeName  + "'>"  + log_info.nodeName          + "</td>";
+        log = "<td class='" + v_nodeName  + "'>" + log_info.nodeName          + "</td>";
         break;
     case v_logLine:
-        log = "<td class='" + v_logLine   + "'>"   + log_info.logLine           + "</td>";
+        log = "<td class='" + v_logLine   + "'>" + log_info.logLine           + "</td>";
         break;
     case v_domain:
-        log = "<td class='" + v_domain    + "'>"    + log_info.domain            + "</td>";
+        log = "<td class='" + v_domain    + "'>" + log_info.domain            + "</td>";
         break;
     case v_cpu:
-        log = "<td class='" + v_cpu       + "'>"       + log_info.cpu               + "</td>";
+        log = "<td class='" + v_cpu       + "'>" + log_info.cpu               + "</td>";
         break;
     case v_procName:
-        log = "<td class='" + v_procName  + "'>"  + log_info.procInfo.procName + "</td>";
+        log = "<td class='" + v_procName  + "'>" + log_info.procInfo.procName + "</td>";
         break;
     case v_vpid:
-        log = "<td class='" + v_vpid      + "'>"      + log_info.procInfo.vpid     + "</td>";
+        log = "<td class='" + v_vpid      + "'>" + log_info.procInfo.vpid     + "</td>";
         break;
     case v_vtid:
-        log = "<td class='" + v_vtid      + "'>"      + log_info.procInfo.vtid     + "</td>";
+        log = "<td class='" + v_vtid      + "'>" + log_info.procInfo.vtid     + "</td>";
         break;
     case v_fileName:
-        log = "<td class='" + v_fileName  + "'>"  + log_info.detail.fileName   + "</td>";
+        log = "<td class='" + v_fileName  + "'>" + log_info.detail.fileName   + "</td>";
         break;
     case v_funct:
-        log = "<td class='" + v_funct     + "'>"     + log_info.detail.funct      + "</td>";
+        log = "<td class='" + v_funct     + "'>" + log_info.detail.funct      + "</td>";
         break;
     case v_codeLine:
-        log = "<td class='" + v_codeLine  + "'>"  + log_info.detail.codeLine   + "</td>";
+        log = "<td class='" + v_codeLine  + "'>" + log_info.detail.codeLine   + "</td>";
         break;
     case v_message:
-        log = "<td class='" + v_message   + "'>"   + log_info.detail.message    + "</td>";
+        log = "<td class='" + v_message   + "'>" + log_info.detail.message    + "</td>";
         break;
     }
         return log;
