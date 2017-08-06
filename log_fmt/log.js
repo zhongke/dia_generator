@@ -1,5 +1,6 @@
-// TODO:
-
+// JSON model analyzer
+// Load the log information based on the various conditions
+// .............................................................................
 // Defintion of all the field strings
 // .............................................................................
 v_index     = 'index';
@@ -16,6 +17,8 @@ v_funct     = 'funct';
 v_codeLine  = 'codeLine';
 v_message   = 'message';
 
+
+// TODO:
 // Add a filter for doamin
 // Load all the domain in the set for later filtering in a list
 // .............................................................................
@@ -87,8 +90,8 @@ function initTable() {
 
     items.push(header);
     var traffic_list  = [];
-    for (var traffic_index = 0; traffic_index < data.length; ++traffic_index) {
-        var log_info = data[traffic_index];
+    for (var i = 0; i < data.length; ++i) {
+        var log_info = data[i];
         // Add the traffic line into the table
         if (log_info.detail.message.includes('DIAMETER-MESSAGE')) {
             log = "<tr id=" + log_info.index + " class='traffic'>";
@@ -108,7 +111,7 @@ function initTable() {
             log += "</tr>";
 
             items.push(log);
-            traffic_list.push(traffic_index);
+            traffic_list.push(i);
         }
     }
 
@@ -181,9 +184,9 @@ function showContext(traffic_list)
 // .............................................................................
 function removeContext(id)
 {
-    for (var traffic_index = parseInt(id) + 1; traffic_index < data.length; ++traffic_index) {
-        if (! data[traffic_index].detail.message.includes('DIAMETER-MESSAGE')) {
-            $('table tr#' + traffic_index).remove();
+    for (var i = parseInt(id) + 1; i < data.length; ++i) {
+        if (! data[i].detail.message.includes('DIAMETER-MESSAGE')) {
+            $('table tr#' + i).remove();
         } else {
             break;
         }
@@ -194,9 +197,9 @@ function removeContext(id)
 function insertContext(id, trafficObject)
 {
     context = [];
-    for (var traffic_index = parseInt(id) + 1; traffic_index < data.length; ++traffic_index) {
+    for (var i = parseInt(id) + 1; i < data.length; ++i) {
         // Add the traffic line into the table
-        var log_info = data[traffic_index];
+        var log_info = data[i];
         if (! log_info.detail.message.includes('DIAMETER-MESSAGE')) {
             context.push(buildRow(log_info));
         } else {
@@ -225,9 +228,9 @@ function doFiltering()
 {
     var context = [];
 
-    for (var traffic_index = 0; traffic_index < data.length; ++traffic_index) {
+    for (var i = 0; i < data.length; ++i) {
         // Add the traffic line into the table
-        var log_info = data[traffic_index];
+        var log_info = data[i];
 
         if (! log_info.detail.message.includes('DIAMETER-MESSAGE')) {
             filterAllFileds(log_info);
