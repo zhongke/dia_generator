@@ -230,27 +230,26 @@ function search()
         var i_domain = $('#f_domain').val();
         // split value by space
         if (i_domain != '')
-        g_filter.domain.push(i_domain);
-
+            g_filter.domain.push(i_domain);
 
         // fileName
         var i_fileName = $('#f_fileName').val();
         // split value by space
         if (i_fileName != '')
-        g_filter.fileName.push(i_fileName);
+            g_filter.fileName.push(i_fileName);
 
         // funct
         var i_funct = $('#f_funct').val();
         // split value by space
         if (i_funct != '')
-        g_filter.funct.push(i_funct);
+            g_filter.funct.push(i_funct);
+
 
         // message
         var i_message = $('#f_message').val();
         // split value by space
         if (i_message != '')
-        g_filter.message.push(i_message);
-
+            g_filter.message.push(i_message);
 
         doFiltering();
     });
