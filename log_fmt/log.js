@@ -28,7 +28,7 @@ var g_filter = {
     // nodeName  : ['PL-3', 'PL-4'],
     nodeName  : [],
     logLine   : [],
-    // domain    : ['traffic_pcc_tasks', 'traffic_pcc_db_session'],
+    domain    : ['traffic_pcc_tasks', 'traffic_pcc_db_session'],
     domain    : [],
     // cpu       : ['1', '2', '3'],
     cpu       : [],
@@ -236,8 +236,12 @@ function search()
         // domain
         var i_domain = $('#f_domain').val();
         // split value by space
-        if (i_domain != '')
-            g_filter.domain.push(i_domain);
+        if (i_domain != '') {
+            var elements = i_domain.split(',');
+            for (var i = 0; i < elements.length; i++) {
+                g_filter.domain.push($.trim(elements[i]));
+            }
+        }
 
         // fileName
         var i_fileName = $('#f_fileName').val();
