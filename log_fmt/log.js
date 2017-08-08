@@ -222,6 +222,13 @@ function search()
     // Get all the fields value that you want to filter and put them into
     // global filter object
     $('#filter').click(function(){
+        // TODO: before filter the context, remove all the exist cntext firstly
+
+        for (var traffic_idx = 0; traffic_idx < g_traffic_list.length; traffic_idx++) {
+            if (g_context_exist[traffic_idx] == true) {
+                removeContext(g_traffic_list[traffic_idx]);
+            }
+        }
 
         // RESET filter status and set page status to default only traffic message
         // was shwn
