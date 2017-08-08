@@ -25,26 +25,20 @@ v_message   = 'message';
 var g_filter = {
     index     : [],
     timestamp : [],
-    // nodeName  : ['PL-3', 'PL-4'],
-    nodeName  : [],
     logLine   : [],
     domain    : ['traffic_pcc_tasks', 'traffic_pcc_db_session'],
     domain    : [],
-    // cpu       : ['1', '2', '3'],
     cpu       : [],
     // TODO:
     // procName  : ['pcrf-proc'],
     procName  : [],
-    // vpid      : ['1964', '31514'],
-    vpid      : [],
-    // vtid      : ['12750', '12772'],
     vtid      : [],
     // TODO:
     // fileName  : ['RxRetrieveAndMarkNetlocTask.cc'],
     fileName  : [],
-    // funct     : ['onIncomingRequest', 'TasksContext'],
     funct     : [],
     codeLine  : [],
+    // TODO:
     message   : []
 };
 
