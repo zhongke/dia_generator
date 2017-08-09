@@ -25,16 +25,15 @@ v_message   = 'message';
 var g_filter = {
     index     : [],
     timestamp : [],
+    nodeName  : [],
     logLine   : [],
-    domain    : ['traffic_pcc_tasks', 'traffic_pcc_db_session'],
     domain    : [],
     cpu       : [],
     // TODO:
-    // procName  : ['pcrf-proc'],
     procName  : [],
+    vpid      : [],
     vtid      : [],
     // TODO:
-    // fileName  : ['RxRetrieveAndMarkNetlocTask.cc'],
     fileName  : [],
     funct     : [],
     codeLine  : [],
@@ -217,7 +216,7 @@ function search()
     // global filter object
     $('#filter').click(function(){
         // TODO: before filter the context, remove all the exist cntext firstly
-
+        // TODO: It's better clear all the elements then add the filtered context
         for (var traffic_idx = 0; traffic_idx < g_traffic_list.length; traffic_idx++) {
             if (g_context_exist[traffic_idx] == true) {
                 removeContext(g_traffic_list[traffic_idx]);
@@ -225,41 +224,50 @@ function search()
         }
 
         // RESET filter status and set page status to default only traffic message
-        // was shwn
+        // was shown
 
-        // domain
-        var i_domain = $('#f_domain').val();
-        // split value by space
-        if (i_domain != '') {
-            var elements = i_domain.split(',');
-            for (var i = 0; i < elements.length; i++) {
-                g_filter.domain.push($.trim(elements[i]));
-            }
-        }
+        addKeywordsToFilter(v_domain);
 
-        // fileName
-        var i_fileName = $('#f_fileName').val();
-        // split value by space
-        if (i_fileName != '')
-            g_filter.fileName.push(i_fileName);
+        addKeywordsToFilter(v_fileName);
 
-        // funct
-        var i_funct = $('#f_funct').val();
-        // split value by space
-        if (i_funct != '')
-            g_filter.funct.push(i_funct);
+        addKeywordsToFilter(v_funct);
 
-
-        // message
-        var i_message = $('#f_message').val();
-        // split value by space
-        if (i_message != '')
-            g_filter.message.push(i_message);
+        addKeywordsToFilter(v_message);
 
         doFiltering();
     });
 
+}
 
+function addKeywordsToFilter(field)
+{
+    var input = $('#f_' + field).val();
+    // split value by space
+    if (input != '') {
+        var elements = input.split(',');
+        switch(field) {
+        case v_domain:
+            for (var i = 0; i < elements.length; i++) {
+                g_filter.domain.push($.trim(elements[i]));
+            }
+            break;
+        case v_fileName:
+            for (var i = 0; i < elements.length; i++) {
+                g_filter.fileName.push($.trim(elements[i]));
+            }
+            break;
+        case v_funct:
+            for (var i = 0; i < elements.length; i++) {
+                g_filter.funct.push($.trim(elements[i]));
+            }
+            break;
+        case v_message:
+            for (var i = 0; i < elements.length; i++) {
+                g_filter.message.push($.trim(elements[i]));
+            }
+            break;
+        }
+    }
 }
 
 
