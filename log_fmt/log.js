@@ -29,11 +29,9 @@ var g_filter = {
     logLine   : [],
     domain    : [],
     cpu       : [],
-    // TODO:
     procName  : [],
     vpid      : [],
     vtid      : [],
-    // TODO:
     fileName  : [],
     funct     : [],
     codeLine  : [],
@@ -228,6 +226,8 @@ function search()
 
         addKeywordsToFilter(v_domain);
 
+        addKeywordsToFilter(v_procName);
+
         addKeywordsToFilter(v_fileName);
 
         addKeywordsToFilter(v_funct);
@@ -242,13 +242,18 @@ function search()
 function addKeywordsToFilter(field)
 {
     var input = $('#f_' + field).val();
-    // split value by space
+    // split value by comma: ','
     if (input != '') {
         var elements = input.split(',');
         switch(field) {
         case v_domain:
             for (var i = 0; i < elements.length; i++) {
                 g_filter.domain.push($.trim(elements[i]));
+            }
+            break;
+        case v_procName:
+            for (var i = 0; i < elements.length; i++) {
+                g_filter.procName.push($.trim(elements[i]));
             }
             break;
         case v_fileName:
@@ -380,40 +385,17 @@ function filterAllFileds(log_info)
     // Check cpu
     filterField(g_filter.cpu, log_info.cpu, v_cpu);
 
-    // TODO: Check procName
-    // filterField(g_filter.procName, log_info.procInfo.procName, v_procName);
+    // Check procName
+    filterField(g_filter.procName, log_info.procInfo.procName, v_procName);
 
-    if (g_filter.procName.length == 0) {
-        g_matched_field.procName = true;
-    } else {
-        for (var i = 0; i < g_filter.procName.length; ++i) {
-            if (log_info.procInfo.procName == g_filter.procName[i]) {
-                g_matched_field.procName = true;
-                row_exist = true;
-                break;
-            }
-        }
-    }
     // Check vpid
     filterField(g_filter.vpid, log_info.procInfo.vpid, v_vpid);
 
     // Check vtid
     filterField(g_filter.vtid, log_info.procInfo.vtid, v_vtid);
 
-    // TODO: Check fileName
-    // filterField(g_filter.fileName, log_info.procInfo.fileName, v_fileName);
-
-    if (g_filter.fileName.length == 0) {
-        g_matched_field.fileName = true;
-    } else {
-        for (var i = 0; i < g_filter.fileName.length; ++i) {
-            if (log_info.detail.fileName == g_filter.fileName[i]) {
-                g_matched_field.fileName = true;
-                row_exist = true;
-                break;
-            }
-        }
-    }
+    // Check fileName
+    filterField(g_filter.fileName, log_info.detail.fileName, v_fileName);
 
     // Check funct
     filterField(g_filter.funct, log_info.detail.funct, v_funct);
@@ -436,7 +418,7 @@ function filterAllFileds(log_info)
 
 }
 
-
+// TODO: check the pattern as input
 // .............................................................................
 function filterField(filter_field, log_field, field)
 {
@@ -461,7 +443,7 @@ function setMatched(fieldName)
     case v_nodeName : g_matched_field.nodeName = true; break;
     case v_domain   : g_matched_field.domain   = true; break;
     case v_cpu      : g_matched_field.cpu      = true; break;
-    case v_procName : g_matched_field.porcName = true; break;
+    case v_procName : g_matched_field.procName = true; break;
     case v_vpid     : g_matched_field.vpid     = true; break;
     case v_vtid     : g_matched_field.vtid     = true; break;
     case v_fileName : g_matched_field.fileName = true; break;
