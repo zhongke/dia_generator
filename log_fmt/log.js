@@ -214,6 +214,19 @@ function search()
 
         // RESET filter status and set page status to default only traffic message
         // was shown
+        g_filter.index     = [];
+        g_filter.timestamp = [];
+        g_filter.nodeName  = [];
+        g_filter.logLine   = [];
+        g_filter.domain    = [];
+        g_filter.cpu       = [];
+        g_filter.procName  = [];
+        g_filter.vpid      = [];
+        g_filter.vtid      = [];
+        g_filter.fileName  = [];
+        g_filter.funct     = [];
+        g_filter.codeLine  = [];
+        g_filter.message   = [];
 
         addKeywordsToFilter(v_domain);
 
@@ -406,8 +419,8 @@ function filterField(filter_field, log_field, field)
         setMatched(field);
     } else {
         for (var i = 0; i < filter_field.length; ++i) {
-            if (log_field == filter_field[i] ||
-                log_field.includes(filter_field[i])) {
+            if (log_field.toLowerCase() == filter_field[i].toLowerCase() ||
+                log_field.toLowerCase().includes(filter_field[i].toLowerCase())) {
                 setMatched(field);
                 break;
             }
