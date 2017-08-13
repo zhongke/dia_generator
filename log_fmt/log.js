@@ -23,30 +23,19 @@ v_message   = 'message';
 // Load all the domain in the set for later filtering in a list
 // .............................................................................
 var g_filter = {
-    index     : [],
-    timestamp : [],
-    nodeName  : [],
-    logLine   : [],
-    domain    : [],
-    cpu       : [],
-    procName  : [],
-    vpid      : [],
-    vtid      : [],
-    fileName  : [],
-    funct     : [],
-    codeLine  : [],
-    // TODO:
-    message   : []
+    index   : [], timestamp : [], nodeName : [], logLine  : [],
+    domain  : [], cpu       : [], procName : [], vpid     : [],
+    vtid    : [], fileName  : [], funct    : [], codeLine : [],
+    message : []
 };
 
 // Global variable to store column status show or hide
 // .............................................................................
 var g_column_status = {
-    index     : true, timestamp : true, nodeName  : true,
-    logLine   : true, domain    : true, cpu       : true,
-    procName  : true, vpid      : true, vtid      : true,
-    fileName  : true, funct     : true, codeLine  : true,
-    message   : true
+    index   : true, timestamp : true, nodeName : true, logLine  : true,
+    domain  : true, cpu       : true, procName : true, vpid     : true,
+    vtid    : true, fileName  : true, funct    : true, codeLine : true,
+    message : true
 };
 
 
@@ -215,9 +204,9 @@ function search()
     $('#filter').click(function(){
         // TODO: before filter the context, remove all the exist cntext firstly
         // TODO: It's better clear all the elements then add the filtered context
-        for (var traffic_idx = 0; traffic_idx < g_traffic_list.length; traffic_idx++) {
-            if (g_context_exist[traffic_idx] == true) {
-                removeContext(g_traffic_list[traffic_idx]);
+        for (var tfc_idx = 0; tfc_idx < g_traffic_list.length; tfc_idx++) {
+            if (g_context_exist[tfc_idx] == true) {
+                removeContext(g_traffic_list[tfc_idx]);
             }
         }
 
@@ -292,9 +281,9 @@ function doFiltering()
 {
     var context = [];
     var i = data.length - 1;
-    for (var traffic_idx = g_traffic_list.length- 1 ; traffic_idx >= 0; traffic_idx--) {
+    for (var tfc_idx = g_traffic_list.length- 1 ; tfc_idx >= 0; tfc_idx--) {
 
-        var traffic_id = g_traffic_list[traffic_idx];
+        var traffic_id = g_traffic_list[tfc_idx];
         for (; i >= 0; i--) {
             // Add the traffic line into the table
             var log_info = data[i];
@@ -307,7 +296,7 @@ function doFiltering()
                 if (log_info.index == traffic_id) {
                     // Before insert the matched context, remove all the context firstly
                     if (g_context_exist[traffic_id] == true) {
-                        removeContext(traffic_idx);
+                        removeContext(tfc_idx);
                     } else {
                         // TODO: Set the current traffic context status is shown
                         // if one more click, all the context will be removed.
@@ -317,7 +306,7 @@ function doFiltering()
                         // If no filtered history the status should be empty or false
                         // that could introduce more complex feature to store the
                         // filter HISTORY
-                        g_context_exist[traffic_idx] = true;
+                        g_context_exist[tfc_idx] = true;
                     }
 
                     // Put all the info in the context into html
@@ -342,7 +331,6 @@ function doFiltering()
                     && g_matched_field.message
                     ) {
                         context.push(buildRow(log_info));
-                        // console.log(buildRow(log_info));
                     }
                 }
             }
@@ -403,18 +391,8 @@ function filterAllFileds(log_info)
     // TODO: Check codeLine
     g_matched_field.codeLine = true;
 
-    // TODO: Check message
-    if (g_filter.message.length == 0) {
-        g_matched_field.message = true;
-    } else {
-        for (var i = 0; i < g_filter.message.length; ++i) {
-            if (log_info.detail.message.includes(g_filter.message[i])) {
-                g_matched_field.message = true;
-                row_exist = true;
-                break;
-            }
-        }
-    }
+    // Check message
+    filterField(g_filter.message, log_info.detail.message, v_message);
 
 }
 
@@ -426,7 +404,8 @@ function filterField(filter_field, log_field, field)
         setMatched(field);
     } else {
         for (var i = 0; i < filter_field.length; ++i) {
-            if (log_field == filter_field[i]) {
+            if (log_field == filter_field[i] ||
+                log_field.includes(filter_field[i])) {
                 setMatched(field);
                 break;
             }
@@ -448,7 +427,7 @@ function setMatched(fieldName)
     case v_vtid     : g_matched_field.vtid     = true; break;
     case v_fileName : g_matched_field.fileName = true; break;
     case v_funct    : g_matched_field.funct    = true; break;
-    //case v_message  : g_matched_field.message  = true; break;
+    case v_message  : g_matched_field.message  = true; break;
     }
 }
 
