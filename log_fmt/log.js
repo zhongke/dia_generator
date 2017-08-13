@@ -106,6 +106,8 @@ function initTable() {
         html: items.join( "" )
     }).appendTo( "body" );
 
+    $('table').addClass("outline");
+
     // Load the function here
     hideColumn();
     showContext(g_traffic_list);
