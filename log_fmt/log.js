@@ -422,7 +422,17 @@ function filterAllFileds(log_info)
     g_matched_field.codeLine = true;
 
     // TODO: Check message
-    g_matched_field.message = true;
+    if (g_filter.message.length == 0) {
+        g_matched_field.message = true;
+    } else {
+        for (var i = 0; i < g_filter.message.length; ++i) {
+            if (log_info.detail.message.includes(g_filter.message[i])) {
+                g_matched_field.message = true;
+                row_exist = true;
+                break;
+            }
+        }
+    }
 
 }
 
