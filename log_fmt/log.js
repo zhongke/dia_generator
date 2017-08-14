@@ -108,14 +108,20 @@ function initTable() {
 
     $('table').addClass("outline");
 
+    // Clear all the content in every field filter input
+    $('#clear').click(function() {
+        $('#f_domain').val("");
+        $('#f_procName').val("");
+        $('#f_fileName').val("");
+        $('#f_funct').val("");
+        $('#f_message').val("");
+    });
+
     // Load the function here
     hideColumn();
     showContext(g_traffic_list);
 
     search();
-
-    // Test doFiltering
-    //doFiltering();
 
 }
 
