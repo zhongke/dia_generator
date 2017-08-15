@@ -57,3 +57,8 @@ tr:nth-child(even) {
     width: 90px;
     float: left;
 }
+
+.message {
+    font-size : 12px;
+    font-family: "Consolas";
+}
