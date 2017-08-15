@@ -342,7 +342,7 @@ function doFiltering()
                     break;
                 } else {
                     filterAllFileds(log_info);
-
+/*
                     if(g_matched_field.index    && g_matched_field.timestamp
                     && g_matched_field.nodeName && g_matched_field.logLine
                     && g_matched_field.domain   && g_matched_field.cpu
@@ -350,6 +350,14 @@ function doFiltering()
                     && g_matched_field.vtid     && g_matched_field.fileName
                     && g_matched_field.funct    && g_matched_field.codeLine
                     && g_matched_field.message
+*/
+                    if(g_matched_field.index    || g_matched_field.timestamp
+                    || g_matched_field.nodeName || g_matched_field.logLine
+                    || g_matched_field.domain   || g_matched_field.cpu
+                    || g_matched_field.procName || g_matched_field.vpid
+                    || g_matched_field.vtid     || g_matched_field.fileName
+                    || g_matched_field.funct    || g_matched_field.codeLine
+                    || g_matched_field.message
                     ) {
                         context.push(buildRow(log_info));
                     }
@@ -377,16 +385,16 @@ function filterAllFileds(log_info)
     };
 
     // TODO: index need to be suport single number seperate number and a range
-    g_matched_field.index = true;
+    g_matched_field.index = false;
 
     // TODO: Check timestamp
-    g_matched_field.timestamp = true;
+    g_matched_field.timestamp = false;
 
     // Check nodeName
     filterField(g_filter.nodeName, log_info.nodeName, v_nodeName);
 
     // TODO: Check logLine
-    g_matched_field.logLine = true;
+    g_matched_field.logLine = false;
 
     // Check domain
     filterField(g_filter.domain, log_info.domain, v_domain);
@@ -410,7 +418,7 @@ function filterAllFileds(log_info)
     filterField(g_filter.funct, log_info.detail.funct, v_funct);
 
     // TODO: Check codeLine
-    g_matched_field.codeLine = true;
+    g_matched_field.codeLine = false;
 
     // Check message
     filterField(g_filter.message, log_info.detail.message, v_message);
@@ -422,12 +430,12 @@ function filterAllFileds(log_info)
 function filterField(filter_field, log_field, field)
 {
     if (filter_field.length == 0) {
-        setMatched(field);
+        setMatched(field, false);
     } else {
         for (var i = 0; i < filter_field.length; ++i) {
             if (log_field.toLowerCase() == filter_field[i].toLowerCase() ||
                 log_field.toLowerCase().includes(filter_field[i].toLowerCase())) {
-                setMatched(field);
+                setMatched(field, true);
                 break;
             }
         }
@@ -436,19 +444,19 @@ function filterField(filter_field, log_field, field)
 
 
 // .............................................................................
-function setMatched(fieldName)
+function setMatched(fieldName, result)
 {
     // alert(fieldName);
     switch(fieldName) {
-    case v_nodeName : g_matched_field.nodeName = true; break;
-    case v_domain   : g_matched_field.domain   = true; break;
-    case v_cpu      : g_matched_field.cpu      = true; break;
-    case v_procName : g_matched_field.procName = true; break;
-    case v_vpid     : g_matched_field.vpid     = true; break;
-    case v_vtid     : g_matched_field.vtid     = true; break;
-    case v_fileName : g_matched_field.fileName = true; break;
-    case v_funct    : g_matched_field.funct    = true; break;
-    case v_message  : g_matched_field.message  = true; break;
+    case v_nodeName : g_matched_field.nodeName = result; break;
+    case v_domain   : g_matched_field.domain   = result; break;
+    case v_cpu      : g_matched_field.cpu      = result; break;
+    case v_procName : g_matched_field.procName = result; break;
+    case v_vpid     : g_matched_field.vpid     = result; break;
+    case v_vtid     : g_matched_field.vtid     = result; break;
+    case v_fileName : g_matched_field.fileName = result; break;
+    case v_funct    : g_matched_field.funct    = result; break;
+    case v_message  : g_matched_field.message  = result; break;
     }
 }
 
