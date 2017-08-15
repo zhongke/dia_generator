@@ -75,8 +75,19 @@ function initTable() {
     for (var i = 0; i < data.length; ++i) {
         var log_info = data[i];
         // Add the traffic line into the table
-        if (log_info.detail.message.includes('DIAMETER-MESSAGE')) {
-            log = "<tr id=" + log_info.index + " class='traffic'>";
+
+        if (log_info.detail.message.includes('DIAMETER-MESSAGE') ||
+            log_info.detail.message.includes('URL: ') ||
+            log_info.detail.message.includes('PUT result')) {
+
+            log = "<tr id=" + log_info.index;
+            if (log_info.detail.message.includes('DIAMETER-MESSAGE')) {
+                log += " class='traffic'>";
+            } else if (log_info.detail.message.includes('URL') ||
+                    (log_info.detail.message.includes('PUT'))) {
+                log += " class='populate'>";
+            }
+
             log += buildTd(log_info, v_index);
             log += buildTd(log_info, v_timestamp);
             log += buildTd(log_info, v_nodeName);

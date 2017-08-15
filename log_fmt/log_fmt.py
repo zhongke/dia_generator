@@ -107,12 +107,15 @@ def parse_log(file_info: list, logDetailList: list) -> None:
                 if (', ' != item):
                     contents.append(item)
 
+            # if current line function is "PcrfVerificationPip", that will be ignored
+            if (get_detail(contents[3], logDetail)):
+                break;
+
             # Set first 4 object members
             get_first_4_parts(contents[0], logDetail)
 
             get_cpu(contents[1], logDetail)
             get_proc(contents[2], logDetail)
-            get_detail(contents[3], logDetail)
 
         else:
             # Handle the remaining part if there is no domain info included like dia
@@ -150,17 +153,26 @@ def get_proc(log_proc: str, logDetail: LogDetail) -> None:
 
 
 #.......................................................................'
-def get_detail(detail: str, logDetail: LogDetail) -> None:
+def get_detail(detail: str, logDetail: LogDetail) -> bool:
 
+    # TODO: ignore the last part of trace which the fuciton is "PcrfVerificationPip"
     codeInfo = detail.split('=')
 
-    logDetail.detail['fileName']     = codeInfo[1].split('"')[1]
-    logDetail.detail['funct']        = codeInfo[2].split('"')[1]
-    logDetail.detail['codeLine']     = (codeInfo[3].split(',')[0]).strip(' ')
+    ignoreRemaining = false;
 
+    logDetail.detail['funct'] = codeInfo[2].split('"')[1]
 
-    # get the index of substr('msg') + ('msg = "')
-    logDetail.detail['message']      = detail[(detail.find('msg') + 7):]
+    if (LogDetail.detail['funct'] != 'PcrfVerificationPip'):
+        logDetail.detail['fileName']     = codeInfo[1].split('"')[1]
+        logDetail.detail['codeLine']     = (codeInfo[3].split(',')[0]).strip(' ')
+        # get the index of substr('msg') + ('msg = "')
+        logDetail.detail['message']      = detail[(detail.find('msg') + 7):]
+
+        ignoreRemaining = false;
+    else:
+        ignoreRemaining = true;
+
+    return ignoreRemaining;
 
 
 # PART 1 : Parse log file
