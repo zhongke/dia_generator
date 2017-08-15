@@ -129,8 +129,8 @@ def parse_log(file_info: list, logDetailList: list) -> None:
             #       2 special domain for later filtering
 
             # Get the remaining info by the substr start from index 34 to the end of the line
-            # TODO: Keep the 'space' for the diaMsg in the original format
-            logDetail.detail['message'] = str(line[34:])
+            # Keep the 'space' for the diaMsg in the original format [&nbsp;]
+            logDetail.detail['message'] = str(line[34:]).replace(' ', '&nbsp;')
 
         logDetailList.append(logDetail)
 
