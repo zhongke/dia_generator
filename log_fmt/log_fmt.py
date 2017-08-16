@@ -57,7 +57,6 @@
 # 7) Add click event on function 'otpdiaHandleRequest' + 'Received incoming request' show or hide related info
 # 8) Add click event on function 'handleMessage' + 'Decoded' show or hide related info
 # ------------------------------------------------------------------------------
-
 import os, sys, shutil, os.path, json
 import re
 import LogDetail
@@ -92,12 +91,13 @@ def get_first_4_parts(log_common: str, logDetail: LogDetail) -> None:
 #.......................................................................'
 def parse_log(file_info: list, logDetailList: list) -> None:
     index = 0
+
+    logStatus = ['NotFound']
     for line in file_info:
         contents = []
         # initialize a LogDetail object
         logDetail = LogDetail.LogDetail()
-        logDetail.index = index
-        index += 1
+        # logDetail.logStatus = logStatus
 
         # Handle normal log line with domain info
         if 'com_ericsson_sapc' in line:
@@ -108,7 +108,7 @@ def parse_log(file_info: list, logDetailList: list) -> None:
                     contents.append(item)
 
             # if current line function is "PcrfVerificationPip", that will be ignored
-            if (get_detail(contents[3], logDetail)):
+            if (get_detail(contents[3], logDetail, logStatus) == 'End'):
                 break;
 
             # Set first 4 object members
@@ -135,7 +135,10 @@ def parse_log(file_info: list, logDetailList: list) -> None:
             # Keep the 'space' for the diaMsg in the original format [&nbsp;]
             logDetail.detail['message'] = str(line[34:]).replace(' ', '&nbsp;')
 
-        logDetailList.append(logDetail)
+        if (logStatus[0] == 'Lost'): 
+            logDetail.index = index
+            index += 1
+            logDetailList.append(logDetail)
 
 
 #.......................................................................'
@@ -153,26 +156,33 @@ def get_proc(log_proc: str, logDetail: LogDetail) -> None:
 
 
 #.......................................................................'
-def get_detail(detail: str, logDetail: LogDetail) -> bool:
+def get_detail(detail: str, logDetail: LogDetail, logStatus: list) -> str:
 
     # TODO: ignore the last part of trace which the fuciton is "PcrfVerificationPip"
     codeInfo = detail.split('=')
 
-    ignoreRemaining = false;
-
     logDetail.detail['funct'] = codeInfo[2].split('"')[1]
 
-    if (LogDetail.detail['funct'] != 'PcrfVerificationPip'):
-        logDetail.detail['fileName']     = codeInfo[1].split('"')[1]
-        logDetail.detail['codeLine']     = (codeInfo[3].split(',')[0]).strip(' ')
-        # get the index of substr('msg') + ('msg = "')
-        logDetail.detail['message']      = detail[(detail.find('msg') + 7):]
+    if (logDetail.detail['funct'] != 'PcrfVerificationPip'):
+        if(logStatus[0] == 'Found' or logStatus[0] == 'Lost'):
+            logDetail.detail['fileName']     = codeInfo[1].split('"')[1]
+            logDetail.detail['codeLine']     = (codeInfo[3].split(',')[0]).strip(' ')
+            # get the index of substr('msg') + ('msg = "')
+            logDetail.detail['message']      = detail[(detail.find('msg') + 7):]
+            if (logStatus[0] == 'Found'):
+                logStatus[0] = 'Lost'
 
-        ignoreRemaining = false;
+        else:
+            pass
+
     else:
-        ignoreRemaining = true;
+        if (logStatus[0] == 'NotFound'):
+            logStatus[0] = 'Found'
+        elif (logStatus[0] == 'Lost'):
+            logStatus[0] = 'End'
 
-    return ignoreRemaining;
+
+    return logStatus[0];
 
 
 # PART 1 : Parse log file
