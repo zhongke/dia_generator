@@ -92,6 +92,13 @@ def get_first_4_parts(log_common: str, logDetail: LogDetail) -> None:
 def parse_log(file_info: list, logDetailList: list) -> None:
     index = 0
 
+    # Define a list in order to pass this parameter to getDetail function
+    # There are 4 status:
+    # - 'NotFound' means at the begining of log handling
+    # - 'Found'    means found the function at the begining of log
+    # - 'Lost'     means the founction was over before the begining of traffic
+    # - 'End'      means the function as at the end of traffic
+
     logStatus = ['NotFound']
     for line in file_info:
         contents = []
@@ -135,7 +142,7 @@ def parse_log(file_info: list, logDetailList: list) -> None:
             # Keep the 'space' for the diaMsg in the original format [&nbsp;]
             logDetail.detail['message'] = str(line[34:]).replace(' ', '&nbsp;')
 
-        if (logStatus[0] == 'Lost'): 
+        if (logStatus[0] == 'Lost'):
             logDetail.index = index
             index += 1
             logDetailList.append(logDetail)
